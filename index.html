@@ -1002,6 +1002,49 @@ function giftCard(key,rank,hdrCls,category){
 
 
 
+
+function buildRadar(miPct) {
+  // Larger canvas — cx/cy=220, radar radius=160, label at 185
+  var cx=220,cy=220,R=160;
+  var keys=['Ie','Li','Lo','Vi','Ki','Mu','Ia','Na'];
+  var labels=['PEOPLE','WORD','NUMBER','PICTURE','BODY','MUSIC','SELF','NATURE'];
+  var colors=['#263F6A','#4a7fc1','#6a9fd8','#EFBD47','#f5d070','#c8c5be','#b0aeaa','#9ca3af'];
+  var angles=[270,315,0,45,90,135,180,225];
+  function pt(a,r){var rad=a*Math.PI/180;return[cx+r*Math.cos(rad),cy+r*Math.sin(rad)];}
+  function poly(frac){return keys.map(function(_,i){var p=pt(angles[i],R*frac);return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' ');}
+  var dataPoints=keys.map(function(k,i){return pt(angles[i],Math.max(R*miPct(k)/100,6));});
+  var dataPoly=dataPoints.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' ');
+  var s='<svg width="440" height="440" viewBox="0 0 440 440" xmlns="http://www.w3.org/2000/svg">';
+  // grid rings — 4 rings at 25/50/75/100%
+  [0.25,0.5,0.75,1].forEach(function(f){
+    s+='<polygon points="'+poly(f)+'" fill="'+(f===1?'none':'rgba(38,63,106,0.03)')+'" stroke="'+(f===1?'#c8d3e0':'#e5e7eb')+'" stroke-width="'+(f===1?'1.5':'1')+'"/>';
+  });
+  // axis lines
+  keys.forEach(function(_,i){
+    var p=pt(angles[i],R);
+    s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+'" stroke="#dde3ec" stroke-width="1"/>';
+  });
+  // data fill — strong blue fill
+  s+='<polygon points="'+dataPoly+'" fill="rgba(38,63,106,0.22)" stroke="#263F6A" stroke-width="2.5" stroke-linejoin="round"/>';
+  // dots with percentage labels
+  dataPoints.forEach(function(p,i){
+    var k=keys[i];
+    var pct=miPct(k);
+    s+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="7" fill="'+colors[i]+'" stroke="white" stroke-width="2.5"/>';
+  });
+  // axis labels — smart label + percentage below
+  keys.forEach(function(k,i){
+    var lp=pt(angles[i],R+26);
+    var pp=pt(angles[i],R+40);
+    var anchor=lp[0]<cx-8?'end':lp[0]>cx+8?'start':'middle';
+    var pct=miPct(k);
+    s+='<text x="'+lp[0].toFixed(1)+'" y="'+lp[1].toFixed(1)+'" text-anchor="'+anchor+'" font-family="Nunito,sans-serif" font-size="11" font-weight="800" fill="#263F6A">'+labels[i]+'</text>';
+    s+='<text x="'+pp[0].toFixed(1)+'" y="'+pp[1].toFixed(1)+'" text-anchor="'+anchor+'" font-family="Nunito,sans-serif" font-size="11" font-weight="700" fill="'+colors[i]+'">'+pct+'%</text>';
+  });
+  s+='</svg>';
+  return s;
+}
+
 function buildReport(){
   document.getElementById('pageNav').style.display='none';
   document.getElementById('progFill').style.width='100%';
@@ -1081,9 +1124,20 @@ function buildReport(){
       <div><div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px">Ministry Passion</div>${R.minS.map(([k,v])=>barRow(MIN_META[k].label,v,5,k===R.minTop?'bf-red':'bf-grey')).join('')}</div>
       <div><div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px">Issues Passion</div>${R.issS.map(([k,v])=>barRow(ISS_META[k].label,v,5,k===R.issTop?'bf-gold':'bf-grey')).join('')}</div>
       <div><div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px">Passion for Role</div>
-        <div style="background:var(--bg);border-radius:14px;padding:20px 22px;border-left:4px solid var(--gold)">
-          <div style="font-family:'Lora',serif;font-size:20px;font-weight:700;color:var(--blue);margin-bottom:8px">${R.roleLabel}</div>
-          <div style="font-size:13px;color:var(--muted);line-height:1.75">${ROLE_META[R.roleLabel]?.long||''}</div>
+        <div style="background:var(--bg);border-radius:14px;padding:20px 22px;border:1px solid var(--border);">
+          <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:6px;">Your Passion for Role</div>
+          <div style="font-family:'Lora',serif;font-size:22px;font-weight:700;color:var(--blue);margin-bottom:16px;">${R.roleLabel}</div>
+          <div style="position:relative;padding-bottom:28px;margin-bottom:8px;">
+            <div style="height:8px;background:linear-gradient(90deg,#263F6A,#4a7fc1,#EFBD47,#f5a623,#F7403A);border-radius:4px;"></div>
+            <div style="position:absolute;bottom:0;left:${ {Doer:4, Supervisor:25, Manager:50, Innovator:72, 'Thinker / Pioneer':94}[R.roleLabel]||50 }%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;">
+              <div style="width:20px;height:20px;background:var(--blue);border-radius:50%;border:3px solid white;box-shadow:0 2px 8px rgba(38,63,106,.3);margin-top:-14px;"></div>
+              <div style="width:2px;height:6px;background:var(--blue);"></div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:14px;">
+            ${['Doer','Supervisor','Manager','Innovator','Thinker / Pioneer'].map(function(l){return '<span style="font-size:10px;font-weight:'+(l===R.roleLabel?'900':'700')+';color:'+(l===R.roleLabel?'var(--blue)':'var(--muted)')+';flex:1;text-align:center;">' + l + '</span>';}).join('')}
+          </div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.75;">${ROLE_META[R.roleLabel]?.long||''}</div>
         </div>
       </div>
     </div>
@@ -1101,7 +1155,12 @@ function buildReport(){
       <div class="mi-pc-pct-row"><div class="mi-pc-pct">${R.miPct(miTop)}%</div><div class="mi-pc-pct-label">· ${miTopMeta.pct} of people share this as their primary intelligence</div></div>
       <div class="mi-pc-desc">${miTopMeta.desc}</div>
     </div>
-    ${miBarHtml}
+    <div style="display:flex;justify-content:center;margin:24px 0 8px;">
+      ${buildRadar(R.miPct)}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px;">
+      ${R.miS.map(function([k],i){return '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border-radius:10px;"><div style="width:10px;height:10px;border-radius:50%;background:'+['#263F6A','#4a7fc1','#6a9fd8','#EFBD47','#f5d070','#c8c5be','#b0aeaa','#9ca3af'][i]+';flex-shrink:0;"></div><div style="flex:1;min-width:0;"><div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+MI_META[k].name+'</div><div style="font-size:10px;color:var(--muted);">'+MI_META[k].smart+'</div></div><div style="font-size:13px;font-weight:800;color:var(--blue);flex-shrink:0;">'+R.miPct(k)+'%</div></div>';}).join('')}
+    </div>
     <div class="mi-all-grid">${miGridHtml}</div>
   </div>
 
