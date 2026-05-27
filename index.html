@@ -20,17 +20,34 @@ button,input{-webkit-appearance:none;appearance:none;}
 html{scroll-behavior:smooth;}
 
 /* ── NAV ── */
-.nav{position:fixed;top:0;left:0;right:0;z-index:9999;background:white;border-bottom:1px solid var(--border);padding:0 20px;height:52px;display:flex;align-items:center;gap:12px;}
+.nav{position:fixed;top:0;left:0;right:0;z-index:9999;background:white;border-bottom:1px solid var(--border);padding:0 16px;height:52px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.nav-logo{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.nav-brand-text{font-family:'Lora',serif;font-size:14px;font-weight:700;color:var(--blue);}
+.nav-section-name{font-size:12px;font-weight:700;color:var(--muted);flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.nav-badge{background:var(--gold);color:var(--blue);font-size:11px;font-weight:800;padding:4px 12px;border-radius:6px;letter-spacing:.02em;white-space:nowrap;flex-shrink:0;}
 
 .nav-badge{background:var(--gold);color:var(--blue);font-size:11px;font-weight:800;padding:4px 12px;border-radius:6px;letter-spacing:.02em;white-space:nowrap;flex-shrink:0;}
 .nav-pct{font-size:14px;font-weight:900;color:var(--blue);min-width:48px;text-align:right;}
 
 /* ── PROGRESS STRIP ── */
-.prog-strip{position:fixed;top:52px;left:0;right:0;z-index:9998;background:var(--grey);height:4px;}
-.prog-fill{height:4px;background:var(--gold);transition:width .6s ease;position:relative;}
+.section-tracker{position:fixed;top:52px;left:0;right:0;z-index:9998;background:white;border-bottom:1px solid var(--border);padding:8px 16px 10px;}
+.st-icons{display:flex;justify-content:space-around;align-items:flex-end;margin-bottom:8px;}
+.st-icon{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:default;flex:1;}
+.sti-wrap{display:flex;flex-direction:column;align-items:center;gap:3px;}
+.sti-svg{width:22px;height:22px;color:var(--border);transition:color .25s,width .25s,height .25s;}
+.sti-label{font-size:9px;font-weight:800;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;opacity:0;white-space:nowrap;transition:opacity .25s;}
+.st-icon.active .sti-svg{width:26px;height:26px;color:var(--red);}
+.st-icon.active .sti-label{opacity:1;color:var(--blue);}
+.st-icon.done .sti-svg{color:var(--blue);}
+.st-icon.done .sti-label{opacity:0;}
+.st-bar{height:4px;background:var(--grey);border-radius:2px;}
+.st-bar-fill{height:4px;background:#F7403A;border-radius:2px;transition:width .5s ease;}
+.prog-fill{height:4px;background:#F7403A;transition:width .5s ease;}
 
 /* ── SCREENS ── */
-.screen{display:none;min-height:100vh;padding-top:56px;}
+.screen{display:none;min-height:100vh;}
+#screen-questions{padding-top:138px;}
+#screen-report{padding-top:56px;}
 .screen.active{display:block;}
 
 
@@ -77,7 +94,13 @@ html{scroll-behavior:smooth;}
    QUESTIONS
 ══════════════════════════════════════════ */
 .q-outer{max-width:720px;margin:0 auto;padding:20px 24px 20px;overflow-x:hidden;}
-.q-block{padding:44px 0;border-bottom:1px solid var(--border);transition:opacity .3s ease;}
+.q-block{padding:44px 0;border-bottom:1px solid var(--border);}
+.q-block.locked{opacity:.12;pointer-events:none;}
+.q-block.active{opacity:1;pointer-events:all;}
+.q-block.answered{opacity:1;pointer-events:all;}
+
+
+
 .q-block:last-child{border-bottom:none;}
 .q-block.faded{opacity:.15;pointer-events:none;}
 .q-block.active{opacity:1;pointer-events:all;}
@@ -101,10 +124,10 @@ html{scroll-behavior:smooth;}
 .q-sl.always{color:var(--blue);}
 
 /* ── PAGE NAV ── */
-.page-nav{position:sticky;bottom:0;left:0;right:0;z-index:100;background:white;border-top:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;}
-.btn-back{background:transparent;border:none;font-size:13px;font-weight:800;color:var(--muted);cursor:pointer;font-family:'Nunito',sans-serif;padding:10px 4px;letter-spacing:.06em;display:flex;align-items:center;gap:8px;transition:color .2s;}
+.page-nav{position:sticky;bottom:0;left:0;right:0;z-index:100;background:var(--blue);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;}
+.btn-back{background:transparent;border:none;font-size:13px;font-weight:800;color:rgba(255,255,255,.75);cursor:pointer;font-family:'Nunito',sans-serif;padding:10px 4px;letter-spacing:.06em;display:flex;align-items:center;gap:8px;transition:color .2s;}
 .btn-back:hover{color:var(--text);}
-.btn-next{background:var(--blue);color:white;border:none;border-radius:50px;padding:13px 34px;font-size:13px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer;letter-spacing:.06em;display:flex;align-items:center;gap:8px;transition:all .2s;}
+.btn-next{background:var(--gold);color:var(--blue);border:none;border-radius:50px;padding:13px 34px;font-size:13px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer;letter-spacing:.06em;display:flex;align-items:center;gap:8px;transition:all .2s;}
 .btn-next:hover{background:#1a2f52;box-shadow:0 4px 16px rgba(38,63,106,0.3);}
 .warn-msg{font-size:12px;font-weight:700;color:var(--red);display:none;text-align:center;}
 
@@ -126,16 +149,25 @@ html{scroll-behavior:smooth;}
 .rpt-cover-date{font-size:12px;color:rgba(255,255,255,.3);}
 
 /* REPORT SECTIONS */
-.rs{padding:64px;background:white;border-bottom:1px solid var(--border);}
+.rs{padding:64px;background:white;border-bottom:1px solid var(--border);position:relative;}
 .rs.alt{background:var(--bg);}
 .rs:last-child{border-bottom:none;}
-.rs-eyebrow{font-size:10px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-bottom:8px;}
+.rs-eyebrow{font-size:10px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.rs-icon{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;flex-shrink:0;}
+.rs-icon svg{width:16px;height:16px;}
+.gifts-icon{background:#EBF0F8;color:var(--blue);}
+.passion-icon{background:#FEF0EF;color:#C0342F;}
+.potential-icon{background:#FDF7E7;color:#7a4f00;}
+.personality-icon{background:#F3EEF8;color:#6B3FA0;}
+.pathway-icon{background:#E8F5EE;color:#1d6b45;}
 .rs-title{font-family:'Lora',serif;font-size:clamp(28px,4vw,44px);font-weight:700;color:var(--blue);line-height:1.05;margin-bottom:10px;}
 .rs-intro{font-size:14px;line-height:1.8;color:var(--muted);max-width:680px;margin-bottom:36px;font-style:italic;padding-left:16px;border-left:3px solid var(--gold);}
 
 /* SUMMARY GRID */
 .sum-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;background:var(--border);border-radius:16px;overflow:hidden;margin-bottom:40px;}
 .sg{background:white;padding:22px 20px;}
+.sg-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+.sg-icon svg{width:18px;height:18px;}
 .sg-lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:7px;}
 .sg-val{font-family:'Lora',serif;font-size:17px;font-weight:700;color:var(--blue);line-height:1.2;margin-bottom:4px;}
 .sg-sub{font-size:11px;color:var(--muted);line-height:1.4;}
@@ -182,6 +214,8 @@ html{scroll-behavior:smooth;}
 /* PASSION */
 .passion-chips{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px;}
 .pchip{border-radius:14px;padding:24px;}
+.pchip-icon{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+.pchip-icon svg{width:18px;height:18px;}
 .pchip.c1{background:var(--blue);}
 .pchip.c2{background:var(--red);}
 .pchip.c3{background:var(--gold);}
@@ -297,7 +331,12 @@ html{scroll-behavior:smooth;}
 @media(max-width:680px){
 
   /* NAV */
-  .nav{padding:0 14px;height:48px;gap:10px;}
+  .nav{padding:0 12px;height:48px;gap:8px;}
+  .nav-brand-text{display:none;}
+  .section-tracker{padding:6px 12px 8px;}
+  .sti-emoji{font-size:18px!important;}
+  .st-icon.active .sti-emoji{font-size:22px!important;}
+  #screen-questions{padding-top:116px!important;}
   .prog-strip{top:48px;}
   .nav-badge{font-size:10px;padding:4px 10px;}
   .nav-pct{font-size:13px;min-width:36px;}
@@ -321,8 +360,8 @@ html{scroll-behavior:smooth;}
   .q-scale-labels{margin-top:6px;font-size:10px;}
   .page-nav{padding:12px 14px;gap:8px;left:0;right:0;border-radius:0;}
   .page-nav .btn-nav{padding:11px 18px;font-size:12px;}
-  #pageCtr{font-size:11px;}
-  #warnMsg{font-size:12px;padding:10px 14px;}
+  #pageCtr{font-size:11px;color:rgba(255,255,255,.65);font-weight:600;}
+  #warnMsg{font-size:12px;padding:10px 14px;color:var(--gold);font-weight:700;}
 
   /* REPORT GENERAL */
   .rpt-wrap{padding-bottom:40px;}
@@ -389,7 +428,9 @@ html{scroll-behavior:smooth;}
   .path-overall{padding:22px 20px;}
   .path-op-score{font-size:44px;}
   .path-item{padding:16px 16px;}
-  .pi-name{font-size:14px;}
+  .pi-name{font-size:14px;font-weight:800;color:var(--text);}
+.pi-name-wrap{display:flex;align-items:center;gap:8px;}
+.pi-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#E8F5EE;color:#1d6b45;}
   .pi-badge{font-size:10px;padding:3px 10px;}
   .pi-desc{font-size:12px;}
 
@@ -553,16 +594,403 @@ html{scroll-behavior:smooth;}
   a { text-decoration: none !important; }
 }
 
+
+/* ══════════════════════════════════════════
+   DASHBOARD — 5P Summary Card
+══════════════════════════════════════════ */
+.dashboard {
+  background: var(--blue);
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  page-break-after: always;
+}
+
+/* header strip */
+.db-header {
+  background: var(--red);
+  padding: 20px 40px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.db-header-left { display: flex; flex-direction: column; gap: 2px; }
+.db-name { font-family: 'Lora', serif; font-size: 32px; font-weight: 700; color: white; line-height: 1; }
+.db-subtitle { font-size: 12px; font-weight: 700; color: rgba(255,255,255,.7); text-transform: uppercase; letter-spacing: .1em; margin-top: 4px; }
+.db-date { font-size: 11px; color: rgba(255,255,255,.5); margin-top: 2px; }
+.db-logo {
+  width: 56px; height: 56px;
+  background: var(--blue);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.db-logo svg { width: 36px; height: 36px; }
+
+/* grid */
+.db-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto auto;
+  gap: 2px;
+  background: rgba(255,255,255,.08);
+  padding: 2px;
+}
+
+/* each card */
+.db-card {
+  background: var(--blue);
+  padding: 24px 28px;
+  position: relative;
+  overflow: hidden;
+}
+.db-card::before {
+  content: '';
+  position: absolute;
+  top: -20px; right: -20px;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.04);
+}
+
+/* pathway spans full width */
+.db-card.full { grid-column: 1 / -1; }
+
+.db-card-eyebrow {
+  font-size: 9px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .14em;
+  color: rgba(255,255,255,.4);
+  margin-bottom: 10px;
+  display: flex; align-items: center; gap: 6px;
+}
+.db-card-eyebrow svg { width: 12px; height: 12px; opacity: .6; }
+
+.db-card-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+.db-card-icon svg { width: 22px; height: 22px; }
+.db-card-icon.gifts-col    { background: rgba(239,189,71,.2); color: var(--gold); }
+.db-card-icon.passion-col  { background: rgba(247,64,58,.2);  color: var(--red); }
+.db-card-icon.potent-col   { background: rgba(255,255,255,.12); color: white; }
+.db-card-icon.person-col   { background: rgba(239,189,71,.15); color: var(--gold); }
+.db-card-icon.path-col     { background: rgba(247,64,58,.15);  color: var(--red); }
+
+.db-card-title {
+  font-family: 'Lora', serif;
+  font-size: 22px; font-weight: 700;
+  color: white; line-height: 1.2;
+  margin-bottom: 4px;
+}
+.db-card-sub {
+  font-size: 12px; color: rgba(255,255,255,.5);
+  font-weight: 500; margin-bottom: 14px;
+}
+
+/* gift percentage badge */
+.db-gift-pct {
+  display: inline-flex; align-items: center;
+  background: var(--gold);
+  color: var(--blue);
+  font-size: 11px; font-weight: 800;
+  padding: 3px 10px; border-radius: 20px;
+  margin-bottom: 12px;
+}
+
+/* gift bar mini */
+.db-bar-wrap { margin-bottom: 6px; }
+.db-bar-row {
+  display: flex; align-items: center;
+  gap: 8px; margin-bottom: 5px;
+}
+.db-bar-label {
+  font-size: 11px; font-weight: 700;
+  color: rgba(255,255,255,.65);
+  width: 80px; flex-shrink: 0;
+  white-space: nowrap; overflow: hidden;
+  text-overflow: ellipsis;
+}
+.db-bar-label.top { color: white; font-weight: 800; }
+.db-bar-track {
+  flex: 1; height: 5px;
+  background: rgba(255,255,255,.1);
+  border-radius: 3px; overflow: hidden;
+}
+.db-bar-fill { height: 5px; border-radius: 3px; }
+.db-bar-fill.top  { background: var(--gold); }
+.db-bar-fill.rest { background: rgba(255,255,255,.25); }
+.db-bar-pct {
+  font-size: 10px; font-weight: 800;
+  color: rgba(255,255,255,.5); width: 28px;
+  text-align: right; flex-shrink: 0;
+}
+.db-bar-pct.top { color: var(--gold); }
+
+/* passion chips */
+.db-passion-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 4px;
+}
+.db-pchip {
+  background: rgba(255,255,255,.08);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+.db-pchip-cat {
+  font-size: 8px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .1em;
+  color: var(--gold); margin-bottom: 3px;
+}
+.db-pchip-val {
+  font-size: 13px; font-weight: 700;
+  color: white; line-height: 1.2;
+}
+
+/* MI radar mini + legend */
+.db-mi-wrap {
+  display: flex; gap: 16px;
+  align-items: flex-start;
+  margin-top: 4px;
+}
+.db-mi-legend { flex: 1; }
+.db-mi-row {
+  display: flex; align-items: center;
+  gap: 6px; margin-bottom: 5px;
+}
+.db-mi-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%; flex-shrink: 0;
+}
+.db-mi-name {
+  font-size: 11px; font-weight: 700;
+  color: rgba(255,255,255,.8); flex: 1;
+  white-space: nowrap; overflow: hidden;
+  text-overflow: ellipsis;
+}
+.db-mi-pct {
+  font-size: 11px; font-weight: 800;
+  color: white; flex-shrink: 0;
+}
+
+/* personality letters */
+.db-pers-letters {
+  display: flex; gap: 6px; margin-bottom: 10px;
+}
+.db-letter {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.12);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Lora', serif;
+  font-size: 18px; font-weight: 700; color: white;
+}
+.db-letter.active { background: var(--gold); color: var(--blue); }
+
+/* personality bars */
+.db-dim-row {
+  display: flex; align-items: center;
+  gap: 6px; margin-bottom: 5px;
+}
+.db-dim-lbl {
+  font-size: 10px; font-weight: 700;
+  color: rgba(255,255,255,.5);
+  width: 14px; text-align: center;
+}
+.db-dim-track {
+  flex: 1; height: 5px;
+  background: rgba(255,255,255,.08);
+  border-radius: 3px; overflow: hidden;
+  display: flex;
+}
+.db-dim-l { height: 5px; background: var(--gold); border-radius: 3px 0 0 3px; }
+.db-dim-r { height: 5px; background: rgba(255,255,255,.2); border-radius: 0 3px 3px 0; }
+.db-dim-rbl { font-size: 10px; color: rgba(255,255,255,.5); font-weight: 700; width: 14px; text-align: center; }
+
+/* pathway full-width */
+.db-path-bar-wrap {
+  margin-top: 10px;
+}
+.db-path-areas {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.db-path-area {
+  background: rgba(255,255,255,.06);
+  border-radius: 8px;
+  padding: 10px 8px;
+  text-align: center;
+}
+.db-path-area-name {
+  font-size: 9px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .08em;
+  color: rgba(255,255,255,.4);
+  margin-bottom: 4px;
+}
+.db-path-area-score {
+  font-size: 18px; font-weight: 800;
+  color: white; line-height: 1;
+  margin-bottom: 4px;
+}
+.db-path-area-stage {
+  font-size: 8px; font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 6px; border-radius: 10px;
+  display: inline-block;
+}
+.db-path-area-stage.striving  { background: rgba(247,64,58,.3); color: #ff9b9b; }
+.db-path-area-stage.surviving { background: rgba(239,189,71,.25); color: var(--gold); }
+.db-path-area-stage.thriving  { background: rgba(80,200,120,.2); color: #7fffb2; }
+
+.db-path-overall {
+  display: flex; align-items: center; gap: 16px;
+}
+.db-path-overall-score {
+  font-family: 'Lora', serif;
+  font-size: 44px; font-weight: 700;
+  color: white; line-height: 1;
+  flex-shrink: 0;
+}
+.db-path-overall-stage {
+  font-size: 11px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .1em;
+  color: var(--gold); margin-bottom: 4px;
+}
+.db-path-track {
+  flex: 1; height: 8px;
+  background: rgba(255,255,255,.1);
+  border-radius: 4px; overflow: hidden;
+}
+.db-path-fill {
+  height: 8px; border-radius: 4px;
+  background: linear-gradient(90deg, var(--gold), var(--red));
+}
+
+/* share button */
+.db-share-bar {
+  background: rgba(0,0,0,.2);
+  padding: 14px 40px;
+  display: flex; align-items: center;
+  justify-content: space-between;
+}
+.db-share-label {
+  font-size: 11px; color: rgba(255,255,255,.4);
+  font-weight: 600;
+}
+.db-share-btn {
+  background: var(--gold);
+  color: var(--blue);
+  border: none; cursor: pointer;
+  padding: 10px 24px;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 800;
+  display: flex; align-items: center; gap: 8px;
+  transition: all .2s;
+}
+.db-share-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(239,189,71,.4); }
+.db-share-btn svg { width: 14px; height: 14px; }
+
+@media(max-width:680px){
+  .db-header { padding: 16px 20px; }
+  .db-name { font-size: 24px; }
+  .db-card { padding: 18px 20px; }
+  .db-card-title { font-size: 18px; }
+  .db-passion-grid { grid-template-columns: 1fr 1fr; }
+  .db-path-areas { grid-template-columns: repeat(3, 1fr); }
+  .db-share-bar { padding: 12px 20px; }
+}
+@media print {
+  .db-share-bar { display: none; }
+  .dashboard { page-break-after: always; }
+}
+
 </style>
 </head>
 <body>
 <!-- NAV -->
-<nav class="nav" style="justify-content:space-between">
+<nav class="nav">
+  <!-- Logo left -->
+  <div class="nav-logo">
+    <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="40" height="40" rx="10" fill="#263F6A"/>
+      <path d="M20 8 L32 28 H8 Z" fill="#EFBD47"/>
+      <path d="M20 14 L28 28 H12 Z" fill="#F7403A" opacity=".7"/>
+      <circle cx="20" cy="13" r="4" fill="white"/>
+    </svg>
+    <span class="nav-brand-text">YOUnique</span>
+  </div>
+  <!-- Section name centre -->
+  <div class="nav-section-name" id="navSection"></div>
+  <!-- Badge right -->
   <div class="nav-badge">YOUnique Purpose</div>
-  <div style="font-size:13px;font-weight:700;color:var(--muted)" id="navSection"></div>
-  <div class="nav-pct" id="navPct"></div>
 </nav>
-<div class="prog-strip"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+
+<!-- SECTION ICONS + PROGRESS BAR -->
+<div class="section-tracker" id="sectionTracker" style="display:none">
+  <div class="st-icons">
+    <div class="st-icon" id="sti-gifts" data-sec="gifts">
+      <div class="sti-wrap">
+        <!-- Gift SVG -->
+        <svg class="sti-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="9" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M3 13h18M12 9v13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M12 9C12 9 9 6 9 4.5a2.5 2.5 0 015 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M12 9C12 9 15 6 15 4.5a2.5 2.5 0 00-5 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span class="sti-label">Gifts</span>
+      </div>
+    </div>
+    <div class="st-icon" id="sti-passion" data-sec="passion">
+      <div class="sti-wrap">
+        <!-- Flame SVG -->
+        <svg class="sti-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 22C8.13 22 5 18.87 5 15c0-3.5 2.5-6 4-8 .5 2 1.5 3 2.5 3.5C11 8 12 5 12 2c3 2 5 5.5 5 9 0 2-1 3.5-2 4.5.5-1 .5-2.5-.5-3.5C14 14 14 16 14 17c0 1-1 2-2 2s-2-1-2-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="sti-label">Passion</span>
+      </div>
+    </div>
+    <div class="st-icon" id="sti-mi" data-sec="mi">
+      <div class="sti-wrap">
+        <!-- Star/Potential SVG -->
+        <svg class="sti-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+        </svg>
+        <span class="sti-label">Potential</span>
+      </div>
+    </div>
+    <div class="st-icon" id="sti-pers" data-sec="pers">
+      <div class="sti-wrap">
+        <!-- Person SVG -->
+        <svg class="sti-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span class="sti-label">Personality</span>
+      </div>
+    </div>
+    <div class="st-icon" id="sti-paths" data-sec="paths">
+      <div class="sti-wrap">
+        <!-- Path SVG -->
+        <svg class="sti-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 17c3-4 5-6 9-6s7 3 9 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M3 7c3 4 5 6 9 6s7-3 9-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="12" cy="12" r="2" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span class="sti-label">Pathway</span>
+      </div>
+    </div>
+  </div>
+  <div class="st-bar">
+    <div class="st-bar-fill" id="progFill" style="width:0%"></div>
+  </div>
+</div>
 
 <!-- WELCOME -->
 <div class="screen active" id="screen-welcome">
@@ -608,191 +1036,197 @@ html{scroll-behavior:smooth;}
     <div id="pageCtr" style="font-size:12px;font-weight:700;color:var(--muted)"></div>
     <div class="warn-msg" id="warnMsg">Please answer all questions to continue</div>
   </div>
-  <button class="btn-next" id="btnNext" onclick="nextPage()">
-    NEXT
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4 2l4 4-4 4" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
-  </button>
+  <button class="btn-next" id="btnNext" onclick="nextPage()">JUST GET MY RESULTS ✦</button>
 </div>
 
 <script>
 // ═══════════════════════════════════════════════════════════
 // DATA
 // ═══════════════════════════════════════════════════════════
-const SECS=[{id:'gifts',name:'Primary Spiritual Gift',n:48},{id:'passion',name:'Passion',n:22},{id:'mi',name:'Potential',n:32},{id:'pers',name:'Personality',n:40},{id:'paths',name:'Pathway',n:25}];
+const SECS=[{id:'gifts',name:'Primary Spiritual Gift',n:48},{id:'passion',name:'Passion',n:24},{id:'mi',name:'Potential',n:40},{id:'pers',name:'Personality',n:24},{id:'paths',name:'Pathway',n:20}];
 
 const QS=[
-// GIFTS 48
-{t:"I am motivated to set goals and influence others to achieve a vision in order to advance God's work on earth.",s:"gifts",k:"A"},
-{t:"I am careful, thorough, and skilled at managing details.",s:"gifts",k:"B"},
-{t:"I have confidence that God not only can, but he will.",s:"gifts",k:"C"},
-{t:"I have spoken the Word of God effectively and publicly, so the hearers felt challenged and convicted.",s:"gifts",k:"D"},
-{t:"I give liberally and joyfully to people in financial need or to projects requiring support.",s:"gifts",k:"E"},
-{t:"I can readily distinguish between spiritual truth and error, good and evil.",s:"gifts",k:"F"},
-{t:"I am eager to communicate the Gospel with clarity and conviction so people can be saved.",s:"gifts",k:"G"},
-{t:"I enjoy working behind the scenes to support the work of others.",s:"gifts",k:"H"},
-{t:"I research and am persistent in my pursuit of knowing biblical truth.",s:"gifts",k:"I"},
-{t:"I can faithfully provide emotional and spiritual support for others.",s:"gifts",k:"J"},
-{t:"I enjoy inviting people into my home for a meal as well as for those who need a place to stay?",s:"gifts",k:"K"},
-{t:"I can often find simple, practical biblical solutions in the midst of conflict or confusion.",s:"gifts",k:"L"},
-{t:"I simply and practically explain and clarify the Word for those who are confused or just do not know.",s:"gifts",k:"M"},
-{t:"I love ministering to the sick, to the poor, and to the handicapped.",s:"gifts",k:"N"},
-{t:"I enjoy reassuring and strengthening those who are discouraged.",s:"gifts",k:"O"},
-{t:"I am attracted to the idea of serving others to meet a need.",s:"gifts",k:"P"},
-{t:"I set goals and direct and inspire people to effectively accomplish them.",s:"gifts",k:"A"},
-{t:"I can clarify goals and understand plans and am able to accomplish the",s:"gifts",k:"B"},
-{t:"I have confidence in God's continuing provision and help, even in difficult times.",s:"gifts",k:"C"},
-{t:"I speak biblical truth to God's people in a timely and culturally sensitive way.",s:"gifts",k:"D"},
-{t:"I manage my money well in order to free more of it for giving.",s:"gifts",k:"E"},
-{t:"I can see through the falsity or deceit before it is evident to others.",s:"gifts",k:"F"},
-{t:"I speak about salvation through Jesus Christ and see a positive response in those who are listening.",s:"gifts",k:"G"},
-{t:"I enjoy doing routine tasks that support the needs of ministry.",s:"gifts",k:"H"},
-{t:"When reading or studying Scripture, I see important biblical truths and themes that benefit others in the body of Christ.",s:"gifts",k:"I"},
-{t:"I enjoy giving practical support, nurture, and spiritual guidance to a group of people.",s:"gifts",k:"J"},
-{t:"I have a knack for making people feel welcome, whether that's in my own home, at church, at work, or elsewhere?",s:"gifts",k:"K"},
-{t:"I give practical biblical advice to help others through complicated situations.",s:"gifts",k:"L"},
-{t:"When I teach, people respond to my teaching with not only understanding but with practical insight.",s:"gifts",k:"M"},
+// ── SPIRITUAL GIFTS — 48 questions (Official Workbook Session 2) ────────────
+// Round 1 Q1-16
+{t:"I am good at setting goals and can influence others to achieving a vision.",s:"gifts",k:"A"},
+{t:"I love to organize things. Organizing comes naturally to me.",s:"gifts",k:"B"},
+{t:"When I pray, I know that God will answer me.",s:"gifts",k:"C"},
+{t:"I feel like I know the Bible really well and find myself correcting my friends.",s:"gifts",k:"D"},
+{t:"If my friends do not have money, I have no problem paying their way.",s:"gifts",k:"E"},
+{t:"I am easily able to differentiate between what's spiritually right and wrong.",s:"gifts",k:"F"},
+{t:"I love to tell people about Jesus. I am fearless in sharing my faith with the lost.",s:"gifts",k:"G"},
+{t:"I am a behind-the-scenes person. I would rather help than be out front.",s:"gifts",k:"H"},
+{t:"I enjoy searching for answers to difficult questions in God's word.",s:"gifts",k:"I"},
+{t:"I am protective of my friends.",s:"gifts",k:"J"},
+{t:"I enjoy having guests at my home and make them feel comfortable.",s:"gifts",k:"K"},
+{t:"I am known for my insight and ability to solve problems.",s:"gifts",k:"L"},
+{t:"It is easy for me to explain the Bible to my friends in a way that they understand it.",s:"gifts",k:"M"},
+{t:"I love ministering to the sick, the poor and needy.",s:"gifts",k:"N"},
+{t:"I love to encourage my friends.",s:"gifts",k:"O"},
+{t:"I want to serve, when I see someone in need.",s:"gifts",k:"P"},
+// Round 2 Q17-32
+{t:"I can set goals and to guide and motivate people to accomplish them.",s:"gifts",k:"A"},
+{t:"I can't stand to see something unorganized, and I will step in to try to fix it.",s:"gifts",k:"B"},
+{t:"I have confidence that God will take care of me, even when things are hard.",s:"gifts",k:"C"},
+{t:"I frequently find myself explaining what the Bible says to my friends and others.",s:"gifts",k:"D"},
+{t:"I like giving money to the church or any ministry.",s:"gifts",k:"E"},
+{t:"Others look to me for help in figuring out right from wrong.",s:"gifts",k:"F"},
+{t:"There isn't a day that goes by that I don't think about telling others about Jesus.",s:"gifts",k:"G"},
+{t:"I am comfortable supporting other people as they minister for God.",s:"gifts",k:"H"},
+{t:"I take great joy in discovering biblical truths on my own.",s:"gifts",k:"I"},
+{t:"I notice when someone is missing at church.",s:"gifts",k:"J"},
+{t:"I enjoy providing for the needs of newcomers, visitors and guests.",s:"gifts",k:"K"},
+{t:"I can offer practical solutions to difficult problems.",s:"gifts",k:"L"},
+{t:"I love to teach my friends Bible truths.",s:"gifts",k:"M"},
 {t:"I enjoy helping people sometimes regarded as undeserving.",s:"gifts",k:"N"},
-{t:"I find joy in affirming the value and worth of others.",s:"gifts",k:"O"},
-{t:"I am good at working with my hands and enjoy doing so.",s:"gifts",k:"P"},
-{t:"I am able to cast a vision for ministry that others want to follow and be a part of.",s:"gifts",k:"A"},
-{t:"I like to help groups become more efficient and organized.",s:"gifts",k:"B"},
-{t:"I am strong in my belief that God will work in circumstances in which success cannot be guaranteed by human effort alone.",s:"gifts",k:"C"},
-{t:"I feel a compulsion to speak the words God gives me to a group of people to strengthen, encourage, and comfort others.",s:"gifts",k:"D"},
-{t:"For special projects and capital campaigns, I like to give in a way that encourages and inspires others to give generously.",s:"gifts",k:"E"},
-{t:"I receive affirmation from others concerning the reliability of my insights, about them, and perceptions I have of others.",s:"gifts",k:"F"},
-{t:"I openly tell people that I am a Christian and want them to ask me about my faith.",s:"gifts",k:"G"},
-{t:"I like to find things that need to be done and often do them without being asked.",s:"gifts",k:"H"},
-{t:"I love learning and understanding God's word and share with those who want to learn.",s:"gifts",k:"I"},
-{t:"There are a number of people in my life that I am personally guiding with truth, encouragement, caring, and wisdom.",s:"gifts",k:"J"},
-{t:"I joyfully provide for the needs of my guests?",s:"gifts",k:"K"},
-{t:"When faced with how to apply biblical truths practically in a difficult or complex situation, God reveals to me a solution.",s:"gifts",k:"L"},
-{t:"I communicate Scripture in ways that cause others to learn and become motivated toward greater growth.",s:"gifts",k:"M"},
-{t:"I enjoy doing practical things for others who are in need.",s:"gifts",k:"N"},
-{t:"I like motivating others to take steps for spiritual growth.",s:"gifts",k:"O"},
-{t:"I am willing to take an active part in helping with a project or practical need.",s:"gifts",k:"P"},
-// PASSION 22
-{t:"Something comes alive in me when I am around young children — I love nurturing, teaching, and shaping young lives during their most formative years.",s:"passion",k:"people_kids"},
-{t:"I feel drawn to teenagers — I love walking with them through the questions, pressures, and identity struggles that define their adolescent years.",s:"passion",k:"people_teens"},
-{t:"I am energised by young people stepping into adulthood — I love helping them find direction, make bold decisions, and discover who God made them to be.",s:"passion",k:"people_youth"},
-{t:"I love coming alongside young adults who are building their lives — helping them navigate career, relationships, calling, and purpose with wisdom and faith.",s:"passion",k:"people_youngadults"},
-{t:"I find deep fulfilment in equipping and encouraging adults — helping them grow, lead, and live purposefully across every season of life.",s:"passion",k:"people_adults"},
-{t:"I have a genuine love for the elderly — I believe in honouring their stories, sitting with them in their later years, and helping them know they are still deeply valued and needed.",s:"passion",k:"people_elderly"},
-{t:"When I see someone spiritually lost, empty, or disconnected from God — I cannot just walk past. Something in me burns to point them back to Him, to sit with them, to help them find what only He can give.",s:"passion",k:"issues_spiritual"},
-{t:"I find it impossible to talk about hope and purpose to someone who is hungry, sick, or without shelter. My first instinct is always to meet the immediate, practical need — to show God's love through tangible action.",s:"passion",k:"issues_physical"},
-{t:"When someone is carrying emotional pain, broken relationships, or silent struggles — I am the person who notices and cannot let it go. I feel most called when I am sitting with someone in the hard and messy parts of life.",s:"passion",k:"issues_relational"},
-{t:"I come alive when I see someone's thinking shift — when a truth lands, when confusion becomes clarity, when someone starts asking better questions. I am drawn to the work of shaping how people understand themselves, the world, and God.",s:"passion",k:"issues_intellectual"},
-{t:"Looking back, I have consistently been someone who steps toward uncertainty rather than away from it — risk has never stopped me when I believe in the direction.",s:"passion",k:"roles_risk"},
-{t:"Before I move, I think. I have always been someone who gathers, reflects, and considers carefully — and this has served me and others well over time.",s:"passion",k:"roles_cautious"},
-{t:"I have rarely been content doing things the same way twice. Throughout my life, I have been drawn to reimagining, improving, and finding better ways forward.",s:"passion",k:"roles_change"},
-{t:"I have built my life and work on what I know is proven and reliable. Consistency, faithfulness, and doing things well have always mattered more to me than novelty.",s:"passion",k:"roles_stability"},
-{t:"I have learned to move forward even when the picture is incomplete. Ambiguity has never paralysed me — I find my way as I go.",s:"passion",k:"roles_ambiguity"},
-{t:"Throughout my life, I have done my best work when I have clear direction, a solid structure, and well-defined steps to follow.",s:"passion",k:"roles_clarity"},
-{t:"When I think about the work God has called me to — sharing the Gospel and leading others to know Jesus — I feel a strong and consistent pull in my heart.",s:"passion",k:"ministry_evangelism"},
-{t:"Walking closely with someone as they grow deeper in their faith — discipling, mentoring, journeying alongside — this is the kind of ministry that has always stirred something real in me.",s:"passion",k:"ministry_discipleship"},
-{t:"The suffering of others does not let me go. I have consistently felt a deep and urgent pull to serve, care for, and stand with people in their pain.",s:"passion",k:"ministry_compassion"},
-{t:"Guiding, developing, and drawing out the potential in others — this is where I feel most alive. I have always been drawn to the work of equipping and empowering people.",s:"passion",k:"ministry_leadership"},
-{t:"The thought of going beyond familiar borders — reaching people from different cultures, nations, and backgrounds with God's love — has always stirred something in me that I cannot ignore.",s:"passion",k:"ministry_missions"},
-{t:"I have consistently found myself drawn to creating — through words, music, art, or media — as a way to carry and communicate God's message into the world.",s:"passion",k:"ministry_creative"},
-// MI 32
-{t:"I enjoy reading books, stories, articles, or written content in my free time.",s:"mi",k:"Li"},
-{t:"I am better with languages and writing than with numbers and calculations.",s:"mi",k:"Li"},
-{t:"I enjoy debating, arguing a point, or persuading others with words.",s:"mi",k:"Li"},
-{t:"I enjoy word games, storytelling, creative writing, or playing with language.",s:"mi",k:"Li"},
-{t:"I enjoy maths, numbers, and logical problem-solving.",s:"mi",k:"Lo"},
-{t:"I enjoy puzzles, brain teasers, and games that make me think.",s:"mi",k:"Lo"},
-{t:"I work best when I have a clear plan, a to-do list, and a schedule to follow.",s:"mi",k:"Lo"},
-{t:"I believe that most things in life can be understood through reason and logical thinking.",s:"mi",k:"Lo"},
-{t:"I enjoy drawing, painting, designing, or creating things visually.",s:"mi",k:"Vi"},
-{t:"I enjoy taking things apart, building things, or working with my hands to make or fix things.",s:"mi",k:"Vi"},
-{t:"When learning something new, I find it easier to understand when I can see diagrams, charts, or pictures.",s:"mi",k:"Vi"},
-{t:"When I close my eyes and imagine something, I can see a very clear and detailed picture in my mind.",s:"mi",k:"Vi"},
-{t:"I am a physically active person and like to keep moving.",s:"mi",k:"Ki"},
-{t:"I am good at crafts, building, sport, or other activities that use my hands or body.",s:"mi",k:"Ki"},
-{t:"I pick up physical skills quickly — whether sports, dance, or any activity that uses the body.",s:"mi",k:"Ki"},
-{t:"I enjoy singing, and people tell me I have a good voice.",s:"mi",k:"Mu"},
-{t:"I love music and listen to it constantly — it is a big part of my life.",s:"mi",k:"Mu"},
-{t:"I can play a musical instrument, or I have always wanted to learn one.",s:"mi",k:"Mu"},
-{t:"I often have music playing in my head, and I notice rhythms and melodies in everyday sounds.",s:"mi",k:"Mu"},
-{t:"I am a social person and feel most comfortable when I am around other people.",s:"mi",k:"Ie"},
-{t:"I enjoy going to social gatherings, celebrations, and events with other people.",s:"mi",k:"Ie"},
-{t:"I am the person my friends come to when they need emotional support or advice.",s:"mi",k:"Ie"},
-{t:"I prefer doing activities as part of a team or group rather than on my own.",s:"mi",k:"Ie"},
-{t:"I have clear goals and a plan for what I want to do with my life.",s:"mi",k:"Ia"},
-{t:"I enjoy reflecting on who I am, what I believe, and what I want out of life.",s:"mi",k:"Ia"},
-{t:"I enjoy learning more about myself through reflection, journaling, or personality tests.",s:"mi",k:"Ia"},
-{t:"I prefer working alone and doing my best thinking when I have quiet time to myself.",s:"mi",k:"Ia"},
-{t:"I love being outdoors and enjoy spending time in nature.",s:"mi",k:"Na"},
-{t:"I love animals and enjoy spending time with or learning about them.",s:"mi",k:"Na"},
-{t:"I enjoy learning about animals, plants, the environment, and how the natural world works.",s:"mi",k:"Na"},
-{t:"I am fascinated by animals, birds, insects, plants, or the environment around me.",s:"mi",k:"Na"},
-{t:"I find joy in being outdoors, gardening, hiking, or being close to the natural world.",s:"mi",k:"Na"},
-// PERSONALITY 40
-{t:"I feel most energized and alive when I am around other people.",s:"pers",k:"E"},
-{t:"I like to share my thoughts and feelings openly with others.",s:"pers",k:"E"},
-{t:"I prefer having a large circle of friends and acquaintances.",s:"pers",k:"E"},
-{t:"I enjoy being the centre of conversations and social gatherings.",s:"pers",k:"E"},
-{t:"I think better when I can talk things through with others rather than processing alone.",s:"pers",k:"E"},
-{t:"I feel most energized and restored when I have quiet time alone.",s:"pers",k:"I"},
-{t:"I prefer to keep my thoughts and feelings to myself rather than sharing openly.",s:"pers",k:"I"},
-{t:"I prefer having a small number of close, deep friendships.",s:"pers",k:"I"},
-{t:"I prefer to listen more than I speak in most conversations.",s:"pers",k:"I"},
-{t:"I process my thoughts best when I have time alone to think before responding.",s:"pers",k:"I"},
-{t:"I trust facts, details, and things I can see or touch more than gut feelings.",s:"pers",k:"S"},
-{t:"I prefer to focus on what is real and happening now rather than imagining possibilities.",s:"pers",k:"S"},
-{t:"I like step-by-step instructions with all the details laid out clearly.",s:"pers",k:"S"},
-{t:"I prefer doing things in a proven, reliable way that I know works.",s:"pers",k:"S"},
-{t:"I focus on practical, measurable outcomes rather than abstract ideas.",s:"pers",k:"S"},
-{t:"I trust my gut feelings and imagination more than facts and concrete details.",s:"pers",k:"N"},
-{t:"I prefer to imagine what could be possible in the future rather than focusing on now.",s:"pers",k:"N"},
-{t:"I like to understand the big picture first before worrying about the details.",s:"pers",k:"N"},
-{t:"I enjoy finding new and creative ways of doing things rather than sticking to what works.",s:"pers",k:"N"},
-{t:"I enjoy exploring ideas even without a clear or immediate practical outcome.",s:"pers",k:"N"},
-{t:"I make decisions based on logic and objective facts rather than feelings.",s:"pers",k:"T"},
-{t:"I can stay calm and detached when handling emotionally charged situations.",s:"pers",k:"T"},
-{t:"I value truth and directness, even if it means someone's feelings might be affected.",s:"pers",k:"T"},
-{t:"I am a fair and objective person — I try not to let emotions cloud my judgement.",s:"pers",k:"T"},
-{t:"I give feedback directly, even if it is hard for the other person to hear.",s:"pers",k:"T"},
-{t:"I make decisions based on how I feel and how they will affect the people around me.",s:"pers",k:"F"},
-{t:"I take things personally and feel them deeply, even when I know I probably shouldn't.",s:"pers",k:"F"},
-{t:"I value kindness and harmony more than being exactly right or technically correct.",s:"pers",k:"F"},
-{t:"I am a compassionate and empathetic person — I feel what others feel very deeply.",s:"pers",k:"F"},
-{t:"I encourage and build people up even when they make mistakes, rather than pointing out what went wrong.",s:"pers",k:"F"},
-{t:"I like to make plans and stick to them — I feel unsettled when plans change unexpectedly.",s:"pers",k:"J"},
-{t:"I feel most comfortable when things are decided and settled rather than open-ended.",s:"pers",k:"J"},
-{t:"I like having a regular schedule and routine to structure my days.",s:"pers",k:"J"},
-{t:"I tend to finish tasks well before deadlines rather than working best under last-minute pressure.",s:"pers",k:"J"},
-{t:"I am very organised and like my environment and plans to be in order.",s:"pers",k:"J"},
-{t:"I prefer to stay flexible and see how things unfold rather than committing to a plan.",s:"pers",k:"P"},
-{t:"I like to keep my options open for as long as possible before making a final decision.",s:"pers",k:"P"},
-{t:"I enjoy spontaneous and unplanned experiences rather than following a fixed schedule.",s:"pers",k:"P"},
-{t:"I work best when the deadline is close — pressure helps me focus and perform.",s:"pers",k:"P"},
-{t:"I am flexible and adapt easily to new or changing situations.",s:"pers",k:"P"},
-// PATHWAYS 25
-{t:"Throughout my life, spending time with God in prayer and scripture has been a consistent and meaningful practice for me.",s:"paths",k:"Faith"},
-{t:"Over time, I have developed a growing sense of what God is calling me toward — a direction that has become clearer the more I seek Him.",s:"paths",k:"Faith"},
-{t:"Being part of a faith community has been an important and consistent part of how I grow and live out my faith.",s:"paths",k:"Faith"},
-{t:"I have seen God prepare and equip me over time — through experiences, opportunities, and growth — for the calling He has placed on my life.",s:"paths",k:"Faith"},
-{t:"There is a specific area of ministry or service that has continued to come back to me — something God keeps putting on my heart that I cannot ignore.",s:"paths",k:"Faith"},
-{t:"Looking at my history with my family, our relationships have generally been a source of love, respect, and support in my life.",s:"paths",k:"Family"},
-{t:"When I look back at how I have handled conflict within my family, I have generally been able to work through it in a calm and constructive way.",s:"paths",k:"Family"},
-{t:"Across my life, I have consistently experienced deep emotional closeness and genuine connection with the people who matter most to me.",s:"paths",k:"Family"},
-{t:"Looking at my patterns over time, investing in my family relationships has been something I have consistently made a priority.",s:"paths",k:"Family"},
-{t:"Over time, I have developed a clear and settled understanding of who I am within my family and what my responsibilities are.",s:"paths",k:"Family"},
-{t:"Over time, I have developed habits of managing money wisely — I have generally been able to live within my means and avoid unnecessary debt.",s:"paths",k:"Finances"},
-{t:"Generosity has been a consistent pattern in my life — I have regularly given to God and others, not just when it was easy or convenient.",s:"paths",k:"Finances"},
-{t:"I have generally been someone who thinks ahead financially — making plans and taking steps to manage and save for the future.",s:"paths",k:"Finances"},
-{t:"Looking at my experience with money over time, financial stress and anxiety have not been a constant or overwhelming presence in my life.",s:"paths",k:"Finances"},
-{t:"Throughout my life, I have consistently held the view that what I have belongs to God — and that I am responsible to steward it wisely on His behalf.",s:"paths",k:"Finances"},
-{t:"Looking at my patterns over time, taking care of my physical health and staying active has been a consistent part of how I live.",s:"paths",k:"Fitness"},
-{t:"Over time, I have generally been someone who prioritises rest and sleep — and this has given me the energy I need to show up for each day.",s:"paths",k:"Fitness"},
-{t:"Across my life, I have consistently tried to make food choices that keep my body healthy and give me the energy I need.",s:"paths",k:"Fitness"},
-{t:"Looking at my physical health over time, my body has generally been strong and well enough to pursue what God has put in front of me.",s:"paths",k:"Fitness"},
-{t:"Over time, I have grown in my ability to recognise when I am emotionally depleted — and I have learned to seek the rest, help, or support I need.",s:"paths",k:"Fitness"},
-{t:"Throughout different seasons of my life, I have had at least one person I could be completely honest with — someone I truly trusted with my real self.",s:"paths",k:"Friends"},
-{t:"Looking back, I have consistently had people around me who genuinely encouraged my faith and challenged me to grow.",s:"paths",k:"Friends"},
-{t:"Over time, investing in friendships has been something I have consistently done — I have made genuine effort to build and maintain meaningful relationships.",s:"paths",k:"Friends"},
-{t:"Across different seasons of my life, I have had people who challenged me, held me accountable, and genuinely helped me become a better person.",s:"paths",k:"Friends"},
-{t:"Looking at my experience across life, I have generally had a sense of belonging — a community where I am truly known and genuinely cared for.",s:"paths",k:"Friends"}
+{t:"My friends would say that I am an encourager.",s:"gifts",k:"O"},
+{t:"I love to serve at church when there is a need.",s:"gifts",k:"P"},
+// Round 3 Q33-48
+{t:"Others respect me and follow my direction.",s:"gifts",k:"A"},
+{t:"It comes naturally to me to organize things and put them into order.",s:"gifts",k:"B"},
+{t:"I am strong in my belief that God will work in difficult circumstances.",s:"gifts",k:"C"},
+{t:"I really enjoy speaking and preaching before a group.",s:"gifts",k:"D"},
+{t:"I don't think twice about giving money to someone in need.",s:"gifts",k:"E"},
+{t:"Others affirm the reliability of my insights and perceptions I have of others.",s:"gifts",k:"F"},
+{t:"My friends have heard me tell them about Jesus on a regular basis.",s:"gifts",k:"G"},
+{t:"I want to help others to be successful.",s:"gifts",k:"H"},
+{t:"I like to study and do research.",s:"gifts",k:"I"},
+{t:"When my friends are hurting, I want to be with them to build them up.",s:"gifts",k:"J"},
+{t:"I am able to extend a warmth that makes guests and visitors comfortable.",s:"gifts",k:"K"},
+{t:"I know what to do when others around me don't know what choices to make.",s:"gifts",k:"L"},
+{t:"I want to teach my friends and others about the Bible.",s:"gifts",k:"M"},
+{t:"I enjoy doing practical things for others who are poor and needy.",s:"gifts",k:"N"},
+{t:"I don't like it when I see someone down. I want to build them up.",s:"gifts",k:"O"},
+{t:"I am willing to take an active part in serving on a project.",s:"gifts",k:"P"},
+
+// ── PASSION — 24 questions (6 per category) ─────────────────────────────────
+// People
+{t:"I love working with and nurturing young children.",s:"passion",k:"ppl_kids"},
+{t:"I enjoy walking alongside teenagers in their struggles.",s:"passion",k:"ppl_teens"},
+{t:"I love helping young people find their direction.",s:"passion",k:"ppl_youth"},
+{t:"I enjoy coming alongside young adults building their lives.",s:"passion",k:"ppl_ya"},
+{t:"I love equipping and encouraging adults to grow.",s:"passion",k:"ppl_adults"},
+{t:"I genuinely love spending time with the elderly.",s:"passion",k:"ppl_elderly"},
+// Issues
+{t:"I am drawn to the spiritual needs of people.",s:"passion",k:"iss_spiritual"},
+{t:"I am moved by the physical needs of people.",s:"passion",k:"iss_physical"},
+{t:"I feel called to the emotional needs of people.",s:"passion",k:"iss_relational"},
+{t:"I love focusing on the intellectual needs of people.",s:"passion",k:"iss_intellectual"},
+{t:"I am burdened by the social needs of those around me.",s:"passion",k:"iss_social"},
+{t:"I feel strongly about the financial needs of people.",s:"passion",k:"iss_financial"},
+// Roles
+{t:"I easily take risks when I believe in something.",s:"passion",k:"rol_risk"},
+{t:"I think carefully before I move or decide.",s:"passion",k:"rol_cautious"},
+{t:"I love finding new and better ways forward.",s:"passion",k:"rol_change"},
+{t:"I value consistency, faithfulness and proven approaches.",s:"passion",k:"rol_stability"},
+{t:"I can move forward even without full clarity.",s:"passion",k:"rol_ambiguity"},
+{t:"I work best with clear structure and defined steps.",s:"passion",k:"rol_clarity"},
+// Ministry
+{t:"I love sharing the Gospel and leading people to Jesus.",s:"passion",k:"min_evangelism"},
+{t:"I enjoy discipling and mentoring people in their faith.",s:"passion",k:"min_discipleship"},
+{t:"I am drawn to serving people in practical compassion.",s:"passion",k:"min_compassion"},
+{t:"I love leading and developing the potential in others.",s:"passion",k:"min_leadership"},
+{t:"I am passionate about reaching unreached people and nations.",s:"passion",k:"min_missions"},
+{t:"I love using creativity to communicate God's message.",s:"passion",k:"min_creative"},
+
+// ── MULTIPLE INTELLIGENCES — 40 questions (Official Workbook Session 4) ──────
+{t:"I enjoy reading books and magazines.",s:"mi",k:"Li"},
+{t:"I enjoy math and science.",s:"mi",k:"Lo"},
+{t:"I love coloring, drawing and painting.",s:"mi",k:"Vi"},
+{t:"I love outdoors and enjoy spending time outside.",s:"mi",k:"Na"},
+{t:"I have a good voice and I like to sing.",s:"mi",k:"Mu"},
+{t:"I am a social person and like being with others.",s:"mi",k:"Ie"},
+{t:"I have clear goals and plans for my future.",s:"mi",k:"Ia"},
+{t:"I love playing with animals and like to spend a lot of time with them.",s:"mi",k:"Na"},
+{t:"I enjoy English more than Math.",s:"mi",k:"Li"},
+{t:"I enjoy playing brainteasers and logic puzzles.",s:"mi",k:"Lo"},
+{t:"I like to take things apart and put them back together (toys and puzzles).",s:"mi",k:"Ki"},
+{t:"I am a very active person always on my feet.",s:"mi",k:"Ki"},
+{t:"I listen to music because I enjoy it very much.",s:"mi",k:"Mu"},
+{t:"I enjoy going to social events like weddings and birthday parties.",s:"mi",k:"Ie"},
+{t:"I like to know more about myself.",s:"mi",k:"Ia"},
+{t:"I enjoy watching nature shows on Discovery Channel & National Geographic.",s:"mi",k:"Na"},
+{t:"I enjoy participating in debates.",s:"mi",k:"Li"},
+{t:"I prefer to have a To Do list and work best with timetables.",s:"mi",k:"Lo"},
+{t:"I like to see the drawings and diagrams of how things work.",s:"mi",k:"Vi"},
+{t:"I enjoy and am good at making things with my hands.",s:"mi",k:"Ki"},
+{t:"I can play a musical instrument.",s:"mi",k:"Mu"},
+{t:"I am good in giving emotional support and advice.",s:"mi",k:"Ie"},
+{t:"I enjoy taking self assessments and personality tests.",s:"mi",k:"Ia"},
+{t:"I like to watch birds and animals, learn more about them and their habits.",s:"mi",k:"Na"},
+{t:"I enjoy playing scrabble and crosswords.",s:"mi",k:"Li"},
+{t:"I think everything can be explained logically.",s:"mi",k:"Lo"},
+{t:"When I close my eyes, I can see clear images in my head.",s:"mi",k:"Vi"},
+{t:"I am good in sports and can learn a new sport quickly.",s:"mi",k:"Ki"},
+{t:"I often play music in my mind.",s:"mi",k:"Mu"},
+{t:"I prefer team sports and activities to individual games.",s:"mi",k:"Ie"},
+{t:"I enjoy working alone.",s:"mi",k:"Ia"},
+{t:"I can differentiate between different kinds of birds, dogs, trees, plants and fruits.",s:"mi",k:"Na"},
+{t:"I like to journal and write stories and poems.",s:"mi",k:"Li"},
+{t:"I like to think through a problem and consider all the consequences.",s:"mi",k:"Lo"},
+{t:"I am good at reading maps and finding my way in new places.",s:"mi",k:"Vi"},
+{t:"I understand best by doing, for example projects and activities.",s:"mi",k:"Ki"},
+{t:"I can easily engage in musical activities.",s:"mi",k:"Mu"},
+{t:"I work best while interacting with people.",s:"mi",k:"Ie"},
+{t:"I enjoy individual sports over team sports.",s:"mi",k:"Ia"},
+{t:"I enjoy visiting the zoo.",s:"mi",k:"Na"},
+
+// ── PERSONALITY — 24 questions (3 per pole, 6 per dimension) ─────────────────
+// E vs I
+{t:"I work best in groups.",s:"pers",k:"E"},
+{t:"I value being with people.",s:"pers",k:"E"},
+{t:"I am very expressive.",s:"pers",k:"E"},
+{t:"I work best when I am alone.",s:"pers",k:"I"},
+{t:"I am a private person.",s:"pers",k:"I"},
+{t:"I like to be quiet.",s:"pers",k:"I"},
+// S vs N
+{t:"I focus on facts.",s:"pers",k:"S"},
+{t:"I want the details.",s:"pers",k:"S"},
+{t:"I am very practical.",s:"pers",k:"S"},
+{t:"I look out for new ideas.",s:"pers",k:"N"},
+{t:"I want the big picture.",s:"pers",k:"N"},
+{t:"I am very innovative.",s:"pers",k:"N"},
+// T vs F
+{t:"I make decisions logically.",s:"pers",k:"T"},
+{t:"I am a logical person.",s:"pers",k:"T"},
+{t:"I am fair-minded.",s:"pers",k:"T"},
+{t:"I make decisions with my heart.",s:"pers",k:"F"},
+{t:"I am an emotional person.",s:"pers",k:"F"},
+{t:"I am sympathetic.",s:"pers",k:"F"},
+// J vs P
+{t:"I am very organised.",s:"pers",k:"J"},
+{t:"I prefer to have a schedule.",s:"pers",k:"J"},
+{t:"I work on a plan.",s:"pers",k:"J"},
+{t:"I am very flexible.",s:"pers",k:"P"},
+{t:"I like to go with the flow.",s:"pers",k:"P"},
+{t:"I prefer to be spontaneous.",s:"pers",k:"P"},
+
+// ── PATHWAY — 20 questions (4 per area) ──────────────────────────────────────
+// Faith
+{t:"Prayer and time in Scripture are genuine, consistent rhythms in my daily life.",s:"paths",k:"pa_faith"},
+{t:"My faith is not just inherited — it is personally alive and actively growing.",s:"paths",k:"pa_faith"},
+{t:"I am rooted in a faith community that challenges and supports my walk with God.",s:"paths",k:"pa_faith"},
+{t:"I have a growing sense of what God is calling me toward and why He made me.",s:"paths",k:"pa_faith"},
+// Family
+{t:"My family relationships have been a genuine source of love, safety, and belonging.",s:"paths",k:"pa_family"},
+{t:"When conflict arises in my family, I am able to handle it in a healthy way.",s:"paths",k:"pa_family"},
+{t:"The people closest to me would say I genuinely show up and invest in them.",s:"paths",k:"pa_family"},
+{t:"I feel emotionally connected and truly known by the people I call family.",s:"paths",k:"pa_family"},
+// Finances
+{t:"I live within my means and handle money in a way I am not ashamed of.",s:"paths",k:"pa_finances"},
+{t:"Giving generously — to God and to others — is a real and consistent part of my life.",s:"paths",k:"pa_finances"},
+{t:"I have a plan for my financial future and am not just living from month to month.",s:"paths",k:"pa_finances"},
+{t:"Money does not control me — I hold it loosely and steward it with intention.",s:"paths",k:"pa_finances"},
+// Fitness
+{t:"I actively take care of my physical health — it is not something I neglect or ignore.",s:"paths",k:"pa_fitness"},
+{t:"I get enough rest and recovery to show up well for God and the people around me.",s:"paths",k:"pa_fitness"},
+{t:"My body generally has the energy and strength to do what God is calling me to do.",s:"paths",k:"pa_fitness"},
+{t:"The choices I make about food, rest, and activity reflect care for the body God gave me.",s:"paths",k:"pa_fitness"},
+// Friends
+{t:"I have at least one person in my life who truly knows me and loves me anyway.",s:"paths",k:"pa_friends"},
+{t:"My closest friendships genuinely push me closer to God and help me become better.",s:"paths",k:"pa_friends"},
+{t:"I consistently show up for the people in my life — not just when it is convenient.",s:"paths",k:"pa_friends"},
+{t:"I have a real sense of belonging — a community where I am known, valued, and loved.",s:"paths",k:"pa_friends"},
 ];
 
 // GIFT META — NO THEOLOGY FIELD
@@ -816,14 +1250,14 @@ P:{name:"Service",title:"Servant",thrust:"THE ATTITUDE AND ABILITY TO SERVE OTHE
 };
 
 const MI_META={
-  Li:{name:"Linguistic",smart:"Word Smart",desc:"Word Smart centres on understanding and using words, either orally or in writing. This intelligence is responsible for the production of language and all the complex possibilities that follow, including poetry, humour, storytelling, grammar, metaphors, symbolic thinking, reading, and writing.",pct:"7%",n:4},
-  Lo:{name:"Logical",smart:"Number Smart",desc:"Number Smart is most often associated with scientific reasoning. This intelligence involves the capacity to recognise patterns, work with abstract symbols such as numbers and geometric shapes, and see relationships or connections between separate pieces of information.",pct:"43%",n:4},
-  Vi:{name:"Visual",smart:"Picture Smart",desc:"Picture Smart deals with the visual arts — painting, drawing, and sculpting — as well as navigation, mapmaking, and architecture. The sense of sight is key, but the ability to form mental images and pictures in the mind is also paramount.",pct:"14%",n:4},
-  Ki:{name:"Kinesthetic",smart:"Body Smart",desc:"Body Smart is the ability to use the body to express emotion — as in dance and body language — to play a game, and to create a new product. Refinement of both large and small motor skills are central in this intelligence.",pct:"40%",n:4},
-  Mu:{name:"Musical",smart:"Music Smart",desc:"Music Smart includes such capacities as the recognition and use of rhythmic and tonal patterns, and sensitivity to sounds from the environment, the human voice, and musical instruments.",pct:"39%",n:4},
-  Ie:{name:"Interpersonal",smart:"People Smart",desc:"People Smart involves the ability to work cooperatively with others in a group as well as the ability to communicate, verbally and nonverbally, with other people. It builds on the capacity to differentiate moods, temperaments, motivation, and intentions.",pct:"45%",n:4},
-  Ia:{name:"Intrapersonal",smart:"Self Smart",desc:"Self Smart involves knowledge of the internal aspects of the self, such as knowledge of feelings, the range of emotional responses, thinking processes, and self-reflection. This intelligence allows us to step back from ourselves and watch ourselves as an observer.",pct:"23%",n:4},
-  Na:{name:"Naturalist",smart:"Nature Smart",desc:"Nature Smart involves the ability to discern, comprehend, and appreciate the various flora and fauna of the world of nature as opposed to the world created by human beings.",pct:"21%",n:4}
+  Li:{name:"Linguistic",smart:"Word Smart",desc:"Word Smart centres on understanding and using words, either orally or in writing. This intelligence is responsible for the production of language and all the complex possibilities that follow, including poetry, humour, storytelling, grammar, metaphors, symbolic thinking, reading, and writing.",pct:"7%",n:5},
+  Lo:{name:"Logical",smart:"Number Smart",desc:"Number Smart is most often associated with scientific reasoning. This intelligence involves the capacity to recognise patterns, work with abstract symbols such as numbers and geometric shapes, and see relationships or connections between separate pieces of information.",pct:"43%",n:5},
+  Vi:{name:"Visual",smart:"Picture Smart",desc:"Picture Smart deals with the visual arts — painting, drawing, and sculpting — as well as navigation, mapmaking, and architecture. The sense of sight is key, but the ability to form mental images and pictures in the mind is also paramount.",pct:"14%",n:5},
+  Ki:{name:"Kinesthetic",smart:"Body Smart",desc:"Body Smart is the ability to use the body to express emotion — as in dance and body language — to play a game, and to create a new product. Refinement of both large and small motor skills are central in this intelligence.",pct:"40%",n:5},
+  Mu:{name:"Musical",smart:"Music Smart",desc:"Music Smart includes such capacities as the recognition and use of rhythmic and tonal patterns, and sensitivity to sounds from the environment, the human voice, and musical instruments.",pct:"39%",n:5},
+  Ie:{name:"Interpersonal",smart:"People Smart",desc:"People Smart involves the ability to work cooperatively with others in a group as well as the ability to communicate, verbally and nonverbally, with other people. It builds on the capacity to differentiate moods, temperaments, motivation, and intentions.",pct:"45%",n:5},
+  Ia:{name:"Intrapersonal",smart:"Self Smart",desc:"Self Smart involves knowledge of the internal aspects of the self, such as knowledge of feelings, the range of emotional responses, thinking processes, and self-reflection. This intelligence allows us to step back from ourselves and watch ourselves as an observer.",pct:"23%",n:5},
+  Na:{name:"Naturalist",smart:"Nature Smart",desc:"Nature Smart involves the ability to discern, comprehend, and appreciate the various flora and fauna of the world of nature as opposed to the world created by human beings.",pct:"21%",n:5}
 };
 
 const MBTI={
@@ -849,7 +1283,7 @@ const PPL_META={
   kids:{label:"Kids (4–12)",short:"You have a heart for nurturing and shaping young minds during their formative years.",long:"You enjoy teaching, caring for, and encouraging children. You help lay strong foundations of identity, character, and faith during their most impressionable years. You believe in planting seeds of truth and love early, shaping the future through small acts of guidance, prayer, and affirmation. You create safe spaces where children feel valued, understood, and loved as they grow into who God created them to be."},
   teens:{label:"Teens (13–17)",short:"You are passionate about guiding and mentoring adolescents during their critical years of self-discovery.",long:"You are passionate about journeying with teens through their unique season of identity formation, questions, and emotional ups and downs. You mentor and encourage them as they navigate peer pressure, academic stress, spiritual doubts, and relational struggles. You offer a listening ear, sound wisdom, and a strong example, helping them to stand firm in who they are in Christ."},
   youth:{label:"Youth (18–21)",short:"You feel called to inspire and support youth as they navigate life transitions.",long:"You are energized by engaging with young people transitioning into adulthood. You encourage them to seek God's purpose during major decisions related to education, work, relationships, and calling. You walk with them through their uncertainties, offering clarity, wisdom, and faith-filled encouragement. You see youth not just as leaders of tomorrow but as influencers of today, and you are committed to equipping them to live boldly for Christ."},
-  youngadults:{label:"Young Adults (22–25)",short:"You connect with those beginning careers or families, helping them make meaningful decisions.",long:"You naturally connect with young adults stepping into careers, marriage, and family life. You encourage wise decision-making rooted in purpose and godly wisdom. You walk alongside them as they face real-world challenges, offering support as they build spiritual disciplines, community ties, and professional integrity. You help them see that success is not just about achievements but about living out God's calling daily."},
+  ya:{label:"Young Adults (22–25)",short:"You connect with those beginning careers or families, helping them make meaningful decisions.",long:"You naturally connect with young adults stepping into careers, marriage, and family life. You encourage wise decision-making rooted in purpose and godly wisdom. You walk alongside them as they face real-world challenges, offering support as they build spiritual disciplines, community ties, and professional integrity. You help them see that success is not just about achievements but about living out God's calling daily."},
   adults:{label:"Adults (25–65)",short:"You are committed to equipping adults to thrive in their personal, family, and community life.",long:"You are passionate about helping adults live lives of purpose and influence. Whether they are parents, professionals, or community leaders, you equip them to grow spiritually, relationally, and emotionally. You guide them in balancing life's demands while keeping Christ at the center. You encourage perseverance through seasons of pressure, transitions, or leadership roles, helping them to build lives that reflect God's wisdom and strength."},
   elderly:{label:"Elderly (65+)",short:"You care deeply for the elderly, bringing comfort, companionship, and dignity during their later years.",long:"You are drawn to honoring and caring for senior citizens as they journey through their later seasons of life. You offer companionship, encouragement, and a listening ear, helping them find continued purpose and dignity in every stage. You recognize the deep wisdom they carry and believe their stories, faith, and legacy deserve to be celebrated and shared."}
 };
@@ -858,7 +1292,9 @@ const ISS_META={
   spiritual:{label:"Spiritual",short:"Helping others grow in their faith and relationship with God.",long:"You are passionate about strengthening people's walk with God. You love helping others know Christ more personally through Bible teaching, prayer, mentoring, and discipleship. Whether it's encouraging new believers, deepening spiritual maturity, or guiding people through faith struggles, you seek to point them back to the heart of God. You believe that nurturing someone's faith impacts not just their present, but their eternity."},
   physical:{label:"Physical",short:"Caring for others' tangible and practical needs — health, resources, and well-being.",long:"You have a heart for meeting practical needs that bring healing, hope, and dignity. Whether through healthcare, resource distribution, financial help, or crisis care, you serve by addressing immediate, real-world needs. You believe that showing God's love includes caring for the physical and material needs of individuals and communities, offering tangible hope where it's needed most."},
   relational:{label:"Relational & Emotional",short:"Supporting others in building healthy relationships and emotional resilience.",long:"You are drawn to helping people build stronger, healthier relationships — family, friends, and community. You are passionate about healing emotional wounds, strengthening trust, and nurturing empathy and communication. Whether through counseling, mentoring, or simple presence, you help others experience wholeness in their connections. You believe that healthy relationships reflect the heart of God's design for love, unity, and belonging."},
-  intellectual:{label:"Intellectual",short:"Encouraging learning, growth, and intellectual development through teaching and sharing knowledge.",long:"You are passionate about inspiring learning and growth. You love teaching, guiding, problem-solving, and expanding people's understanding. You encourage others to think critically, ask deeper questions, and embrace lifelong learning. Whether through education, coaching, mentoring, or creative communication, you equip people with knowledge and skills that help them grow and thrive."}
+  intellectual:{label:"Intellectual",short:"Encouraging learning, growth, and intellectual development through teaching and sharing knowledge.",long:"You are passionate about inspiring learning and growth. You love teaching, guiding, problem-solving, and expanding people's understanding. You encourage others to think critically, ask deeper questions, and embrace lifelong learning. Whether through education, coaching, mentoring, or creative communication, you equip people with knowledge and skills that help them grow and thrive."},
+  social:{label:"Social",short:"You are burdened by the social needs and isolation around you.",long:"You feel called to build community, restore broken relationships, and address the loneliness and social injustice that surrounds you. You see connection as a fundamental human need and believe that every person deserves to belong."},
+  financial:{label:"Financial",short:"You feel strongly about the financial needs of people.",long:"You are moved by poverty and the lack of economic opportunity. You believe in empowering people toward financial dignity and freedom, whether through practical teaching, generosity, or advocacy."}
 };
 
 const MIN_META={
@@ -902,36 +1338,83 @@ function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classL
 function updateProgress(){
   const ans=Object.keys(ST.answers).length,tot=QS.length,pct=Math.round(ans/tot*100);
   document.getElementById('progFill').style.width=pct+'%';
-  document.getElementById('navPct').textContent=pct>0?pct+'%':'';
-  const curSec=QS[ST.pages?.[ST.curPage]?.[0]]?.s;
-  const secName=SECS.find(s=>s.id===curSec)?.name||'';
-  const ns=document.getElementById('navSection');if(ns)ns.textContent=secName;
-  updateTracker();
+  // Update section tracker icons based on answered questions
+  const secAnswered={};
+  const secTotal={};
+  SECS.forEach(s=>{secAnswered[s.id]=0;secTotal[s.id]=s.n;});
+  QS.forEach((q,i)=>{ if(ST.answers[i]!==undefined) secAnswered[q.s]=(secAnswered[q.s]||0)+1; });
+  // Find active section — first section with unanswered questions
+  let activeSec=null;
+  for(const sec of SECS){
+    if(secAnswered[sec.id]<secTotal[sec.id]){activeSec=sec.id;break;}
+  }
+  SECS.forEach(sec=>{
+    const el=document.getElementById('sti-'+sec.id);
+    if(!el)return;
+    el.classList.remove('active','done');
+    if(secAnswered[sec.id]>=secTotal[sec.id]) el.classList.add('done');
+    else if(sec.id===activeSec) el.classList.add('active');
+  });
 }
 
 function updateTracker(){
-  // Tracker removed from UI — no-op
+  // Determine completed sections and active section
+  const secProgress = {};
+  SECS.forEach(sec => { secProgress[sec.id] = 0; });
+  QS.forEach((q, i) => {
+    if (ST.answers[i] !== undefined) {
+      secProgress[q.s] = (secProgress[q.s] || 0) + 1;
+    }
+  });
+  const secTotals = {};
+  SECS.forEach(sec => { secTotals[sec.id] = sec.n; });
+
+  // Get current active section
+  const curPage = ST.curPage || 0;
+  const curQIdx = ST.pages?.[curPage]?.[0];
+  const activeSec = curQIdx !== undefined ? QS[curQIdx]?.s : null;
+
+  SECS.forEach(sec => {
+    const el = document.getElementById('sti-' + sec.id);
+    if (!el) return;
+    const done = secProgress[sec.id] >= secTotals[sec.id];
+    const active = sec.id === activeSec;
+    el.classList.remove('done', 'active');
+    if (done) el.classList.add('done');
+    else if (active) el.classList.add('active');
+  });
 }
 
 function startAssessment(){
   const n=document.getElementById('userName').value.trim();
   if(!n){document.getElementById('userName').focus();document.getElementById('userName').style.borderColor='var(--red)';return;}
   ST.name=n;ST.email=document.getElementById('userEmail').value.trim();
+  // Show tracker now that we are in questions
+  document.getElementById('sectionTracker').style.display='block';
   buildPages();showScreen('questions');
-  document.getElementById('pageNav').style.display='flex';
-  renderPage(0);updateProgress();
+  document.getElementById('pageNav').style.display='none';
+  renderAllQuestions();updateProgress();
   window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0;
 }
 
-function renderPage(pi){
-  ST.curPage=pi;
+function renderAllQuestions(){
+  ST.curPage=0;
   const wrap=document.getElementById('qWrap');
-  const qs=ST.pages[pi];wrap.innerHTML='';
-  qs.forEach((qi,li)=>{
-    const q=QS[qi],answered=ST.answers[qi]!==undefined;
+  wrap.innerHTML='';
+  // Build one flat ordered list — section order preserved, questions in section order
+  const orderedQs=[];
+  SECS.forEach(sec=>{
+    QS.forEach((q,i)=>{ if(q.s===sec.id) orderedQs.push(i); });
+  });
+  orderedQs.forEach((qi,li)=>{
+    const q=QS[qi];
+
     const block=document.createElement('div');
-    block.className='q-block'+(!answered&&li>0?' faded':' active');
+    // First question visible, rest hidden until previous answered
+    block.className='q-block'+(li===0?' active':' locked');
     block.id='qb-'+qi;
+    block.dataset.sec=q.s;
+    block.dataset.order=li;
     let dots='';
     for(let v=0;v<=5;v++){
       const sel=ST.answers[qi]===v?' sel':'';
@@ -940,41 +1423,53 @@ function renderPage(pi){
     block.innerHTML=`<div class="q-text">${q.t}</div><div class="q-scale-wrap"><div class="q-circles">${dots}</div><div class="q-scale-labels"><span class="q-sl never">Never</span><span class="q-sl always">Always</span></div></div>`;
     wrap.appendChild(block);
   });
-  document.getElementById('pageCtr').textContent='Page '+(pi+1)+' of '+ST.pages.length;
-  document.getElementById('warnMsg').style.display='none';
-  document.getElementById('btnBack').style.visibility=pi===0?'hidden':'visible';
-  const isLast=pi===ST.pages.length-1;
-  document.getElementById('btnNext').innerHTML=isLast?'SEE MY RESULTS <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4 2l4 4-4 4" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>':'NEXT <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4 2l4 4-4 4" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>';
-  window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0;
-  updateFade(pi);updateProgress();
+  // Store ordered list for unlock logic
+  ST.orderedQs=orderedQs;
 }
+
+function renderPage(pi){
+  // Legacy — just call renderAllQuestions
+  renderAllQuestions();
+}
+
 
 function pick(qi,v){
   ST.answers[qi]=v;
   const block=document.getElementById('qb-'+qi);
   if(!block)return;
+  // Update circles
   block.querySelectorAll('.q-circle').forEach(c=>{c.classList.remove('sel');if(parseInt(c.dataset.v)===v)c.classList.add('sel');});
-  block.classList.remove('faded');block.classList.add('active');
-  updateFade(ST.curPage);updateProgress();
-  const next=ST.pages[ST.curPage].find(i=>ST.answers[i]===undefined);
-  if(next!==undefined){const nb=document.getElementById('qb-'+next);if(nb)setTimeout(()=>nb.scrollIntoView({behavior:'smooth',block:'center'}),180);}
+  block.classList.remove('faded','locked');block.classList.add('active','answered');
+  // Unlock next unanswered question
+  const orderedQs=ST.orderedQs||[];
+  const curIdx=orderedQs.indexOf(qi);
+  for(let i=curIdx+1;i<orderedQs.length;i++){
+    const nqi=orderedQs[i];
+    if(ST.answers[nqi]===undefined){
+      const nb=document.getElementById('qb-'+nqi);
+      if(nb){
+        nb.classList.remove('locked','faded');
+        nb.classList.add('active');
+        // Scroll to next question
+        setTimeout(()=>nb.scrollIntoView({behavior:'smooth',block:'center'}),80);
+      }
+      break;
+    }
+  }
+  updateProgress();
+  // Check if all answered
+  if(Object.keys(ST.answers).length===QS.length){
+    document.getElementById('pageNav').style.display='flex';
+  }
 }
 
+
 function updateFade(pi){
-  const qs=ST.pages[pi];let foundU=false;
-  qs.forEach(qi=>{
-    const b=document.getElementById('qb-'+qi);if(!b)return;
-    if(ST.answers[qi]!==undefined){b.classList.remove('faded');b.classList.add('active');}
-    else if(!foundU){foundU=true;b.classList.remove('faded');b.classList.add('active');}
-    else{b.classList.add('faded');b.classList.remove('active');}
-  });
+  // No-op in continuous scroll mode
 }
 
 function nextPage(){
-  const qs=ST.pages[ST.curPage],un=qs.filter(qi=>ST.answers[qi]===undefined);
-  if(un.length){document.getElementById('warnMsg').style.display='block';const fb=document.getElementById('qb-'+un[0]);if(fb)fb.scrollIntoView({behavior:'smooth',block:'center'});return;}
-  document.getElementById('warnMsg').style.display='none';
-  if(ST.curPage===ST.pages.length-1)buildReport();else renderPage(ST.curPage+1);
+  buildReport();
 }
 function prevPage(){if(ST.curPage>0)renderPage(ST.curPage-1);}
 
@@ -983,21 +1478,30 @@ function prevPage(){if(ST.curPage>0)renderPage(ST.curPage-1);}
 // ═══════════════════════════════════════════════════════════
 function score(){
   const g={A:0,B:0,C:0,D:0,E:0,F:0,G:0,H:0,I:0,J:0,K:0,L:0,M:0,N:0,O:0,P:0};
-  const ppl={kids:0,teens:0,youth:0,youngadults:0,adults:0,elderly:0};
-  const iss={spiritual:0,physical:0,relational:0,intellectual:0};
+  const ppl={kids:0,teens:0,youth:0,ya:0,adults:0,elderly:0};
+  const iss={spiritual:0,physical:0,relational:0,intellectual:0,social:0,financial:0};
   const rol={risk:0,cautious:0,change:0,stability:0,ambiguity:0,clarity:0};
   const min={evangelism:0,discipleship:0,compassion:0,leadership:0,missions:0,creative:0};
   const mi={Li:0,Lo:0,Vi:0,Ki:0,Mu:0,Ie:0,Ia:0,Na:0};
   const ps={E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};
-  const pa={Faith:0,Family:0,Finances:0,Fitness:0,Friends:0};
+  const pa={faith:0,family:0,finances:0,fitness:0,friends:0};
 
   QS.forEach((q,idx)=>{
     const v=ST.answers[idx]??0;
     if(q.s==='gifts')g[q.k]+=v;
-    if(q.s==='passion'){const[c,sub]=q.k.split('_');if(c==='people')ppl[sub]=(ppl[sub]||0)+v;if(c==='issues')iss[sub]=(iss[sub]||0)+v;if(c==='roles')rol[sub]=(rol[sub]||0)+v;if(c==='ministry')min[sub]=(min[sub]||0)+v;}
+    if(q.s==='passion'){
+      const[c,sub]=q.k.split('_');
+      if(c==='ppl')ppl[sub]=(ppl[sub]||0)+v;
+      if(c==='iss')iss[sub]=(iss[sub]||0)+v;
+      if(c==='rol')rol[sub]=(rol[sub]||0)+v;
+      if(c==='min')min[sub]=(min[sub]||0)+v;
+    }
     if(q.s==='mi')mi[q.k]+=v;
     if(q.s==='pers')ps[q.k]+=v;
-    if(q.s==='paths')pa[q.k]+=v;
+    if(q.s==='paths'){
+      const[,area]=q.k.split('_');
+      pa[area]=(pa[area]||0)+v;
+    }
   });
 
   const motivational=['A','D','G','J','M'];
@@ -1034,10 +1538,10 @@ function score(){
   const tP=Math.round(ps.T/tfT*100),fP=100-tP;
   const jP=Math.round(ps.J/jpT*100),pP=100-jP;
 
-  const paR={};Object.keys(pa).forEach(f=>{const pct=Math.round(pa[f]/25*100);let st='striving';if(pct>=81)st='thriving';else if(pct>=41)st='surviving';paR[f]={score:pct,stage:st};});
+  const paR={};['faith','family','finances','fitness','friends'].forEach(f=>{const pct=Math.round((pa[f]||0)/20*100);let st='striving';if(pct>=81)st='thriving';else if(pct>=41)st='surviving';paR[f]={score:pct,stage:st};});
   const op=Math.round(Object.values(paR).reduce((a,b)=>a+b.score,0)/5);
   let os='striving';if(op>=81)os='thriving';else if(op>=41)os='surviving';
-  const lowestF=Object.entries(paR).sort((a,b)=>a[1].score-b[1].score)[0][0];
+  const lowestF=Object.entries(paR).sort((a,b)=>a[1].score-b[1].score)[0]?.[0]||'faith';
 
   const g1Score=gMotiv[0]?.[1]||0,g2Score=gMinistry[0]?.[1]||0,g3Score=gManifest[0]?.[1]||0;
   const g1Tied=gMotiv.filter(([k,v])=>v===g1Score).map(([k])=>k);
@@ -1178,7 +1682,7 @@ function buildRadar(miPct) {
 function buildReport(){
   document.getElementById('pageNav').style.display='none';
   document.getElementById('progFill').style.width='100%';
-  document.getElementById('navPct').textContent='100%';
+  const navPctEl=document.getElementById('navPct');if(navPctEl)navPctEl.textContent='100%';
   const R=score();
   const date=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
   const pm=MBTI[R.mtype]||MBTI['INFP'];
@@ -1188,10 +1692,157 @@ function buildReport(){
   const giftBarHtml=R.gS.slice(0,8).map(([k,v],i)=>barRow(GM[k].name,v,R.gMax,i===0?'bf-blue':i===1?'bf-red':i===2?'bf-gold':'bf-grey')).join('');
   const miBarHtml=R.miS.map(([k],i)=>barRow(MI_META[k].name+' — '+MI_META[k].smart,R.mi[k],MI_META[k].n*5,i===0?'bf-blue':i===1?'bf-red':i===2?'bf-gold':'bf-grey')).join('');
   const miGridHtml=R.miS.map(([k],i)=>`<div class="mi-card${i===0?' rank1':i===1?' rank2':i===2?' rank3':''}"><div class="mi-card-smart">#${i+1} of 8 · ${MI_META[k].smart}</div><div class="mi-card-name">${MI_META[k].name}</div><div class="mi-card-pct">${R.miPct(k)}%</div></div>`).join('');
-  const pathHtml=Object.entries(R.paR).map(([f,r])=>`<div class="path-item"><div class="pi-hdr"><div class="pi-name">${f}</div><div class="pi-badge ${r.stage}">${r.stage.charAt(0).toUpperCase()+r.stage.slice(1)} — ${r.score}%</div></div><div class="pi-track"><div class="pi-fill ${r.stage}" style="width:${r.score}%"></div></div></div>`).join('');
+  const PATH_ICONS={
+    faith:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
+    family:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="7" r="3" stroke="currentColor" stroke-width="1.8"/><circle cx="17" cy="8" r="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 20c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M17 20c0-2.209-1.343-4-3-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+    finances:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="20" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M2 10h20" stroke="currentColor" stroke-width="1.8"/></svg>',
+    fitness:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6.5 6.5h11M6.5 17.5h11M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="4" cy="6.5" r="1.5" stroke="currentColor" stroke-width="1.8"/><circle cx="4" cy="17.5" r="1.5" stroke="currentColor" stroke-width="1.8"/><circle cx="20" cy="6.5" r="1.5" stroke="currentColor" stroke-width="1.8"/><circle cx="20" cy="17.5" r="1.5" stroke="currentColor" stroke-width="1.8"/></svg>',
+    friends:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="7" r="3" stroke="currentColor" stroke-width="1.8"/><circle cx="16" cy="7" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M2 20c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M16 14c1.5 0 4 .9 4 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>'
+  };
+  const pathHtml=Object.entries(R.paR).map(([f,r])=>`<div class="path-item"><div class="pi-hdr"><div class="pi-name-wrap"><div class="pi-icon pathway-icon">${PATH_ICONS[f]||''}</div><div class="pi-name">${f.charAt(0).toUpperCase()+f.slice(1)}</div></div><div class="pi-badge ${r.stage}">${r.stage.charAt(0).toUpperCase()+r.stage.slice(1)} — ${r.score}%</div></div><div class="pi-track"><div class="pi-fill ${r.stage}" style="width:${r.score}%"></div></div></div>`).join('');
   const stageDesc={striving:"Your reflection shows an area where you want to be more intentional. This is not a place of failure — it is an invitation to pay attention. Every person has areas where they are still growing, and knowing where to focus is the first step toward living your calling more fully.",surviving:"Your Pathways reflection reveals a life of real resilience. You have navigated genuine challenges and kept going. With some intentional focus and the right support around you, this is a season that can move toward greater flourishing.",thriving:"Your Pathways reflection reveals a life of strength and alignment. You are walking in a healthy rhythm across the key areas of your life. Keep investing in what is working — and use this strong foundation to lean more fully into your calling."};
 
   const html=`
+  <!-- DASHBOARD -->
+  <div class="dashboard" id="dashboardCard">
+
+    <!-- Header -->
+    <div class="db-header">
+      <div class="db-header-left">
+        <div class="db-name">${ST.name}</div>
+        <div class="db-subtitle">YOUnique Purpose Report</div>
+        <div class="db-date">${date}</div>
+      </div>
+      <div class="db-logo">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 4 L36 32 H4 Z" fill="#EFBD47"/>
+          <path d="M20 12 L30 32 H10 Z" fill="#F7403A" opacity=".7"/>
+          <circle cx="20" cy="11" r="5" fill="white"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 5P Grid -->
+    <div class="db-grid">
+
+      <!-- GIFTS -->
+      <div class="db-card">
+        <div class="db-card-eyebrow">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="9" width="18" height="13" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 13h18M12 9v13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 9C12 9 9 6 9 4.5a2.5 2.5 0 015 0M12 9C12 9 15 6 15 4.5a2.5 2.5 0 00-5 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Primary Spiritual Gift
+        </div>
+        <div class="db-card-icon gifts-col">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="9" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 13h18M12 9v13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 9C12 9 9 6 9 4.5a2.5 2.5 0 015 0M12 9C12 9 15 6 15 4.5a2.5 2.5 0 00-5 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <div class="db-card-title">${GM[R.g1].name}</div>
+        <div class="db-card-sub">${GM[R.g1].thrust}</div>
+        <div class="db-gift-pct">${Math.round(R.g[R.g1]/R.gMax*100)}% match</div>
+        <div class="db-bar-wrap">
+          ${R.gS.slice(0,5).map(([k,v],i)=>{const pct=Math.round(v/R.gMax*100);return '<div class="db-bar-row"><div class="db-bar-label'+(i===0?' top':'')+'">'+GM[k].name+'</div><div class="db-bar-track"><div class="db-bar-fill '+(i===0?'top':'rest')+'" style="width:'+pct+'%"></div></div><div class="db-bar-pct'+(i===0?' top':'')+'">'+pct+'%</div></div>';}).join('')}
+        </div>
+      </div>
+
+      <!-- PASSION -->
+      <div class="db-card">
+        <div class="db-card-eyebrow">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          Passion
+        </div>
+        <div class="db-card-icon passion-col">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="db-card-title">${PPL_META[pplTop].label}</div>
+        <div class="db-card-sub">People · ${MIN_META[R.minTop].label}</div>
+        <div class="db-passion-grid">
+          <div class="db-pchip">
+            <div class="db-pchip-cat">People</div>
+            <div class="db-pchip-val">${PPL_META[pplTop].label}</div>
+          </div>
+          <div class="db-pchip">
+            <div class="db-pchip-cat">Issues</div>
+            <div class="db-pchip-val">${ISS_META[R.issTop].label}</div>
+          </div>
+          <div class="db-pchip">
+            <div class="db-pchip-cat">Role</div>
+            <div class="db-pchip-val">${R.roleLabel}</div>
+          </div>
+          <div class="db-pchip">
+            <div class="db-pchip-cat">Ministry</div>
+            <div class="db-pchip-val">${MIN_META[R.minTop].label}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- POTENTIAL -->
+      <div class="db-card">
+        <div class="db-card-eyebrow">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          Potential
+        </div>
+        <div class="db-card-icon potent-col">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="db-card-title">${miTopMeta.name}</div>
+        <div class="db-card-sub">${miTopMeta.smart} · ${R.miPct(miTop)}%</div>
+        <div class="db-mi-wrap">
+          <div class="db-mi-legend">
+            ${R.miS.map(([k],i)=>{const colors=['#EFBD47','#F7403A','#4a7fc1','#6a9fd8','#c8c5be','#9ca3af','#7a8fa6','#b0aeaa'];return '<div class="db-mi-row"><div class="db-mi-dot" style="background:'+colors[i]+'"></div><div class="db-mi-name">'+(MI_META[k]?MI_META[k].smart:k)+'</div><div class="db-mi-pct">'+R.miPct(k)+'%</div></div>';}).join('')}
+          </div>
+        </div>
+      </div>
+
+      <!-- PERSONALITY -->
+      <div class="db-card">
+        <div class="db-card-eyebrow">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Personality
+        </div>
+        <div class="db-card-icon person-col">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <div class="db-pers-letters">
+          ${R.mtype.split('').map(l=>`<div class="db-letter active">${l}</div>`).join('')}
+        </div>
+        <div class="db-card-title">${pm.name}</div>
+        <div class="db-card-sub">${pm.role} · ${pm.pct}</div>
+        <div style="margin-top:10px">
+          ${[['E','I',R.eiP[0],R.eiP[1]],['S','N',R.snP[0],R.snP[1]],['T','F',R.tfP[0],R.tfP[1]],['J','P',R.jpP[0],R.jpP[1]]].map(([l,r,lp,rp])=>'<div class="db-dim-row"><div class="db-dim-lbl">'+l+'</div><div class="db-dim-track"><div class="db-dim-l" style="width:'+lp+'%"></div><div class="db-dim-r" style="width:'+rp+'%"></div></div><div class="db-dim-rbl">'+r+'</div></div>').join('')}
+        </div>
+      </div>
+
+      <!-- PATHWAY — full width -->
+      <div class="db-card full">
+        <div class="db-card-eyebrow">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M3 12h18M3 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Pathway
+        </div>
+        <div class="db-path-areas">
+          ${Object.entries(R.paR).map(([f,r])=>'<div class="db-path-area"><div class="db-path-area-name">'+f.charAt(0).toUpperCase()+f.slice(1)+'</div><div class="db-path-area-score">'+r.score+'%</div><div class="db-path-area-stage '+r.stage+'">'+r.stage+'</div></div>').join('')}
+        </div>
+        <div class="db-path-overall">
+          <div class="db-path-overall-score">${R.op}%</div>
+          <div style="flex:1">
+            <div class="db-path-overall-stage">${R.os.toUpperCase()} · Overall Pathway</div>
+            <div class="db-path-track">
+              <div class="db-path-fill" style="width:${R.op}%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end db-grid -->
+
+    <!-- Share bar -->
+    <div class="db-share-bar">
+      <div class="db-share-label">Share your YOUnique Purpose profile</div>
+      <button class="db-share-btn" onclick="shareDashboard()">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Share / Download
+      </button>
+    </div>
+
+  </div><!-- end dashboard -->
+
   <!-- COVER -->
   <div class="rpt-cover">
     <div class="rpt-cover-verse">"For I know the plans I have for you, declares the Lord, plans to prosper you and not to harm you, plans to give you hope and a future."<cite>Jeremiah 29:11</cite></div>
@@ -1209,17 +1860,17 @@ function buildReport(){
     <div class="rs-title">Your Purpose Profile</div>
     <div class="rs-intro">Five globally validated frameworks — one complete picture of how God has uniquely wired you and what He has called you to do.</div>
     <div class="sum-grid">
-      <div class="sg"><div class="sg-lbl">Primary Spiritual Gift</div><div class="sg-val">${GM[R.g1].name}</div><div class="sg-sub">Motivational Gift · ${GM[R.g1].thrust}</div></div>
-      <div class="sg"><div class="sg-lbl">Passion</div><div class="sg-val">${PPL_META[pplTop].label}</div><div class="sg-sub">${MIN_META[R.minTop].label}</div></div>
-      <div class="sg"><div class="sg-lbl">Potential</div><div class="sg-val">${miTopMeta.name}</div><div class="sg-sub">${miTopMeta.smart}</div></div>
-      <div class="sg"><div class="sg-lbl">Personality</div><div class="sg-val">${R.mtype}</div><div class="sg-sub">${pm.name} · ${pm.role}</div></div>
-      <div class="sg"><div class="sg-lbl">Pathway</div><div class="sg-val">${R.os.charAt(0).toUpperCase()+R.os.slice(1)}</div><div class="sg-sub">${R.op}% overall</div></div>
+      <div class="sg"><div class="sg-icon gifts-icon"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="9" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 13h18M12 9v13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 9C12 9 9 6 9 4.5a2.5 2.5 0 015 0M12 9C12 9 15 6 15 4.5a2.5 2.5 0 00-5 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="sg-lbl">Spiritual Gift</div><div class="sg-val">${GM[R.g1].name}</div><div class="sg-sub">${GM[R.g1].thrust}</div></div>
+      <div class="sg"><div class="sg-icon passion-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div><div class="sg-lbl">Passion</div><div class="sg-val">${PPL_META[pplTop].label}</div><div class="sg-sub">${MIN_META[R.minTop].label}</div></div>
+      <div class="sg"><div class="sg-icon potential-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div><div class="sg-lbl">Potential</div><div class="sg-val">${miTopMeta.name}</div><div class="sg-sub">${miTopMeta.smart}</div></div>
+      <div class="sg"><div class="sg-icon personality-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="sg-lbl">Personality</div><div class="sg-val">${R.mtype}</div><div class="sg-sub">${pm.name}</div></div>
+      <div class="sg"><div class="sg-icon pathway-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M3 12h18M3 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="sg-lbl">Pathway</div><div class="sg-val">${R.os.charAt(0).toUpperCase()+R.os.slice(1)}</div><div class="sg-sub">${R.op}% overall</div></div>
     </div>
   </div>
 
   <!-- SPIRITUAL GIFTS -->
   <div class="rs alt">
-    <div class="rs-eyebrow"><span style="background:var(--red);color:white;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;margin-right:8px">1</span>Primary Spiritual Gift</div>
+    <div class="rs-eyebrow"><span class="rs-icon gifts-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="9" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 13h18M12 9v13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 9C12 9 9 6 9 4.5a2.5 2.5 0 015 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 9C12 9 15 6 15 4.5a2.5 2.5 0 00-5 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>Primary Spiritual Gift</div>
     <div class="rs-title">What God has equipped you to do</div>
     <div class="rs-intro">Your Primary Spiritual Gift is the God-given motivational drive at the core of how He has wired you to serve His kingdom. This is not what you do — it is why you do everything.</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-bottom:24px">
@@ -1242,14 +1893,22 @@ function buildReport(){
 
   <!-- PASSION -->
   <div class="rs">
-    <div class="rs-eyebrow"><span style="background:var(--red);color:white;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;margin-right:8px">2</span>Passion</div>
+    <div class="rs-eyebrow"><span class="rs-icon passion-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span>Passion</div>
     <div class="rs-title">Where your heart is most alive</div>
     <div class="rs-intro">Your Passion reveals the people God has broken your heart for, the needs that move you to action, the role you were made to play, and the ministry that sets your soul on fire.</div>
     <div class="passion-chips">
-      <div class="pchip c1"><div class="pchip-cat">Passion for People</div><div class="pchip-val">${PPL_META[pplTop].label}</div><div class="pchip-desc">${PPL_META[pplTop].short}</div></div>
-      <div class="pchip c2"><div class="pchip-cat">Passion for Issues</div><div class="pchip-val">${ISS_META[R.issTop].label}</div><div class="pchip-desc">${ISS_META[R.issTop].short}</div></div>
-      <div class="pchip c3"><div class="pchip-cat">Passion for Roles</div><div class="pchip-val">${R.roleLabel}</div><div class="pchip-desc">${ROLE_META[R.roleLabel]?ROLE_META[R.roleLabel].long.substring(0,100)+'...':''}</div></div>
-      <div class="pchip c4"><div class="pchip-cat">Passion for Ministry</div><div class="pchip-val">${MIN_META[R.minTop].label}</div><div class="pchip-desc">${MIN_META[R.minTop].long.substring(0,100)}...</div></div>
+      <div class="pchip c1">
+        <div class="pchip-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="pchip-cat">Passion for People</div><div class="pchip-val">${PPL_META[pplTop].label}</div><div class="pchip-desc">${PPL_META[pplTop].short}</div></div>
+      <div class="pchip c2">
+        <div class="pchip-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0112 2a8 8 0 018 8.2c0 7.3-8 11.8-8 11.8z" stroke="currentColor" stroke-width="1.8"/></svg></div>
+        <div class="pchip-cat">Passion for Issues</div><div class="pchip-val">${ISS_META[R.issTop].label}</div><div class="pchip-desc">${ISS_META[R.issTop].short}</div></div>
+      <div class="pchip c3">
+        <div class="pchip-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v4l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="pchip-cat">Passion for Roles</div><div class="pchip-val">${R.roleLabel}</div><div class="pchip-desc">${ROLE_META[R.roleLabel]?ROLE_META[R.roleLabel].long.substring(0,100)+'...':''}</div></div>
+      <div class="pchip c4">
+        <div class="pchip-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" stroke-width="1.8"/><path d="M9 22V12h6v10" stroke="currentColor" stroke-width="1.8"/></svg></div>
+        <div class="pchip-cat">Passion for Ministry</div><div class="pchip-val">${MIN_META[R.minTop].label}</div><div class="pchip-desc">${MIN_META[R.minTop].long.substring(0,100)}...</div></div>
     </div>
     <div class="passion-long"><div class="pl-cat">People — Full Description</div><div class="pl-name">${PPL_META[pplTop].label}</div><div class="pl-text">${PPL_META[pplTop].long}</div></div>
     <div class="passion-long" style="border-left:4px solid var(--red)"><div class="pl-cat">Issues — Full Description</div><div class="pl-name">${ISS_META[R.issTop].label}</div><div class="pl-text">${ISS_META[R.issTop].long}</div></div>
@@ -1281,7 +1940,7 @@ function buildReport(){
 
   <!-- POTENTIAL / MI -->
   <div class="rs alt">
-    <div class="rs-eyebrow"><span style="background:var(--red);color:white;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;margin-right:8px">3</span>Potential</div>
+    <div class="rs-eyebrow"><span class="rs-icon potential-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span>Potential</div>
     <div class="rs-title">How God has wired your mind</div>
     <div class="rs-intro">Your Potential reveals how God has wired your mind to learn, think, and create. Every intelligence is a gift — and yours points directly toward the unique contribution only you can make.</div>
     <div class="mi-primary-card">
@@ -1302,10 +1961,15 @@ function buildReport(){
 
   <!-- PERSONALITY -->
   <div class="rs">
-    <div class="rs-eyebrow"><span style="background:var(--red);color:white;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;margin-right:8px">4</span>Personality</div>
+    <div class="rs-eyebrow"><span class="rs-icon personality-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>Personality</div>
     <div class="rs-title">How you are wired to engage the world</div>
     <div class="rs-intro">Your Personality reveals how God has uniquely shaped the way you engage with the world — how you think, how you decide, how you relate, and how you lead.</div>
-    <div class="pers-letters">${R.mtype.split('').map(l=>`<div class="pers-letter">${l}</div>`).join('')}</div>
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+      <div style="width:44px;height:44px;border-radius:12px;background:#F3EEF8;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="7" r="4" stroke="#6B3FA0" stroke-width="1.8"/><path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="#6B3FA0" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </div>
+      <div class="pers-letters">${R.mtype.split('').map(l=>`<div class="pers-letter">${l}</div>`).join('')}</div>
+    </div>
     <div class="pers-name">${pm.name}</div>
     <div class="pers-role-line">${pm.role} · ${pm.pct} of the world's population</div>
     <div class="pers-desc">${pm.desc}</div>
@@ -1331,13 +1995,20 @@ function buildReport(){
 
   <!-- PATHWAY -->
   <div class="rs alt">
-    <div class="rs-eyebrow"><span style="background:var(--red);color:white;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;margin-right:8px">5</span>Pathway</div>
+    <div class="rs-eyebrow"><span class="rs-icon pathway-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 12h18M3 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Pathway</div>
     <div class="rs-title">How your experiences have shaped you</div>
     <div class="rs-intro">Pathways is an honest reflection on how you have experienced the different areas of your life. It gives you a clearer picture of where you are — so you can understand how each area connects to the way you want to live out your purpose.</div>
     <div class="path-items">${pathHtml}</div>
     <div class="path-overall">
-      <div class="po-stage">${R.os.toUpperCase()} · OVERALL PATHWAY</div>
-      <div class="po-score">${R.op}%</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <div style="width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 12h18M3 6l6 6-6 6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <div class="po-stage">${R.os.toUpperCase()} · OVERALL PATHWAY</div>
+          <div class="po-score">${R.op}%</div>
+        </div>
+      </div>
       <div class="po-desc">${stageDesc[R.os]}</div>
     </div>
   </div>
@@ -1364,7 +2035,7 @@ function buildReport(){
         <div class="pc-row row3">
           <div class="pc-cell"><div class="pc-cell-lbl">Potential</div><div class="pc-cell-val">${miTopMeta.name} — ${miTopMeta.smart}</div><div class="pc-cell-desc">${miTopMeta.pct} of people · ${miTopMeta.desc.substring(0,90)}...</div></div>
           <div class="pc-cell"><div class="pc-cell-lbl">Personality</div><div class="pc-cell-val">${R.mtype} — ${pm.name}</div><div class="pc-cell-desc">${pm.role} · ${pm.pct} of the world · ${pm.desc.substring(0,90)}...</div></div>
-          <div class="pc-cell"><div class="pc-cell-lbl">Pathway</div><div class="pc-cell-val">${R.os.charAt(0).toUpperCase()+R.os.slice(1)} · ${R.op}%</div><div class="pc-cell-desc">Faith ${R.paR.Faith.score}% · Family ${R.paR.Family.score}% · Finances ${R.paR.Finances.score}% · Fitness ${R.paR.Fitness.score}% · Friends ${R.paR.Friends.score}%</div></div>
+          <div class="pc-cell"><div class="pc-cell-lbl">Pathway</div><div class="pc-cell-val">${R.os.charAt(0).toUpperCase()+R.os.slice(1)} · ${R.op}%</div><div class="pc-cell-desc">Faith ${R.paR.faith?R.paR.faith.score:0}% · Family ${R.paR.family?R.paR.family.score:0}% · Finances ${R.paR.finances?R.paR.finances.score:0}% · Fitness ${R.paR.fitness?R.paR.fitness.score:0}% · Friends ${R.paR.friends?R.paR.friends.score:0}%</div></div>
         </div>
       </div>
     </div>
