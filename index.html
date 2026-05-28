@@ -30,10 +30,10 @@ html{scroll-behavior:smooth;}
 .nav-pct{font-size:14px;font-weight:900;color:var(--blue);min-width:48px;text-align:right;}
 
 /* ── PROGRESS STRIP ── */
-.section-tracker{position:fixed;top:52px;left:0;right:0;z-index:9998;background:white;border-bottom:1px solid var(--border);padding:6px 0 0;}
+.section-tracker{position:fixed;top:52px;left:0;right:0;z-index:9998;background:white;border-bottom:1px solid var(--border);padding:6px 0 0;display:flex;flex-direction:column;align-items:center;}
 /* centred pill with icons above line */
-.st-inner{max-width:480px;margin:0 auto;padding:0 16px;}
-.st-icons{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:5px;}
+.st-inner{max-width:480px;width:100%;margin:0 auto;padding:0 16px;}
+.st-icons{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:5px;width:100%;}
 .st-icon{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:default;flex:1;}
 .sti-wrap{display:flex;flex-direction:column;align-items:center;gap:2px;}
 .sti-svg{width:20px;height:20px;color:#D1C9C0;transition:color .2s,width .2s,height .2s;}
@@ -43,9 +43,9 @@ html{scroll-behavior:smooth;}
 .st-icon.done .sti-svg{color:var(--blue);}
 .st-icon.done .sti-label{opacity:0;}
 /* bar — full width but pill centred */
-.st-bar-wrap{position:relative;height:10px;display:flex;align-items:center;}
+.st-bar-wrap{position:relative;height:10px;display:flex;align-items:center;width:100%;}
 .st-bar-side{flex:1;height:2px;background:var(--border);}
-.st-bar-pill{width:480px;max-width:calc(100% - 0px);height:2px;background:var(--border);border-radius:1px;overflow:hidden;position:relative;}
+.st-bar-pill{width:100%;max-width:480px;height:2px;background:var(--border);border-radius:1px;overflow:hidden;position:relative;margin:0 auto;}
 .st-bar-fill{height:2px;background:#F7403A;border-radius:1px;transition:width .5s ease;position:absolute;left:0;top:0;}
 .prog-fill{height:4px;background:#F7403A;transition:width .5s ease;}
 
@@ -1495,6 +1495,304 @@ body{font-family:'DM Sans',sans-serif;background:#f8f8f8;color:var(--text);}
 }
 .share-toast.show { opacity:1;transform:translateX(-50%) translateY(0); }
 
+
+/* ══════════════════════════════════════════
+   MERGED PURPOSE CANVAS — Visual Cards
+══════════════════════════════════════════ */
+.pc-visual-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-bottom:28px;
+}
+.pc-vcard {
+  background:white;
+  border:1.5px solid var(--border);
+  border-radius:14px;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+}
+.pc-vcard.full-width { grid-column:1/-1; }
+
+.pc-vcard-eyebrow {
+  font-size:9px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.14em;color:var(--muted);
+  margin-bottom:12px;display:flex;align-items:center;gap:5px;
+}
+.pc-vcard-icon {
+  width:52px;height:52px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:10px;
+}
+.pc-vcard-icon svg { width:26px;height:26px; }
+.pc-vcard-val {
+  font-family:'Lora',serif;font-size:18px;font-weight:700;
+  color:var(--blue);line-height:1.2;margin-bottom:4px;
+}
+.pc-vcard-sub { font-size:11px;color:var(--muted);margin-bottom:8px; }
+.pc-vcard-badge {
+  display:inline-flex;align-items:center;
+  background:var(--bg);border:1.5px solid var(--border);
+  border-radius:20px;padding:3px 10px;
+  font-size:10px;font-weight:700;color:var(--blue);
+}
+
+/* Passion chips inside canvas card */
+.pc-passion-chips {
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:6px;width:100%;margin-top:6px;
+}
+.pc-pchip {
+  background:var(--bg);border-radius:7px;
+  padding:7px 9px;text-align:left;
+  border:1px solid var(--border);
+}
+.pc-pchip-cat {
+  font-size:7px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.1em;margin-bottom:2px;
+}
+.pc-pchip-val { font-size:12px;font-weight:700;color:var(--blue);line-height:1.3; }
+
+/* Personality letters */
+.pc-pers-letters { display:flex;gap:5px;margin-bottom:8px; }
+.pc-pers-letter {
+  width:32px;height:32px;border-radius:7px;
+  background:var(--blue);display:flex;align-items:center;justify-content:center;
+  font-family:'Lora',serif;font-size:16px;font-weight:700;color:var(--gold);
+}
+
+/* Pathway row inside canvas */
+.pc-path-row { display:flex;align-items:flex-start;gap:16px;width:100%; }
+.pc-path-score {
+  font-family:'Lora',serif;font-size:48px;font-weight:700;
+  color:var(--blue);line-height:1;flex-shrink:0;
+}
+.pc-path-right { flex:1; }
+.pc-path-stage {
+  font-size:10px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.1em;margin-bottom:6px;padding:4px 10px;
+  border-radius:20px;display:inline-block;
+}
+.pc-path-stage.thriving { background:#E8F5EE;color:#1d6b45; }
+.pc-path-stage.surviving { background:#FDF0C0;color:#7a5a00; }
+.pc-path-stage.striving  { background:#FEF0EF;color:var(--red); }
+.pc-path-bar {
+  height:5px;background:var(--bg);border-radius:3px;
+  overflow:hidden;margin-bottom:10px;
+}
+.pc-path-fill { height:5px;background:var(--blue);border-radius:3px; }
+.pc-path-areas { display:flex;gap:16px;flex-wrap:wrap; }
+.pc-path-area-name {
+  font-size:8px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--muted);margin-bottom:2px;
+}
+.pc-path-area-score { font-size:14px;font-weight:800; }
+.pc-path-area-score.thriving { color:#1d6b45; }
+.pc-path-area-score.surviving { color:#7a5a00; }
+.pc-path-area-score.striving  { color:var(--red); }
+
+/* Divider between visual and detail */
+.pc-divider {
+  display:flex;align-items:center;gap:16px;
+  margin:24px 0 20px;
+}
+.pc-divider-line { flex:1;height:1px;background:var(--border); }
+.pc-divider-label {
+  font-size:10px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.14em;color:var(--muted);white-space:nowrap;
+}
+
+/* Card colour themes */
+.pc-vcard-gift { border-top:3px solid var(--blue); }
+.pc-vcard-passion { border-top:3px solid var(--red); }
+.pc-vcard-potential { border-top:3px solid var(--gold); }
+.pc-vcard-person { border-top:3px solid var(--blue); }
+.pc-vcard-path { border-top:3px solid var(--blue); text-align:left; }
+
+@media(max-width:600px){
+  .pc-visual-grid { grid-template-columns:1fr !important; }
+  .pc-vcard.full-width { grid-column:1 !important; }
+  .pc-path-score { font-size:36px !important; }
+}
+
+
+/* ══════════════════════════════════════════
+   DETAILS SCREEN
+══════════════════════════════════════════ */
+#screen-details { padding-top:56px; background:var(--bg); min-height:100vh; }
+
+.details-outer {
+  max-width:520px; margin:0 auto;
+  padding:40px 20px 80px;
+}
+
+.details-card {
+  background:white;
+  border-radius:20px;
+  padding:40px 36px;
+  box-shadow:0 4px 32px rgba(38,63,106,.08);
+  border:1px solid var(--border);
+  text-align:center;
+}
+
+.details-check {
+  margin-bottom:20px;
+  animation:checkPop .5s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes checkPop {
+  from { transform:scale(0); opacity:0; }
+  to   { transform:scale(1); opacity:1; }
+}
+
+.details-greeting {
+  font-family:'Lora',serif;
+  font-size:28px; font-weight:700;
+  color:var(--blue); line-height:1.2;
+  margin-bottom:8px;
+}
+
+.details-headline {
+  font-size:15px; font-weight:700;
+  color:var(--text); margin-bottom:8px;
+}
+
+.details-sub {
+  font-size:13px; color:var(--muted);
+  line-height:1.7; margin-bottom:32px;
+  max-width:340px; margin-left:auto; margin-right:auto;
+}
+
+.details-fields { text-align:left; }
+
+.details-field-group {
+  display:flex; flex-direction:column;
+  gap:6px; margin-bottom:16px; flex:1;
+}
+
+.details-field-row {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:12px; margin-bottom:0;
+}
+
+.details-label {
+  font-size:11px; font-weight:800;
+  text-transform:uppercase; letter-spacing:.1em;
+  color:var(--muted);
+}
+
+.details-input {
+  background:var(--bg);
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  padding:13px 16px;
+  font-family:'DM Sans',sans-serif;
+  font-size:14px; color:var(--text);
+  width:100%;
+  transition:border-color .2s, box-shadow .2s;
+  outline:none;
+  appearance:none;
+}
+.details-input:focus {
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(38,63,106,.08);
+  background:white;
+}
+.details-select {
+  cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 12px center;
+  background-size:18px;
+  padding-right:38px;
+}
+
+.details-error {
+  font-size:12px; color:var(--red);
+  margin-bottom:12px; min-height:18px;
+  font-weight:600;
+}
+
+.details-submit-btn {
+  width:100%;
+  background:var(--blue); color:white;
+  border:none; border-radius:12px;
+  padding:15px 24px;
+  font-family:'DM Sans',sans-serif;
+  font-size:15px; font-weight:800;
+  cursor:pointer; letter-spacing:.02em;
+  display:flex; align-items:center;
+  justify-content:center; gap:10px;
+  transition:all .2s; margin-bottom:12px;
+}
+.details-submit-btn:hover {
+  background:var(--blue2);
+  transform:translateY(-1px);
+}
+.details-submit-btn:active { transform:scale(.98); }
+
+.details-skip-btn {
+  width:100%; background:none; border:none;
+  color:var(--muted); font-family:'DM Sans',sans-serif;
+  font-size:13px; font-weight:600;
+  cursor:pointer; padding:8px;
+  transition:color .15s;
+}
+.details-skip-btn:hover { color:var(--blue); }
+
+/* Confetti strip */
+.details-confetti {
+  height:3px;
+  background:linear-gradient(90deg,var(--red),var(--gold),var(--blue),var(--gold),var(--red));
+  border-radius:20px 20px 0 0;
+  margin:-40px -36px 32px;
+}
+
+@media(max-width:480px){
+  .details-card { padding:28px 20px; }
+  .details-field-row { grid-template-columns:1fr; }
+  .details-greeting { font-size:22px; }
+}
+
+
+/* Role selection buttons */
+.details-role-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+.det-role-btn {
+  background:var(--bg);
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  padding:10px 8px;
+  font-family:'DM Sans',sans-serif;
+  font-size:12px;
+  font-weight:700;
+  color:var(--muted);
+  cursor:pointer;
+  transition:all .15s;
+  text-align:center;
+  -webkit-tap-highlight-color:transparent;
+}
+.det-role-btn:hover {
+  border-color:var(--blue);
+  color:var(--blue);
+  background:var(--blue-lt);
+}
+.det-role-btn.selected {
+  background:var(--blue);
+  border-color:var(--blue);
+  color:white;
+}
+@media(max-width:400px){
+  .details-role-grid { grid-template-columns:repeat(2,1fr); }
+}
+
+
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -1610,6 +1908,118 @@ body{font-family:'DM Sans',sans-serif;background:#f8f8f8;color:var(--text);}
 </div>
 
 <!-- REPORT -->
+<div class="screen" id="screen-details">
+  <div class="details-outer">
+    <div class="details-card">
+      <div class="details-confetti"></div>
+      <div class="details-check">
+        <svg viewBox="0 0 48 48" fill="none" width="48" height="48">
+          <circle cx="24" cy="24" r="22" fill="#263F6A"/>
+          <path d="M14 24l7 7 13-14" stroke="#EFBD47" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="details-greeting" id="detailsGreeting">Hi there!</div>
+      <div class="details-headline">You've completed the assessment</div>
+      <div class="details-sub">We just need a few more details before we show your full report.</div>
+
+      <div class="details-fields">
+
+        <!-- Row 1: Church -->
+        <div class="details-field-group">
+          <label class="details-label">Church / Organisation</label>
+          <input class="details-input" id="detChurch" type="text" placeholder="e.g. Grace Community Church" autocomplete="organization"/>
+        </div>
+
+        <!-- Row 2: Phone -->
+        <div class="details-field-group">
+          <label class="details-label">Phone Number</label>
+          <input class="details-input" id="detPhone" type="tel" placeholder="e.g. +91 98765 43210" autocomplete="tel"/>
+        </div>
+
+        <!-- Row 3: City + Country -->
+        <div class="details-field-row">
+          <div class="details-field-group">
+            <label class="details-label">City</label>
+            <input class="details-input" id="detCity" type="text" placeholder="e.g. Chennai" autocomplete="address-level2"/>
+          </div>
+          <div class="details-field-group">
+            <label class="details-label">Country</label>
+            <select class="details-input details-select" id="detCountry">
+              <option value="">Select country</option>
+              <option value="India">India</option>
+              <option value="Sri Lanka">Sri Lanka</option>
+              <option value="Nepal">Nepal</option>
+              <option value="Bangladesh">Bangladesh</option>
+              <option value="Pakistan">Pakistan</option>
+              <option value="United States">United States</option>
+              <option value="United Kingdom">United Kingdom</option>
+              <option value="Canada">Canada</option>
+              <option value="Australia">Australia</option>
+              <option value="Singapore">Singapore</option>
+              <option value="Malaysia">Malaysia</option>
+              <option value="UAE">UAE</option>
+              <option value="South Africa">South Africa</option>
+              <option value="Nigeria">Nigeria</option>
+              <option value="Kenya">Kenya</option>
+              <option value="Philippines">Philippines</option>
+              <option value="Germany">Germany</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 4: Age + Gender -->
+        <div class="details-field-row">
+          <div class="details-field-group">
+            <label class="details-label">Age</label>
+            <select class="details-input details-select" id="detAge">
+              <option value="">Select age</option>
+              <option value="Under 15">Under 15</option>
+              <option value="15–17">15–17</option>
+              <option value="18–21">18–21</option>
+              <option value="22–25">22–25</option>
+              <option value="26–30">26–30</option>
+              <option value="31–40">31–40</option>
+              <option value="41–50">41–50</option>
+              <option value="51+">51+</option>
+            </select>
+          </div>
+          <div class="details-field-group">
+            <label class="details-label">Gender</label>
+            <select class="details-input details-select" id="detGender">
+              <option value="">Select gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Prefer not to say">Prefer not to say</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 5: Role -->
+        <div class="details-field-group">
+          <label class="details-label">Role / Position</label>
+          <div class="details-role-grid" id="detRoleGrid">
+            <button class="det-role-btn" onclick="selectRole(this,'Student')">Student</button>
+            <button class="det-role-btn" onclick="selectRole(this,'Youth')">Youth (15–25)</button>
+            <button class="det-role-btn" onclick="selectRole(this,'Youth Leader')">Youth Leader</button>
+            <button class="det-role-btn" onclick="selectRole(this,'Pastor')">Pastor</button>
+            <button class="det-role-btn" onclick="selectRole(this,'Lay Member')">Lay Member</button>
+            <button class="det-role-btn" onclick="selectRole(this,'Other')">Other</button>
+          </div>
+        </div>
+
+        <div class="details-error" id="detailsError"></div>
+
+        <button class="details-submit-btn" onclick="submitDetails()">
+          Show My Report
+          <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="details-skip-btn" onclick="skipDetails()">Skip for now</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="screen" id="screen-report">
   <div class="rpt-wrap" id="rptContent"></div>
 </div>
@@ -1905,7 +2315,7 @@ const ROLE_META={
 // ═══════════════════════════════════════════════════════════
 // STATE + LOGIC
 // ═══════════════════════════════════════════════════════════
-let ST={name:'',email:'',answers:{},curPage:0,pages:[]};
+let ST={name:'',email:'',church:'',phone:'',city:'',country:'',age:'',gender:'',role:'',answers:{},curPage:0,pages:[]};
 const PER=10;
 
 function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
@@ -2055,7 +2465,7 @@ function updateFade(pi){
 }
 
 function nextPage(){
-  buildReport();
+  showDetailsScreen();
 }
 function prevPage(){if(ST.curPage>0)renderPage(ST.curPage-1);}
 
@@ -2285,8 +2695,6 @@ function buildReport(){
   const stageDesc={striving:"Your reflection shows an area where you want to be more intentional. This is not a place of failure — it is an invitation to pay attention. Every person has areas where they are still growing, and knowing where to focus is the first step toward living your calling more fully.",surviving:"Your Pathways reflection reveals a life of real resilience. You have navigated genuine challenges and kept going. With some intentional focus and the right support around you, this is a season that can move toward greater flourishing.",thriving:"Your Pathways reflection reveals a life of strength and alignment. You are walking in a healthy rhythm across the key areas of your life. Keep investing in what is working — and use this strong foundation to lean more fully into your calling."};
 
   const html=`
-<div class="rpt-wrap">
-
 <!-- ① COVER -->
 <div class="rpt-cover">
   <div class="cover-verse">
@@ -2301,73 +2709,40 @@ function buildReport(){
 
 <!-- ② SUMMARY PROFILE -->
 <div class="rs">
-  <div class="rs-eyebrow"><span class="rs-icon" style="background:#EBF0F8;color:var(--blue)"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/></svg></span>Summary</div>
-  <div class="rs-title">Your Purpose Profile</div>
-  <div class="rs-intro">Five globally validated frameworks — one complete picture of how God has uniquely wired you and what He has called you to do.</div>
+  <div class="rs-eyebrow"><span class="rs-icon" style="background:#EBF0F8;color:var(--blue)"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/></svg></span>Your Purpose Profile</div>
+  <div class="rs-title">Five dimensions. One complete picture.</div>
+  <div class="rs-intro">God has uniquely wired you across five dimensions — each one a different lens on the same calling He has placed in you.</div>
   <div class="sum-grid">
-    <div class="sg"><div class="sg-icon gifts-col"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="9" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 13h18M12 9v13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 9C12 9 9 6 9 4.5a2.5 2.5 0 015 0M12 9C12 9 15 6 15 4.5a2.5 2.5 0 00-5 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="sg-lbl">Spiritual Gift</div><div class="sg-val">${GM[R.g1].name}</div><div class="sg-sub">${GM[R.g1].thrust.toLowerCase().replace(/^./,c=>c.toUpperCase())}</div></div>
-    <div class="sg"><div class="sg-icon passion-col"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div><div class="sg-lbl">Passion</div><div class="sg-val">${PPL_META[pplTop].label}</div><div class="sg-sub">${MIN_META[R.minTop].label}</div></div>
-    <div class="sg"><div class="sg-icon potent-col"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div><div class="sg-lbl">Potential</div><div class="sg-val">${miTopMeta.name}</div><div class="sg-sub">${miTopMeta.smart}</div></div>
-    <div class="sg"><div class="sg-icon person-col"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="sg-lbl">Personality</div><div class="sg-val">${R.mtype}</div><div class="sg-sub">${pm.name}</div></div>
-    <div class="sg"><div class="sg-icon path-col"><svg viewBox="0 0 24 24" fill="none"><path d="M3 12h18M3 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="sg-lbl">Pathway</div><div class="sg-val">${R.os.charAt(0).toUpperCase()+R.os.slice(1)}</div><div class="sg-sub">${R.op}% overall</div></div>
-  </div>
-</div>
-
-<!-- ③ DASHBOARD CANVAS -->
-<div class="dashboard">
-  <div class="db-verse">"For we are God's masterpiece, created in Christ Jesus to do good works." — Ephesians 2:10</div>
-  <div class="db-grid">
-    <div class="db-card">
-      <div class="db-card-eyebrow"><svg viewBox="0 0 24 24" fill="none" width="12" height="12"><rect x="3" y="9" width="18" height="13" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 13h18M12 9v13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Spiritual Gift</div>
-      <div class="db-card-icon gifts-col"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="9" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 13h18M12 9v13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 9C12 9 9 6 9 4.5a2.5 2.5 0 015 0M12 9C12 9 15 6 15 4.5a2.5 2.5 0 00-5 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-      <div class="db-card-title">Shepherding</div>
-      <div class="db-card-sub">Caring for the Growth of Followers</div>
-      <div style="display:inline-flex;align-items:center;gap:5px;background:#EBF0F8;color:var(--blue);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;padding:4px 10px;border-radius:10px;margin-top:4px;">✦ Motivational Gift</div>
+    <div class="sg">
+      <div class="sg-icon gifts-col"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="9" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 13h18M12 9v13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 9C12 9 9 6 9 4.5a2.5 2.5 0 015 0M12 9C12 9 15 6 15 4.5a2.5 2.5 0 00-5 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+      <div class="sg-lbl">How God equipped you</div>
+      <div class="sg-val">${GM[R.g1].name}</div>
+      <div class="sg-sub">Spiritual Gift · ${GM[R.g1].cat}</div>
     </div>
-    <div class="db-card">
-      <div class="db-card-eyebrow"><svg viewBox="0 0 24 24" fill="none" width="12" height="12"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Passion</div>
-      <div class="db-card-icon passion-col"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
-      <div class="db-passion-grid">
-        <div class="db-pchip db-pchip-people"><div class="db-pchip-cat">People</div><div class="db-pchip-val">Teens (13–17)</div></div>
-        <div class="db-pchip db-pchip-issues"><div class="db-pchip-cat">Issues</div><div class="db-pchip-val">Spiritual</div></div>
-        <div class="db-pchip db-pchip-role"><div class="db-pchip-cat">Role</div><div class="db-pchip-val">Thinker</div></div>
-        <div class="db-pchip db-pchip-ministry"><div class="db-pchip-cat">Ministry</div><div class="db-pchip-val">Discipleship</div></div>
-      </div>
+    <div class="sg">
+      <div class="sg-icon passion-col"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+      <div class="sg-lbl">Who God burdened you for</div>
+      <div class="sg-val">${PPL_META[pplTop].label}</div>
+      <div class="sg-sub">Passion · ${MIN_META[R.minTop].label}</div>
     </div>
-    <div class="db-card">
-      <div class="db-card-eyebrow"><svg viewBox="0 0 24 24" fill="none" width="12" height="12"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Potential</div>
-      <div class="db-card-icon potent-col"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
-      <div class="db-card-title">Musical</div>
-      <div class="db-card-sub">Music Smart</div>
+    <div class="sg">
+      <div class="sg-icon potent-col"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+      <div class="sg-lbl">How God wired your mind</div>
+      <div class="sg-val">${miTopMeta.name}</div>
+      <div class="sg-sub">Potential · ${miTopMeta.smart}</div>
     </div>
-    <div class="db-card">
-      <div class="db-card-eyebrow"><svg viewBox="0 0 24 24" fill="none" width="12" height="12"><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Personality</div>
-      <div class="db-card-icon person-col"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-      <div class="db-pers-letters"><div class="db-letter">I</div><div class="db-letter">N</div><div class="db-letter">T</div><div class="db-letter">J</div></div>
-      <div class="db-card-title">Mastermind</div>
-      <div class="db-card-sub">Strategist · 2.1% of people</div>
+    <div class="sg">
+      <div class="sg-icon person-col"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+      <div class="sg-lbl">How God designed your nature</div>
+      <div class="sg-val">${R.mtype}</div>
+      <div class="sg-sub">Personality · ${pm.name}</div>
     </div>
-    <div class="db-card full">
-      <div class="db-card-eyebrow"><svg viewBox="0 0 24 24" fill="none" width="12" height="12"><path d="M3 12h18M3 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Pathway</div>
-      <div class="db-pathway-simple">
-        <div class="db-ps-score">62%</div>
-        <div class="db-ps-right">
-          <div class="db-ps-stage">Surviving · Overall Pathway</div>
-          <div class="db-ps-track"><div class="db-ps-fill"></div></div>
-          <div class="db-ps-areas">
-            <div class="db-ps-area"><div class="db-ps-area-name">Faith</div><div class="db-ps-area-score">70%</div></div>
-            <div class="db-ps-area"><div class="db-ps-area-name">Family</div><div class="db-ps-area-score">65%</div></div>
-            <div class="db-ps-area"><div class="db-ps-area-name">Finances</div><div class="db-ps-area-score">55%</div></div>
-            <div class="db-ps-area"><div class="db-ps-area-name">Fitness</div><div class="db-ps-area-score">60%</div></div>
-            <div class="db-ps-area"><div class="db-ps-area-name">Friends</div><div class="db-ps-area-score">60%</div></div>
-          </div>
-        </div>
-      </div>
+    <div class="sg">
+      <div class="sg-icon path-col"><svg viewBox="0 0 24 24" fill="none"><path d="M3 12h18M3 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="sg-lbl">Where you are right now</div>
+      <div class="sg-val">${R.os.charAt(0).toUpperCase()+R.os.slice(1)}</div>
+      <div class="sg-sub">Pathway · ${R.op}% overall</div>
     </div>
-  </div>
-  <div class="db-share-bar">
-    <div class="db-share-label">Share your YOUnique Purpose profile</div>
-    <button class="db-share-btn"><svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Download</button>
   </div>
 </div>
 
@@ -2844,28 +3219,111 @@ function buildReport(){
 <div class="rs">
   <div class="rs-eyebrow"><span class="rs-icon" style="background:#EBF0F8;color:var(--blue)"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/></svg></span>Purpose Canvas</div>
   <div class="rs-title">Where it all comes together</div>
-  <div class="rs-intro">Your Purpose Canvas brings every dimension of who God made you together into one view.</div>
+  <div class="rs-intro">Your Purpose Canvas is the synthesis of everything — a single view of how God has uniquely wired you and what He has prepared for you to do.</div>
+
+  <!-- VISUAL CARDS — shareable summary -->
+  <div class="pc-visual-grid">
+
+    <!-- Gift card -->
+    <div class="pc-vcard pc-vcard-gift">
+      <div class="pc-vcard-eyebrow">
+        <svg viewBox="0 0 24 24" fill="none" width="11" height="11"><rect x="3" y="9" width="18" height="13" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 13h18M12 9v13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Spiritual Gift
+      </div>
+      <div class="pc-vcard-icon gifts-col"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="9" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 13h18M12 9v13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 9C12 9 9 6 9 4.5a2.5 2.5 0 015 0M12 9C12 9 15 6 15 4.5a2.5 2.5 0 00-5 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+      <div class="pc-vcard-val">${GM[R.g1].name}</div>
+      <div class="pc-vcard-sub">${GM[R.g1].thrust}</div>
+      <div class="pc-vcard-badge">${GM[R.g1].cat}</div>
+    </div>
+
+    <!-- Passion card -->
+    <div class="pc-vcard pc-vcard-passion">
+      <div class="pc-vcard-eyebrow">
+        <svg viewBox="0 0 24 24" fill="none" width="11" height="11"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        Passion
+      </div>
+      <div class="pc-vcard-icon passion-col"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+      <div class="pc-passion-chips">
+        <div class="pc-pchip"><div class="pc-pchip-cat" style="color:var(--blue)">People</div><div class="pc-pchip-val">${PPL_META[pplTop].label}</div></div>
+        <div class="pc-pchip"><div class="pc-pchip-cat" style="color:var(--red)">Issues</div><div class="pc-pchip-val">${ISS_META[R.issTop].label}</div></div>
+        <div class="pc-pchip"><div class="pc-pchip-cat" style="color:#7a5a00">Role</div><div class="pc-pchip-val">${R.roleLabel}</div></div>
+        <div class="pc-pchip"><div class="pc-pchip-cat" style="color:var(--blue)">Ministry</div><div class="pc-pchip-val">${MIN_META[R.minTop].label}</div></div>
+      </div>
+    </div>
+
+    <!-- Potential card -->
+    <div class="pc-vcard pc-vcard-potential">
+      <div class="pc-vcard-eyebrow">
+        <svg viewBox="0 0 24 24" fill="none" width="11" height="11"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        Potential
+      </div>
+      <div class="pc-vcard-icon potent-col"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+      <div class="pc-vcard-val">${miTopMeta.name}</div>
+      <div class="pc-vcard-sub">${miTopMeta.smart}</div>
+    </div>
+
+    <!-- Personality card -->
+    <div class="pc-vcard pc-vcard-person">
+      <div class="pc-vcard-eyebrow">
+        <svg viewBox="0 0 24 24" fill="none" width="11" height="11"><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Personality
+      </div>
+      <div class="pc-vcard-icon person-col"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+      <div class="pc-pers-letters">${R.mtype.split('').map(l=>'<div class="pc-pers-letter">'+l+'</div>').join('')}</div>
+      <div class="pc-vcard-val" style="font-size:16px;">${pm.name}</div>
+      <div class="pc-vcard-sub">${pm.role}</div>
+    </div>
+
+    <!-- Pathway full width -->
+    <div class="pc-vcard pc-vcard-path full-width">
+      <div class="pc-vcard-eyebrow">
+        <svg viewBox="0 0 24 24" fill="none" width="11" height="11"><path d="M3 12h18M3 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Pathway
+      </div>
+      <div class="pc-path-row">
+        <div class="pc-path-score">${R.op}%</div>
+        <div class="pc-path-right">
+          <div class="pc-path-stage ${R.os}">${R.os.charAt(0).toUpperCase()+R.os.slice(1)} · Overall Pathway</div>
+          <div class="pc-path-bar"><div class="pc-path-fill" style="width:${R.op}%"></div></div>
+          <div class="pc-path-areas">
+            ${Object.entries(R.paR).map(([f,r])=>'<div class="pc-path-area"><div class="pc-path-area-name">'+f.charAt(0).toUpperCase()+f.slice(1)+'</div><div class="pc-path-area-score '+r.stage+'">'+r.score+'%</div></div>').join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end pc-visual-grid -->
+
+  <!-- DIVIDER -->
+  <div class="pc-divider">
+    <div class="pc-divider-line"></div>
+    <div class="pc-divider-label">Full Detail</div>
+    <div class="pc-divider-line"></div>
+  </div>
+
+  <!-- NAVY GRID — detailed synthesis -->
   <div class="purpose-canvas">
-    <div class="pc-title">Your Purpose Canvas</div>
+    <div class="pc-title">Your Purpose Canvas · ${ST.name}</div>
     <div class="pc-rows">
       <div class="pc-row row1">
-        <div class="pc-cell"><div class="pc-cell-lbl">Primary Spiritual Gift · Motivational</div><div class="pc-cell-val">Shepherding</div><div class="pc-cell-sub">Caring for the Growth of Followers</div></div>
-        <div class="pc-cell"><div class="pc-cell-lbl">Secondary Spiritual Gift · Ministry</div><div class="pc-cell-val">Discipleship</div><div class="pc-cell-sub">Walking Alongside Others</div></div>
-        <div class="pc-cell"><div class="pc-cell-lbl">Supporting Gift · Manifestation</div><div class="pc-cell-val">Knowledge</div><div class="pc-cell-sub">Revelation of Spiritual Truth</div></div>
+        <div class="pc-cell"><div class="pc-cell-lbl">Primary Spiritual Gift · ${GM[R.g1].cat}</div><div class="pc-cell-val">${GM[R.g1].name}</div><div class="pc-cell-sub">${GM[R.g1].thrust}</div></div>
+        <div class="pc-cell"><div class="pc-cell-lbl">Secondary Gift · ${GM[R.g2].cat}</div><div class="pc-cell-val">${GM[R.g2].name}</div><div class="pc-cell-sub">${GM[R.g2].thrust}</div></div>
+        <div class="pc-cell"><div class="pc-cell-lbl">Supporting Gift · ${GM[R.g3].cat}</div><div class="pc-cell-val">${GM[R.g3].name}</div><div class="pc-cell-sub">${GM[R.g3].thrust}</div></div>
       </div>
       <div class="pc-row row2">
-        <div class="pc-cell"><div class="pc-cell-lbl">Passion — People</div><div class="pc-cell-val">Teens (13–17)</div><div class="pc-cell-desc">Guiding and mentoring teenagers through their critical years of self-discovery.</div></div>
-        <div class="pc-cell"><div class="pc-cell-lbl">Passion — Ministry</div><div class="pc-cell-val">Discipleship</div><div class="pc-cell-desc">Walking closely with others as they grow deeper in their faith.</div></div>
-        <div class="pc-cell"><div class="pc-cell-lbl">Passion — Role</div><div class="pc-cell-val">Thinker / Pioneer</div><div class="pc-cell-desc">You love thinking deeply, exploring new ideas, and challenging the status quo.</div></div>
-        <div class="pc-cell"><div class="pc-cell-lbl">Passion — Issues</div><div class="pc-cell-val">Spiritual</div><div class="pc-cell-desc">You are moved by the spiritual needs of people around you.</div></div>
+        <div class="pc-cell"><div class="pc-cell-lbl">Passion — People</div><div class="pc-cell-val">${PPL_META[pplTop].label}</div><div class="pc-cell-desc">${PPL_META[pplTop].short||''}</div></div>
+        <div class="pc-cell"><div class="pc-cell-lbl">Passion — Ministry</div><div class="pc-cell-val">${MIN_META[R.minTop].label}</div><div class="pc-cell-desc">${MIN_META[R.minTop].long.substring(0,100)}...</div></div>
+        <div class="pc-cell"><div class="pc-cell-lbl">Passion — Role</div><div class="pc-cell-val">${R.roleLabel}</div><div class="pc-cell-desc">${ROLE_META&&ROLE_META[R.roleLabel]?ROLE_META[R.roleLabel].long.substring(0,100)+'...':''}</div></div>
+        <div class="pc-cell"><div class="pc-cell-lbl">Passion — Issues</div><div class="pc-cell-val">${ISS_META[R.issTop].label}</div><div class="pc-cell-desc">${ISS_META[R.issTop].short||''}</div></div>
       </div>
       <div class="pc-row row3">
-        <div class="pc-cell"><div class="pc-cell-lbl">Potential</div><div class="pc-cell-val">Musical — Music Smart</div><div class="pc-cell-desc">19% of people · Musical intelligence includes rhythmic and tonal patterns and sensitivity to sounds.</div></div>
-        <div class="pc-cell"><div class="pc-cell-lbl">Personality</div><div class="pc-cell-val">INTJ — Mastermind</div><div class="pc-cell-desc">Strategist · 2.1% of people. INTJs are rare visionaries who see the world differently.</div></div>
-        <div class="pc-cell"><div class="pc-cell-lbl">Pathway</div><div class="pc-cell-val">Surviving · 62%</div><div class="pc-cell-desc">Faith 70% · Family 65% · Finances 55% · Fitness 60% · Friends 60%</div></div>
+        <div class="pc-cell"><div class="pc-cell-lbl">Potential</div><div class="pc-cell-val">${miTopMeta.name} — ${miTopMeta.smart}</div><div class="pc-cell-desc">${miTopMeta.desc?miTopMeta.desc.substring(0,100)+'...':''}</div></div>
+        <div class="pc-cell"><div class="pc-cell-lbl">Personality</div><div class="pc-cell-val">${R.mtype} — ${pm.name}</div><div class="pc-cell-desc">${pm.role||''} · ${pm.desc?pm.desc.substring(0,80)+'...':''}</div></div>
+        <div class="pc-cell"><div class="pc-cell-lbl">Pathway</div><div class="pc-cell-val">${R.os.charAt(0).toUpperCase()+R.os.slice(1)} · ${R.op}%</div><div class="pc-cell-desc">Faith ${R.paR.faith?R.paR.faith.score:0}% · Family ${R.paR.family?R.paR.family.score:0}% · Finances ${R.paR.finances?R.paR.finances.score:0}% · Fitness ${R.paR.fitness?R.paR.fitness.score:0}% · Friends ${R.paR.friends?R.paR.friends.score:0}%</div></div>
       </div>
     </div>
   </div>
+
 </div>
 
 <!-- NEXT STEPS -->
@@ -2874,9 +3332,9 @@ function buildReport(){
   <div class="rs-title">What you do with this</div>
   <div class="rs-intro">Discovery is only the beginning. Here are three personalised next steps based on your results.</div>
   <div class="ns-list">
-    <div class="ns-card"><div class="ns-num">01</div><div><div class="ns-title">Begin with prayer</div><div class="ns-text">Bring your results before God and ask Him to confirm, clarify, and direct you. Your gift of Shepherding is not yours to figure out on your own — it was placed in you by Him, and He is the one who will show you how and where to use it.</div></div></div>
+    <div class="ns-card"><div class="ns-num">01</div><div><div class="ns-title">Begin with prayer</div><div class="ns-text">Bring your results before God and ask Him to confirm, clarify, and direct you. Your gift of <strong>${GM[R.g1].name}</strong> is not yours to figure out on your own — it was placed in you by Him, and He is the one who will show you how and where to use it.</div></div></div>
     <div class="ns-card"><div class="ns-num">02</div><div><div class="ns-title">Share with a mentor or spiritual leader</div><div class="ns-text">Don't process this alone. Find a trusted person — a pastor, mentor, or spiritual friend — and walk through your results with them. Ask them: "Does this sound like me? Where have you seen these gifts at work in my life?"</div></div></div>
-    <div class="ns-card"><div class="ns-num">03</div><div><div class="ns-title">Take one concrete step this week</div><div class="ns-text">Based on your gift of Shepherding and your passion for Teens — what is one thing you could do this week to begin living this out? Sign up to lead a small group. Reach out to a young person. Say yes to that mentoring opportunity you have been delaying.</div></div></div>
+    <div class="ns-card"><div class="ns-num">03</div><div><div class="ns-title">Take one concrete step this week</div><div class="ns-text">Based on your gift of <strong>${GM[R.g1].name}</strong> and your passion for <strong>${PPL_META[pplTop].label}</strong> — what is one thing you could do this week to begin living this out? Purpose only becomes real when it gets put into motion.</div></div></div>
   </div>
 </div>
 
@@ -2898,12 +3356,82 @@ function buildReport(){
     Download Report
   </button>
 </div>
+
 `;
 
   document.getElementById('rptContent').innerHTML=html;
   showScreen('report');
   window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0;
 }
+
+// ═══════════════════════════════════════════════════════════
+// DETAILS SCREEN
+// ═══════════════════════════════════════════════════════════
+function showDetailsScreen() {
+  // Set greeting with name
+  const greeting = document.getElementById('detailsGreeting');
+  if (greeting) {
+    greeting.textContent = 'Hi ' + (ST.name || 'there') + '! 🎉';
+  }
+  // Hide tracker
+  document.getElementById('sectionTracker').style.display = 'none';
+  document.getElementById('pageNav').style.display = 'none';
+  showScreen('details');
+  window.scrollTo(0, 0);
+}
+
+function selectRole(el, role) {
+  document.querySelectorAll('.det-role-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  ST.role = role;
+}
+
+function submitDetails() {
+  const church  = document.getElementById('detChurch').value.trim();
+  const phone   = document.getElementById('detPhone').value.trim();
+  const city    = document.getElementById('detCity').value.trim();
+  const country = document.getElementById('detCountry').value;
+  const age     = document.getElementById('detAge').value;
+  const gender  = document.getElementById('detGender').value;
+  const errEl   = document.getElementById('detailsError');
+
+  // Validate — church and country required
+  if (!church) {
+    errEl.textContent = 'Please enter your church or organisation name.';
+    document.getElementById('detChurch').focus();
+    return;
+  }
+  if (!country) {
+    errEl.textContent = 'Please select your country.';
+    document.getElementById('detCountry').focus();
+    return;
+  }
+
+  errEl.textContent = '';
+
+  // Save to ST
+  ST.church  = church;
+  ST.phone   = phone;
+  ST.city    = city;
+  ST.country = country;
+  ST.age     = age;
+  ST.gender  = gender;
+  // ST.role already set by selectRole()
+
+  // Animate button
+  const btn = document.querySelector('.details-submit-btn');
+  if (btn) {
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" width="16" height="16" style="animation:spin .8s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Generating your report...';
+    btn.disabled = true;
+  }
+
+  setTimeout(() => buildReport(), 400);
+}
+
+function skipDetails() {
+  buildReport();
+}
+
 </script>
 
 
