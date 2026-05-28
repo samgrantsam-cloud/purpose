@@ -2694,7 +2694,51 @@ function buildReport(){
   const pathHtml=Object.entries(R.paR).map(([f,r])=>`<div class="path-item"><div class="pi-hdr"><div class="pi-name-wrap"><div class="pi-icon pathway-icon">${PATH_ICONS[f]||''}</div><div class="pi-name">${f.charAt(0).toUpperCase()+f.slice(1)}</div></div><div class="pi-badge ${r.stage}">${r.stage.charAt(0).toUpperCase()+r.stage.slice(1)} — ${r.score}%</div></div><div class="pi-track"><div class="pi-fill ${r.stage}" style="width:${r.score}%"></div></div></div>`).join('');
   const stageDesc={striving:"Your reflection shows an area where you want to be more intentional. This is not a place of failure — it is an invitation to pay attention. Every person has areas where they are still growing, and knowing where to focus is the first step toward living your calling more fully.",surviving:"Your Pathways reflection reveals a life of real resilience. You have navigated genuine challenges and kept going. With some intentional focus and the right support around you, this is a season that can move toward greater flourishing.",thriving:"Your Pathways reflection reveals a life of strength and alignment. You are walking in a healthy rhythm across the key areas of your life. Keep investing in what is working — and use this strong foundation to lean more fully into your calling."};
 
-  const html=`
+  
+  // ── Passion bar HTML builders ─────────────────────────────────────────────
+  const pplOrder=['kids','teens','youth','ya','adults','elderly'];
+  const pplTopK=R.pplS[0][0];
+  const pplMax2=R.pplS[0][1]||1;
+  const pplBarsHtml=pplOrder.map(k=>{
+    const sc=R.ppl[k]||0;const pct=Math.round(sc/pplMax2*100);const isTop=k===pplTopK;
+    return`<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px"><span style="font-size:12px;font-weight:${isTop?800:600};color:${isTop?'var(--blue)':'var(--muted)'};width:110px;flex-shrink:0">${PPL_META[k].label}</span><div style="flex:1;height:5px;background:var(--bg);border-radius:3px;overflow:hidden;border:1px solid var(--border)"><div style="height:5px;background:${isTop?'var(--blue)':'#D1C9C0'};border-radius:3px;width:${pct}%"></div></div><span style="font-size:11px;font-weight:${isTop?800:600};color:${isTop?'var(--blue)':'var(--muted)'};width:28px;text-align:right">${pct}%</span></div>`;
+  }).join('');
+  const issOrder=['spiritual','physical','relational','intellectual','social','financial'];
+  const issMax2=R.iss[R.issTop]||1;
+  const issBarsHtml=issOrder.map(k=>{
+    const sc=R.iss[k]||0;const pct=Math.round(sc/issMax2*100);const isTop=k===R.issTop;
+    return`<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px"><span style="font-size:12px;font-weight:${isTop?800:600};color:${isTop?'var(--red)':'var(--muted)'};width:110px;flex-shrink:0">${ISS_META[k].label}</span><div style="flex:1;height:5px;background:var(--bg);border-radius:3px;overflow:hidden;border:1px solid var(--border)"><div style="height:5px;background:${isTop?'var(--red)':'#D1C9C0'};border-radius:3px;width:${pct}%"></div></div><span style="font-size:11px;font-weight:${isTop?800:600};color:${isTop?'var(--red)':'var(--muted)'};width:28px;text-align:right">${pct}%</span></div>`;
+  }).join('');
+  const minOrder=['evangelism','discipleship','compassion','leadership','missions','creative'];
+  const minMax2=R.min[R.minTop]||1;
+  const minBarsHtml=minOrder.map(k=>{
+    const sc=R.min[k]||0;const pct=Math.round(sc/minMax2*100);const isTop=k===R.minTop;
+    return`<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px"><span style="font-size:12px;font-weight:${isTop?800:600};color:${isTop?'var(--blue)':'var(--muted)'};width:110px;flex-shrink:0">${MIN_META[k].label}</span><div style="flex:1;height:5px;background:var(--bg);border-radius:3px;overflow:hidden;border:1px solid var(--border)"><div style="height:5px;background:${isTop?'var(--blue)':'#D1C9C0'};border-radius:3px;width:${pct}%"></div></div><span style="font-size:11px;font-weight:${isTop?800:600};color:${isTop?'var(--blue)':'var(--muted)'};width:28px;text-align:right">${pct}%</span></div>`;
+  }).join('');
+  // ── Role spectrum ─────────────────────────────────────────────────────────
+  const roleLabels2=['Doer','Supervisor','Manager','Innovator','Thinker / Pioneer'];
+  const roleIdx2=roleLabels2.indexOf(R.roleLabel);
+  const rolePct2=roleIdx2<0?50:[10,28,46,66,85][roleIdx2];
+  const roleSpectrumHtml=`<div style="position:relative;height:8px;background:var(--bg);border-radius:4px;margin-bottom:6px;overflow:visible;border:1px solid var(--border)"><div style="position:absolute;left:0;top:0;height:6px;background:linear-gradient(90deg,var(--gold),var(--blue));border-radius:4px;width:${rolePct2}%"></div><div style="position:absolute;left:${rolePct2}%;top:-3px;width:14px;height:14px;border-radius:50%;background:var(--blue);border:2px solid white;transform:translateX(-50%);box-shadow:0 1px 4px rgba(0,0,0,.2)"></div></div><div style="display:flex;justify-content:space-between;margin-bottom:12px">${['Doer','Supervisor','Manager','Innovator','Thinker'].map(l=>`<span style="font-size:9px;font-weight:${R.roleLabel.startsWith(l)?800:600};color:${R.roleLabel.startsWith(l)?'var(--blue)':'var(--muted)'}">${l}</span>`).join('')}</div>`;
+  const roleDesc2=(ROLE_META&&ROLE_META[R.roleLabel]&&ROLE_META[R.roleLabel].long)||'You are drawn to thinking deeply, exploring ideas, and reimagining how things could be done differently.';
+  // ── MI legend ─────────────────────────────────────────────────────────────
+  const miLegendHtml=R.miS.map(([k],i)=>`<div style="display:flex;align-items:center;gap:9px;padding:6px 0;border-bottom:0.5px solid var(--border)"><div style="width:10px;height:10px;border-radius:50%;background:${i===0?'var(--blue)':i===1?'var(--red)':i===2?'var(--gold)':'#D1C9C0'};flex-shrink:0"></div><span style="font-size:13px;font-weight:${i===0?700:500};color:${i===0?'var(--text)':'var(--muted)'};flex:1">${MI_META[k].name}</span><span style="font-size:13px;font-weight:${i===0?800:600};color:${i===0?'var(--blue)':'var(--muted)'}">${Math.round(R.miPct(k)*100)}%</span></div>`).join('');
+  // ── Personality ───────────────────────────────────────────────────────────
+  const persLettersHtml=R.mtype.split('').map(l=>`<div class="pers-letter">${l}</div>`).join('');
+  const persDimsHtml=[['E','I',R.eiP[0],R.eiP[1]],['S','N',R.snP[0],R.snP[1]],['T','F',R.tfP[0],R.tfP[1]],['J','P',R.jpP[0],R.jpP[1]]].map(([a,b,pa,pb])=>`<div class="dim-row"><span class="dim-pole">${a}</span><span class="dim-pct-l" style="color:${pa>pb?'var(--blue)':'var(--muted)'}">${pa}%</span><div class="dim-track"><div class="dim-fill-l" style="width:${pa}%;background:${pa>pb?'var(--blue)':'var(--border)'}"></div><div class="dim-fill-r" style="width:${pb}%;background:${pb>pa?'var(--blue)':'var(--border)'}"></div></div><span class="dim-pct-r" style="color:${pb>pa?'var(--blue)':'var(--muted)'}">${pb}%</span><span class="dim-pole">${b}</span></div>`).join('');
+  const persStrHtml=(pm.strengths||['Strategic thinker','High standards and drive','Independent decision-maker','Deep commitment to growth','Sees patterns others miss']).map(s=>`<div class="pers-panel-item">${s}</div>`).join('');
+  const persWatchHtml=(pm.watchouts||pm.watch||['Can appear cold or critical','May struggle to delegate','Perfectionism can slow progress','Can undervalue emotions','Tendency to overanalyse']).map(w=>`<div class="pers-panel-item">${w}</div>`).join('');
+  // ── Pathway ───────────────────────────────────────────────────────────────
+  const pathAreas2=[['faith',R.paR.faith],['family',R.paR.family],['finances',R.paR.finances],['fitness',R.paR.fitness],['friends',R.paR.friends]];
+  const pathPts2=pathAreas2.map(([,r],i)=>{const ang=(i*72-90)*Math.PI/180;const s2=(r?r.score:0)/100;return[110+100*s2*Math.cos(ang),110+100*s2*Math.sin(ang)];});
+  const pathPoly2=pathPts2.map(([x,y])=>x+','+y).join(' ');
+  const pathGridLines2=[[0.33],[0.66],[1]].map(([s3])=>pathAreas2.map(([,],i)=>{const ang=(i*72-90)*Math.PI/180;return[110+100*s3*Math.cos(ang),110+100*s3*Math.sin(ang)];}).map(([x,y])=>x+','+y).join(' '));
+  const pathIcons2={faith:'<svg viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',family:'<svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="7" r="3" stroke="currentColor" stroke-width="1.8"/><circle cx="17" cy="8" r="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 20c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',finances:'<svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="20" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M2 10h20" stroke="currentColor" stroke-width="1.8"/></svg>',fitness:'<svg viewBox="0 0 24 24" fill="none"><path d="M18 8h1a4 4 0 010 8h-1M5 8H4a4 4 0 000 8h1M8 20v-1a4 4 0 018 0v1M8 4v1a4 4 0 008 0V4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',friends:'<svg viewBox="0 0 24 24" fill="none"><circle cx="8" cy="7" r="3" stroke="currentColor" stroke-width="1.8"/><circle cx="16" cy="7" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M2 20c0-3.314 2.686-6 6-6s6 2.686 6 6M16 14c1.5 0 4 .9 4 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>'};
+  const pathSvgHtml=`<svg viewBox="0 0 220 220" width="200" height="200" xmlns="http://www.w3.org/2000/svg">${pathGridLines2.map(g=>`<polygon points="${g}" fill="none" stroke="#E4E8EF" stroke-width="0.8"/>`).join('')}${pathAreas2.map(([,],i)=>{const ang=(i*72-90)*Math.PI/180;return`<line x1="110" y1="110" x2="${110+100*Math.cos(ang)}" y2="${110+100*Math.sin(ang)}" stroke="#E4E8EF" stroke-width="0.8"/>`;}).join('')}<polygon points="${pathPoly2}" fill="rgba(38,63,106,0.12)" stroke="#263F6A" stroke-width="1.8" stroke-linejoin="round"/>${pathAreas2.map(([name,],i)=>{const ang=(i*72-90)*Math.PI/180;const lx=110+118*Math.cos(ang);const ly=110+118*Math.sin(ang);const sc=(R.paR[name]?R.paR[name].score:0);return`<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-family="DM Sans" font-size="8" font-weight="800" fill="#263F6A">${name.charAt(0).toUpperCase()+name.slice(1)} ${sc}%</text>`;}).join('')}</svg>`;
+  const pathAreasHtml=pathAreas2.map(([name,r])=>{const sc=r?r.score:0;const st=r?r.stage:'striving';const stageCol=st==='thriving'?'#1d6b45':st==='surviving'?'#7a5a00':'var(--red)';const stageBg=st==='thriving'?'#E8F5EE':st==='surviving'?'#FDF0C0':'#FEF0EF';return`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border)"><div style="width:28px;height:28px;border-radius:7px;background:var(--bg);display:flex;align-items:center;justify-content:center;color:var(--blue);flex-shrink:0">${pathIcons2[name]}</div><div style="font-size:14px;font-weight:700;color:var(--text);flex:1">${name.charAt(0).toUpperCase()+name.slice(1)}</div><div style="width:70px;height:5px;background:var(--bg);border-radius:3px;overflow:hidden;flex-shrink:0"><div style="height:5px;background:var(--blue);border-radius:3px;width:${sc}%"></div></div><div style="font-family:'Lora',serif;font-size:14px;font-weight:700;color:var(--blue);width:32px;text-align:right;flex-shrink:0">${sc}%</div><span style="font-size:9px;font-weight:800;text-transform:uppercase;padding:2px 7px;border-radius:8px;background:${stageBg};color:${stageCol};flex-shrink:0">${st}</span></div>`;}).join('');
+  const pathOverallDesc2=R.os==='thriving'?'You are flourishing across your life areas. These strong foundations give you a powerful platform to serve and lead.':R.os==='surviving'?'You are making real progress. There is growth happening and real areas still needing investment. Keep going.':'There are significant challenges in some areas right now. Bringing them to God and a trusted community is the next step.';
+
+const html=`
 <!-- ① COVER -->
 <div class="rpt-cover">
   <div class="cover-verse">
@@ -2747,470 +2791,174 @@ function buildReport(){
 </div>
 
 <!-- ④ SPIRITUAL GIFTS -->
-<div class="rs alt">
-  <div class="rs-eyebrow"><span class="rs-icon" style="background:#EBF0F8;color:var(--blue)"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="9" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 13h18M12 9v13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>Primary Spiritual Gift</div>
+<div class="rs">
+  <div class="rs-eyebrow"><span class="rs-icon" style="background:#EBF0F8;color:var(--blue)"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="9" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 13h18M12 9v13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>Spiritual Gifts</div>
   <div class="rs-title">What God has equipped you to do</div>
-  <div class="rs-intro">Your Primary Spiritual Gift is the God-given motivational drive at the core of how He has wired you to serve His kingdom. This is not what you do — it is why you do everything.</div>
-  <div class="gift-hero">
-    <div class="gift-hero-top">
-      <div class="gift-hero-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M16 4a4 4 0 11-8 0M8 4c0 2.5-2 4-4 6s0 7 8 8c8-1 10-6 8-8s-4-3.5-4-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="14" r="3" stroke="currentColor" stroke-width="1.8"/></svg></div>
-      <div>
-        <div class="gift-cat-badge"><svg viewBox="0 0 24 24" fill="none" width="10" height="10"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Motivational Gift</div>
-        <div class="gift-name">Shepherding</div>
-        <div class="gift-thrust">Caring for the Growth of Followers</div>
-      </div>
-    </div>
-    <div class="gift-score-row">
-      <div class="gift-score-arc">
-        <svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="7"/><circle cx="40" cy="40" r="32" fill="none" stroke="#EFBD47" stroke-width="7" stroke-dasharray="201" stroke-dashoffset="40" stroke-linecap="round" transform="rotate(-90 40 40)"/></svg>
-        <div class="gift-score-arc-label"><span class="gift-score-num">80%</span><span class="gift-score-sub">match</span></div>
-      </div>
-      <div class="gift-verse">"He tends his flock like a shepherd: He gathers the lambs in his arms and carries them close to his heart." — Isaiah 40:11</div>
-    </div>
-  </div>
-  <div class="gift-bars-section">
-    <div class="gift-bars-title">Motivational Gifts — How you ranked</div>
-    <div class="gift-bar-row"><div class="gift-bar-rank r1">#1</div><div class="gift-bar-label top">Shepherding</div><div class="gift-bar-track"><div class="gift-bar-fill-r1" style="width:80%"></div></div><div class="gift-bar-pct r1">80%</div></div>
-    <div class="gift-bar-row"><div class="gift-bar-rank r2">#2</div><div class="gift-bar-label">Teaching</div><div class="gift-bar-track"><div class="gift-bar-fill-r2" style="width:65%"></div></div><div class="gift-bar-pct">65%</div></div>
-    <div class="gift-bar-row"><div class="gift-bar-rank r3">#3</div><div class="gift-bar-label">Evangelism</div><div class="gift-bar-track"><div class="gift-bar-fill-r3" style="width:55%"></div></div><div class="gift-bar-pct">55%</div></div>
-    <div class="gift-bar-row"><div class="gift-bar-rank rn">4</div><div class="gift-bar-label">Leadership</div><div class="gift-bar-track"><div class="gift-bar-fill-rn" style="width:42%"></div></div><div class="gift-bar-pct">42%</div></div>
-    <div class="gift-bar-row"><div class="gift-bar-rank rn">5</div><div class="gift-bar-label">Preaching</div><div class="gift-bar-track"><div class="gift-bar-fill-rn" style="width:35%"></div></div><div class="gift-bar-pct">35%</div></div>
-  </div>
-  <div class="gift-detail-card">
-    <div class="gift-detail-header"><div class="gift-detail-header-text">Caring for the growth of followers</div></div>
-    <div class="gift-detail-body">
-      <p class="gift-definition">The God-given capacity to assume long-term personal responsibility for the spiritual welfare of a group of believers. You care deeply about the people God has placed in your life — not just their knowledge but their formation, their struggles, their growth over time.</p>
-      <div class="gift-attrs-title">Attributes</div>
-      <div class="gift-attr-item"><div class="gift-attr-dot"></div><div class="gift-attr-text">A genuine love for people that goes beyond surface-level interaction</div></div>
-      <div class="gift-attr-item"><div class="gift-attr-dot"></div><div class="gift-attr-text">A deep concern for the spiritual growth and maturity of those in your care</div></div>
-      <div class="gift-attr-item"><div class="gift-attr-dot"></div><div class="gift-attr-text">A willingness to commit over the long term — not just when it is convenient</div></div>
-      <div style="height:16px"></div>
-      <div class="gift-attrs-title">Traits</div>
-      <div class="gift-traits-grid">
-        <div class="gift-trait">Protective of those in your care</div>
-        <div class="gift-trait">Loyal and consistent over time</div>
-        <div class="gift-trait">Sensitive to the struggles of others</div>
-        <div class="gift-trait">Drawn to one-on-one investment</div>
-      </div>
-    </div>
-  </div>
-  <div class="biblical-card">
-    <div class="biblical-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <div>
-      <div class="biblical-label">Biblical example of this gift</div>
-      <div class="biblical-name">David</div>
-      <div class="biblical-desc">David the shepherd boy became the shepherd king — tending both flocks and people with extraordinary care, loyalty, and courage. His life demonstrates what it means to shepherd from the heart, not just the position.</div>
-      <div class="biblical-verse">"He chose David his servant and took him from the sheep pens." — Psalm 78:70</div>
-    </div>
-  </div>
-  <div style="margin-top:16px">
-    <div class="blind-spot"><div class="blind-spot-icon">⚠️</div><div><div class="blind-spot-title">Watch out for</div><div class="blind-spot-text">You may become overly protective or possessive of those you shepherd — making it hard to release people to grow independently. Watch for the tendency to take others' struggles personally.</div></div></div>
-  </div>
-
-  <!-- SECONDARY GIFT -->
-  <div style="margin-top:40px;padding-top:40px;border-top:1px solid var(--border);">
-    <div class="rs-eyebrow" style="margin-bottom:16px;"><span class="rs-icon" style="background:#FEF0EF;color:var(--red)"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="9" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 13h18M12 9v13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>Secondary Spiritual Gift</div>
-    <div class="gift-hero" style="background:linear-gradient(135deg,var(--red),var(--red));margin-bottom:24px;">
-      <div class="gift-hero-top">
-        <div class="gift-hero-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-        <div>
-          <div class="gift-cat-badge" style="background:rgba(255,255,255,.15);color:rgba(255,255,255,.9);">Ministry Gift</div>
-          <div class="gift-name">Teaching</div>
-          <div class="gift-thrust">Communicating Truth for Understanding and Growth</div>
-        </div>
-      </div>
-      <div class="gift-score-row">
-        <div class="gift-score-arc">
-          <svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="7"/><circle cx="40" cy="40" r="32" fill="none" stroke="#EFBD47" stroke-width="7" stroke-dasharray="201" stroke-dashoffset="70" stroke-linecap="round" transform="rotate(-90 40 40)"/></svg>
-          <div class="gift-score-arc-label"><span class="gift-score-num">65%</span><span class="gift-score-sub">match</span></div>
-        </div>
-        <div class="gift-verse">"Not many of you should become teachers, my fellow believers, because you know that we who teach will be judged more strictly." — James 3:1</div>
-      </div>
-    </div>
-    <div class="gift-bars-section">
-      <div class="gift-bars-title">Ministry Gifts — How you ranked</div>
-      <div class="gift-bar-row"><div class="gift-bar-rank r1">#1</div><div class="gift-bar-label top">Teaching</div><div class="gift-bar-track"><div class="gift-bar-fill-r1" style="width:65%"></div></div><div class="gift-bar-pct r1">65%</div></div>
-      <div class="gift-bar-row"><div class="gift-bar-rank r2">#2</div><div class="gift-bar-label">Mercy</div><div class="gift-bar-track"><div class="gift-bar-fill-r2" style="width:58%"></div></div><div class="gift-bar-pct">58%</div></div>
-      <div class="gift-bar-row"><div class="gift-bar-rank r3">#3</div><div class="gift-bar-label">Encouragement</div><div class="gift-bar-track"><div class="gift-bar-fill-r3" style="width:52%"></div></div><div class="gift-bar-pct">52%</div></div>
-      <div class="gift-bar-row"><div class="gift-bar-rank rn">4</div><div class="gift-bar-label">Helps</div><div class="gift-bar-track"><div class="gift-bar-fill-rn" style="width:45%"></div></div><div class="gift-bar-pct">45%</div></div>
-    </div>
-    <div class="gift-detail-card">
-      <div class="gift-detail-header"><div class="gift-detail-header-text">Communicating Truth for Understanding and Growth</div></div>
-      <div class="gift-detail-body">
-        <p class="gift-definition">The God-given ability to explain, apply, and communicate biblical truth in a way that causes people to learn, understand, and grow. Your teaching is not just information transfer — it is life-giving instruction that equips people to live differently because of what they have understood.</p>
-        <div class="gift-attrs-title">Attributes</div>
-        <div class="gift-attr-item"><div class="gift-attr-dot"></div><div class="gift-attr-text">A love for study, research, and deep understanding of Scripture</div></div>
-        <div class="gift-attr-item"><div class="gift-attr-dot"></div><div class="gift-attr-text">The ability to take complex truths and make them clear and practical</div></div>
-        <div class="gift-attr-item"><div class="gift-attr-dot"></div><div class="gift-attr-text">A desire to see people not just know truth but live it out</div></div>
-        <div style="height:16px"></div>
-        <div class="gift-attrs-title">Traits</div>
-        <div class="gift-traits-grid">
-          <div class="gift-trait">Loves to study and prepare deeply</div>
-          <div class="gift-trait">Drawn to clarity and precision</div>
-          <div class="gift-trait">Energised when people have breakthroughs</div>
-          <div class="gift-trait">Natural communicator and explainer</div>
-        </div>
-      </div>
-    </div>
-    <div class="biblical-card" style="background:linear-gradient(135deg,var(--red),var(--red));margin-bottom:16px;">
-      <div class="biblical-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 014 17V4.5A2.5 2.5 0 016.5 2H20v20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-      <div>
-        <div class="biblical-label">Biblical example of this gift</div>
-        <div class="biblical-name">Ezra</div>
-        <div class="biblical-desc">Ezra devoted himself to the study and observance of the Law of the Lord — and then to teaching its decrees and laws. He prepared his heart to seek the law of God, to do it, and to teach in Israel.</div>
-        <div class="biblical-verse">"For Ezra had devoted himself to the study and observance of the Law of the LORD." — Ezra 7:10</div>
-      </div>
-    </div>
-    <div class="blind-spot"><div class="blind-spot-icon">⚠️</div><div><div class="blind-spot-title">Watch out for</div><div class="blind-spot-text">Teachers can become overly academic — more focused on content than transformation. Watch for the tendency to value being right over being relational, or to teach without listening to where the people actually are.</div></div></div>
-  </div>
-
-  <!-- SUPPORTING GIFT -->
-  <div style="margin-top:40px;padding-top:40px;border-top:1px solid var(--border);">
-    <div class="rs-eyebrow" style="margin-bottom:16px;"><span class="rs-icon" style="background:#FEF0EF;color:var(--blue)"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="9" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 13h18M12 9v13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>Supporting Gift</div>
-    <div class="gift-hero" style="background:linear-gradient(135deg,#1a2f52,var(--blue));margin-bottom:24px;">
-      <div class="gift-hero-top">
-        <div class="gift-hero-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div>
-          <div class="gift-cat-badge" style="background:rgba(239,189,71,.25);color:var(--gold);">Manifestation Gift</div>
-          <div class="gift-name">Knowledge</div>
-          <div class="gift-thrust">Revelation of Spiritual Truth</div>
-        </div>
-      </div>
-      <div class="gift-score-row">
-        <div class="gift-score-arc">
-          <svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="7"/><circle cx="40" cy="40" r="32" fill="none" stroke="#EFBD47" stroke-width="7" stroke-dasharray="201" stroke-dashoffset="100" stroke-linecap="round" transform="rotate(-90 40 40)"/></svg>
-          <div class="gift-score-arc-label"><span class="gift-score-num">50%</span><span class="gift-score-sub">match</span></div>
-        </div>
-        <div class="gift-verse">"To one there is given through the Spirit a message of wisdom, to another a message of knowledge by means of the same Spirit." — 1 Corinthians 12:8</div>
-      </div>
-    </div>
-    <div class="gift-bars-section">
-      <div class="gift-bars-title">Manifestation Gifts — How you ranked</div>
-      <div class="gift-bar-row"><div class="gift-bar-rank r1">#1</div><div class="gift-bar-label top">Knowledge</div><div class="gift-bar-track"><div class="gift-bar-fill-r1" style="width:50%"></div></div><div class="gift-bar-pct r1">50%</div></div>
-      <div class="gift-bar-row"><div class="gift-bar-rank r2">#2</div><div class="gift-bar-label">Wisdom</div><div class="gift-bar-track"><div class="gift-bar-fill-r2" style="width:45%"></div></div><div class="gift-bar-pct">45%</div></div>
-      <div class="gift-bar-row"><div class="gift-bar-rank r3">#3</div><div class="gift-bar-label">Faith</div><div class="gift-bar-track"><div class="gift-bar-fill-r3" style="width:38%"></div></div><div class="gift-bar-pct">38%</div></div>
-      <div class="gift-bar-row"><div class="gift-bar-rank rn">4</div><div class="gift-bar-label">Discernment</div><div class="gift-bar-track"><div class="gift-bar-fill-rn" style="width:30%"></div></div><div class="gift-bar-pct">30%</div></div>
-    </div>
-    <div class="gift-detail-card">
-      <div class="gift-detail-header"><div class="gift-detail-header-text">Revelation of Spiritual Truth</div></div>
-      <div class="gift-detail-body">
-        <p class="gift-definition">The God-given ability to receive and communicate insights about God, Scripture, and people that go beyond natural learning — received by the Spirit for the building up of the body of Christ. This is not merely intellectual knowledge but Spirit-given revelation that serves others in their walk with God.</p>
-        <div class="gift-attrs-title">Attributes</div>
-        <div class="gift-attr-item"><div class="gift-attr-dot"></div><div class="gift-attr-text">An unusual ability to understand Scripture at depth and make connections others miss</div></div>
-        <div class="gift-attr-item"><div class="gift-attr-dot"></div><div class="gift-attr-text">An occasional awareness of things about people or situations that could not be known naturally</div></div>
-        <div class="gift-attr-item"><div class="gift-attr-dot"></div><div class="gift-attr-text">A drive to study and understand the Word of God in order to serve others</div></div>
-        <div style="height:16px"></div>
-        <div class="gift-attrs-title">Traits</div>
-        <div class="gift-traits-grid">
-          <div class="gift-trait">Given to hours in deep study of Scripture</div>
-          <div class="gift-trait">Often receives understanding at exactly the right moment</div>
-          <div class="gift-trait">Knows facts about people supernaturally</div>
-          <div class="gift-trait">Uses knowledge to build up, not show off</div>
-        </div>
-      </div>
-    </div>
-    <div class="biblical-card" style="background:linear-gradient(135deg,#1a2f52,#1a2f52);margin-bottom:16px;">
-      <div class="biblical-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zM12 8v4M12 16h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-      <div>
-        <div class="biblical-label">Biblical example of this gift</div>
-        <div class="biblical-name">Daniel</div>
-        <div class="biblical-desc">Daniel possessed an extraordinary ability to understand visions, dreams, and the mysteries of God. God gave Daniel knowledge and skill in all learning and wisdom, and understanding in all visions and dreams.</div>
-        <div class="biblical-verse">"As for these four young men, God gave them knowledge and skill in all learning and wisdom." — Daniel 1:17</div>
-      </div>
-    </div>
-    <div class="blind-spot"><div class="blind-spot-icon">⚠️</div><div><div class="blind-spot-title">Watch out for</div><div class="blind-spot-text">Knowledge can puff up without love to anchor it. Guard against using spiritual insight to impress or control others. The gift is given for the body — always use it to serve, not to elevate yourself.</div></div></div>
-  </div>
+  <div class="rs-intro">Your spiritual gifts are the God-given abilities He has placed in you to serve His kingdom. Your Primary Gift is the motivational drive at the core of everything — the reason behind how you naturally serve.</div>
+  ${giftCard(R.g1,'primary','primary-h','Motivational Gift')}
+  ${giftCard(R.g2,'secondary','secondary-h','Ministry Gift')}
+  ${giftCard(R.g3,'supporting','supporting-h','Manifestation Gift')}
 </div>
 
 <!-- ⑤ PASSION -->
-<div class="rs">
+<div class="rs alt">
   <div class="rs-eyebrow"><span class="rs-icon" style="background:#FEF0EF;color:var(--red)"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span>Passion</div>
   <div class="rs-title">Where your heart is most alive</div>
-  <div class="rs-intro">Your passion points to the people you feel most called to serve, the problems you cannot ignore, and the way God has wired you to engage with the needs around you.</div>
+  <div class="rs-intro">Your passion points to the people God has placed on your heart, the problems you cannot ignore, and the ministry context where you come alive.</div>
 
-  <!-- ── PEOPLE ── -->
-  <div style="border:1.5px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:20px;">
-    <!-- Header strip -->
-    <div style="background:var(--blue);padding:20px 24px;display:flex;align-items:center;gap:14px;">
-      <div style="width:40px;height:40px;background:rgba(255,255,255,.12);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><circle cx="12" cy="7" r="4" stroke="white" stroke-width="1.8"/><path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+  <div class="passion-hero">
+    <!-- People -->
+    <div class="pcard">
+      <div class="pcard-header" style="background:var(--blue)">
+        <div class="pcard-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="7" r="4" stroke="white" stroke-width="1.8"/><path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div>
+          <div class="pcard-eyebrow">People</div>
+          <div class="pcard-title">${PPL_META[R.pplS[0][0]].label}</div>
+        </div>
       </div>
-      <div>
-        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.5);margin-bottom:3px;">Passion for People</div>
-        <div style="font-family:Lora,serif;font-size:22px;font-weight:700;color:white;line-height:1;">Teens (13–17)</div>
-      </div>
-    </div>
-    <!-- Age timeline -->
-    <div style="background:white;padding:16px 24px;border-bottom:1px solid var(--border);">
-      <div style="display:flex;gap:4px;margin-bottom:5px;">
-        <div style="flex:1;height:5px;border-radius:3px;background:var(--border);"></div>
-        <div style="flex:1;height:5px;border-radius:3px;background:var(--blue);"></div>
-        <div style="flex:1;height:5px;border-radius:3px;background:var(--border);"></div>
-        <div style="flex:1;height:5px;border-radius:3px;background:var(--border);"></div>
-        <div style="flex:1;height:5px;border-radius:3px;background:var(--border);"></div>
-        <div style="flex:1;height:5px;border-radius:3px;background:var(--border);"></div>
-      </div>
-      <div style="display:flex;justify-content:space-between;">
-        <span style="font-size:8px;font-weight:600;color:var(--muted);">Kids</span>
-        <span style="font-size:8px;font-weight:800;color:var(--blue);">Teens</span>
-        <span style="font-size:8px;font-weight:600;color:var(--muted);">Youth</span>
-        <span style="font-size:8px;font-weight:600;color:var(--muted);">Y.Adults</span>
-        <span style="font-size:8px;font-weight:600;color:var(--muted);">Adults</span>
-        <span style="font-size:8px;font-weight:600;color:var(--muted);">Elderly</span>
+      <div class="pcard-body">
+        ${pplBarsHtml}
+        <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">${PPL_META[R.pplS[0][0]].long}</div>
       </div>
     </div>
-    <!-- All scores -->
-    <div style="background:white;padding:16px 24px;border-bottom:1px solid var(--border);">
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <div style="display:flex;align-items:center;gap:12px;"><div style="font-size:11px;font-weight:700;color:var(--blue);width:100px;flex-shrink:0;">Teens (13–17)</div><div style="flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;"><div style="height:6px;background:var(--blue);width:88%;border-radius:3px;"></div></div><div style="font-size:11px;font-weight:800;color:var(--blue);width:32px;text-align:right;">88%</div></div>
-        <div style="display:flex;align-items:center;gap:12px;"><div style="font-size:11px;font-weight:600;color:var(--muted);width:100px;flex-shrink:0;">Youth (18–21)</div><div style="flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;"><div style="height:6px;background:#4a6fa5;width:72%;border-radius:3px;"></div></div><div style="font-size:11px;font-weight:700;color:var(--muted);width:32px;text-align:right;">72%</div></div>
-        <div style="display:flex;align-items:center;gap:12px;"><div style="font-size:11px;font-weight:600;color:var(--muted);width:100px;flex-shrink:0;">Young Adults</div><div style="flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;"><div style="height:6px;background:#6a8fc5;width:60%;border-radius:3px;"></div></div><div style="font-size:11px;font-weight:700;color:var(--muted);width:32px;text-align:right;">60%</div></div>
-        <div style="display:flex;align-items:center;gap:12px;"><div style="font-size:11px;font-weight:600;color:var(--muted);width:100px;flex-shrink:0;">Kids (4–12)</div><div style="flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;"><div style="height:6px;background:#8aacdb;width:48%;border-radius:3px;"></div></div><div style="font-size:11px;font-weight:700;color:var(--muted);width:32px;text-align:right;">48%</div></div>
-        <div style="display:flex;align-items:center;gap:12px;"><div style="font-size:11px;font-weight:600;color:var(--muted);width:100px;flex-shrink:0;">Adults</div><div style="flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;"><div style="height:6px;background:#aac3e8;width:40%;border-radius:3px;"></div></div><div style="font-size:11px;font-weight:700;color:var(--muted);width:32px;text-align:right;">40%</div></div>
-        <div style="display:flex;align-items:center;gap:12px;"><div style="font-size:11px;font-weight:600;color:var(--muted);width:100px;flex-shrink:0;">Elderly</div><div style="flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;"><div style="height:6px;background:#cdd9f0;width:28%;border-radius:3px;"></div></div><div style="font-size:11px;font-weight:700;color:var(--muted);width:32px;text-align:right;">28%</div></div>
+
+    <!-- Issues -->
+    <div class="pcard">
+      <div class="pcard-header" style="background:var(--red)">
+        <div class="pcard-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="white" stroke-width="1.8"/><path d="M12 8v4M12 16h.01" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div>
+          <div class="pcard-eyebrow">Issues</div>
+          <div class="pcard-title">${ISS_META[R.issTop].label}</div>
+        </div>
+      </div>
+      <div class="pcard-body">
+        ${issBarsHtml}
+        <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">${ISS_META[R.issTop].long}</div>
       </div>
     </div>
-    <!-- Detail -->
-    <div style="background:#F7F9FC;padding:20px 24px;">
-      <div style="font-size:13px;color:var(--text);line-height:1.85;">You are drawn to walking alongside teenagers in their most formative, identity-shaping years. You feel a deep pull toward the questions, pressures, and struggles that define adolescence — and a genuine desire to help young people discover who they are in Christ before the world defines them. You believe these years matter more than most people realise, and you are willing to invest your time, energy, and care into the lives of those who most need a steady, faithful presence.</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;">
-        <span style="background:white;border:1.5px solid var(--border);color:var(--blue);font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;">Identity formation</span>
-        <span style="background:white;border:1.5px solid var(--border);color:var(--blue);font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;">Mentoring</span>
-        <span style="background:white;border:1.5px solid var(--border);color:var(--blue);font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;">Belonging</span>
-        <span style="background:white;border:1.5px solid var(--border);color:var(--blue);font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;">Faith formation</span>
+
+    <!-- Role -->
+    <div class="pcard">
+      <div class="pcard-header" style="background:var(--gold)">
+        <div class="pcard-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="var(--blue)" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+        <div>
+          <div class="pcard-eyebrow" style="color:rgba(38,63,106,.5)">Role</div>
+          <div class="pcard-title" style="color:var(--blue)">${R.roleLabel}</div>
+        </div>
+      </div>
+      <div class="pcard-body">
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:8px">Role Spectrum</div>
+        <div style="position:relative;height:8px;background:var(--bg);border-radius:4px;margin-bottom:6px;overflow:visible;border:1px solid var(--border)">
+          ${roleSpectrumHtml}
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+          
+        </div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.7;padding-top:10px;border-top:1px solid var(--border)">${ROLE_META&&ROLE_META[R.roleLabel]?ROLE_META[R.roleLabel].long:'You are drawn to thinking deeply, exploring ideas, and reimagining how things could be. You thrive when given space to innovate.'}</div>
+      </div>
+    </div>
+
+    <!-- Ministry -->
+    <div class="pcard">
+      <div class="pcard-header" style="background:var(--blue)">
+        <div class="pcard-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div>
+          <div class="pcard-eyebrow">Ministry</div>
+          <div class="pcard-title">${MIN_META[R.minTop].label}</div>
+        </div>
+      </div>
+      <div class="pcard-body">
+        ${minBarsHtml}
+        <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">${MIN_META[R.minTop].long}</div>
       </div>
     </div>
   </div>
-
-  <!-- ── ISSUES ── -->
-  <div style="border:1.5px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:20px;">
-    <div style="background:var(--red);padding:20px 24px;display:flex;align-items:center;gap:14px;">
-      <div style="width:40px;height:40px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><circle cx="12" cy="12" r="9" stroke="white" stroke-width="1.8"/><path d="M12 8v4M12 16h.01" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
-      </div>
-      <div>
-        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.55);margin-bottom:3px;">Passion for Issues</div>
-        <div style="font-family:Lora,serif;font-size:22px;font-weight:700;color:white;line-height:1;">Spiritual</div>
-      </div>
-    </div>
-    <!-- Bars -->
-    <div style="background:white;padding:16px 24px;border-bottom:1px solid var(--border);">
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <div style="display:flex;align-items:center;gap:12px;"><div style="font-size:11px;font-weight:700;color:var(--red);width:100px;flex-shrink:0;">Spiritual</div><div style="flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;"><div style="height:6px;background:var(--red);width:85%;border-radius:3px;"></div></div><div style="font-size:11px;font-weight:800;color:var(--red);width:32px;text-align:right;">85%</div></div>
-        <div style="display:flex;align-items:center;gap:12px;"><div style="font-size:11px;font-weight:600;color:var(--muted);width:100px;flex-shrink:0;">Relational</div><div style="flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;"><div style="height:6px;background:#e0604a;width:70%;border-radius:3px;"></div></div><div style="font-size:11px;font-weight:700;color:var(--muted);width:32px;text-align:right;">70%</div></div>
-        <div style="display:flex;align-items:center;gap:12px;"><div style="font-size:11px;font-weight:600;color:var(--muted);width:100px;flex-shrink:0;">Physical</div><div style="flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;"><div style="height:6px;background:#e8806e;width:55%;border-radius:3px;"></div></div><div style="font-size:11px;font-weight:700;color:var(--muted);width:32px;text-align:right;">55%</div></div>
-        <div style="display:flex;align-items:center;gap:12px;"><div style="font-size:11px;font-weight:600;color:var(--muted);width:100px;flex-shrink:0;">Intellectual</div><div style="flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;"><div style="height:6px;background:#f0a090;width:45%;border-radius:3px;"></div></div><div style="font-size:11px;font-weight:700;color:var(--muted);width:32px;text-align:right;">45%</div></div>
-      </div>
-    </div>
-    <!-- Detail -->
-    <div style="background:#F7F9FC;padding:20px 24px;">
-      <div style="font-size:13px;color:var(--text);line-height:1.85;">When you see someone spiritually lost, empty, or disconnected from God — you cannot just walk past. Something in you has to respond. You feel a deep and urgent burden for the spiritual needs of people, believing that no amount of physical or emotional help can substitute for a person finding their way back to God. You are energised by conversations about faith, calling, identity, and purpose — and you naturally find yourself drawing others toward the things of God.</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;">
-        <span style="background:white;border:1.5px solid var(--border);color:var(--red);font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;">Evangelism</span>
-        <span style="background:white;border:1.5px solid var(--border);color:var(--red);font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;">Discipleship</span>
-        <span style="background:white;border:1.5px solid var(--border);color:var(--red);font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;">Prayer</span>
-        <span style="background:white;border:1.5px solid var(--border);color:var(--red);font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;">Calling</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── ROLES ── -->
-  <div style="border:1.5px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:20px;">
-    <div style="background:var(--gold);padding:20px 24px;display:flex;align-items:center;gap:14px;">
-      <div style="width:40px;height:40px;background:rgba(38,63,106,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="var(--blue)" stroke-width="1.8" stroke-linejoin="round"/></svg>
-      </div>
-      <div>
-        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:rgba(38,63,106,.55);margin-bottom:3px;">Passion for Roles</div>
-        <div style="font-family:Lora,serif;font-size:22px;font-weight:700;color:var(--blue);line-height:1;">Thinker / Pioneer</div>
-      </div>
-    </div>
-    <!-- Spectrum -->
-    <div style="background:white;padding:20px 24px;border-bottom:1px solid var(--border);">
-      <div style="height:9px;background:var(--bg);border-radius:5px;position:relative;margin-bottom:10px;overflow:visible;">
-        <div style="position:absolute;left:0;top:0;height:9px;background:linear-gradient(90deg,var(--gold),var(--blue));width:80%;border-radius:5px;"></div>
-        <div style="position:absolute;left:80%;top:-4px;width:18px;height:18px;border-radius:50%;background:var(--blue);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,.2);transform:translateX(-50%);"></div>
-      </div>
-      <div style="display:flex;justify-content:space-between;">
-        <span style="font-size:9px;font-weight:700;color:var(--muted);">Doer</span>
-        <span style="font-size:9px;font-weight:700;color:var(--muted);">Supervisor</span>
-        <span style="font-size:9px;font-weight:700;color:var(--muted);">Manager</span>
-        <span style="font-size:9px;font-weight:700;color:var(--muted);">Innovator</span>
-        <span style="font-size:9px;font-weight:800;color:var(--blue);">Thinker</span>
-      </div>
-    </div>
-    <!-- Detail -->
-    <div style="background:#F7F9FC;padding:20px 24px;">
-      <div style="font-size:13px;color:var(--text);line-height:1.85;">You love thinking deeply, exploring new ideas, and challenging the status quo. You thrive when given space to imagine, question, and innovate — rather than simply execute what has always been done. You are energised by big questions, long-term vision, and the challenge of solving problems no one else has cracked. You work best with freedom to think and the trust of those around you to go in new directions.</div>
-    </div>
-  </div>
-
-  <!-- ── MINISTRY ── -->
-  <div style="border:1.5px solid var(--border);border-radius:18px;overflow:hidden;">
-    <div style="background:var(--blue);padding:20px 24px;display:flex;align-items:center;gap:14px;">
-      <div style="width:40px;height:40px;background:rgba(255,255,255,.12);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
-      </div>
-      <div>
-        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.5);margin-bottom:3px;">Passion for Ministry</div>
-        <div style="font-family:Lora,serif;font-size:22px;font-weight:700;color:white;line-height:1;">Discipleship</div>
-      </div>
-    </div>
-    <!-- Ministry scores -->
-    <div style="background:white;padding:16px 24px;border-bottom:1px solid var(--border);">
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <div style="display:flex;align-items:center;gap:12px;"><div style="font-size:11px;font-weight:700;color:var(--blue);width:100px;flex-shrink:0;">Discipleship</div><div style="flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;"><div style="height:6px;background:var(--blue);width:90%;border-radius:3px;"></div></div><div style="font-size:11px;font-weight:800;color:var(--blue);width:32px;text-align:right;">90%</div></div>
-        <div style="display:flex;align-items:center;gap:12px;"><div style="font-size:11px;font-weight:600;color:var(--muted);width:100px;flex-shrink:0;">Compassion</div><div style="flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;"><div style="height:6px;background:#4a6fa5;width:72%;border-radius:3px;"></div></div><div style="font-size:11px;font-weight:700;color:var(--muted);width:32px;text-align:right;">72%</div></div>
-        <div style="display:flex;align-items:center;gap:12px;"><div style="font-size:11px;font-weight:600;color:var(--muted);width:100px;flex-shrink:0;">Evangelism</div><div style="flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;"><div style="height:6px;background:#6a8fc5;width:65%;border-radius:3px;"></div></div><div style="font-size:11px;font-weight:700;color:var(--muted);width:32px;text-align:right;">65%</div></div>
-        <div style="display:flex;align-items:center;gap:12px;"><div style="font-size:11px;font-weight:600;color:var(--muted);width:100px;flex-shrink:0;">Leadership</div><div style="flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;"><div style="height:6px;background:#8aacdb;width:55%;border-radius:3px;"></div></div><div style="font-size:11px;font-weight:700;color:var(--muted);width:32px;text-align:right;">55%</div></div>
-        <div style="display:flex;align-items:center;gap:12px;"><div style="font-size:11px;font-weight:600;color:var(--muted);width:100px;flex-shrink:0;">Missions</div><div style="flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;"><div style="height:6px;background:#aac3e8;width:45%;border-radius:3px;"></div></div><div style="font-size:11px;font-weight:700;color:var(--muted);width:32px;text-align:right;">45%</div></div>
-      </div>
-    </div>
-    <!-- Detail -->
-    <div style="background:#F7F9FC;padding:20px 24px;">
-      <div style="font-size:13px;color:var(--text);line-height:1.85;">You are committed to walking alongside others as they deepen their relationship with Christ. You enjoy teaching, mentoring, encouraging, and helping others mature in their faith journey. You are passionate about helping believers not just know about God, but truly live out their faith with strength and conviction. You believe spiritual growth is a lifelong journey and find deep joy in investing time, wisdom, and care into others' spiritual development.</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;">
-        <span style="background:white;border:1.5px solid var(--border);color:var(--blue);font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;">One-on-one mentoring</span>
-        <span style="background:white;border:1.5px solid var(--border);color:var(--blue);font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;">Small group leadership</span>
-        <span style="background:white;border:1.5px solid var(--border);color:var(--blue);font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;">Spiritual formation</span>
-        <span style="background:white;border:1.5px solid var(--border);color:var(--blue);font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;">Teaching</span>
-      </div>
-    </div>
-  </div>
-
 </div>
 
 <!-- ⑥ POTENTIAL -->
-<div class="rs alt">
-  <div class="rs-eyebrow"><span class="rs-icon" style="background:#FEF0EF;color:var(--blue)"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span>Potential</div>
+<div class="rs">
+  <div class="rs-eyebrow"><span class="rs-icon" style="background:#FDF5DC;color:#7a5a00"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span>Potential</div>
   <div class="rs-title">How God has wired your mind</div>
-  <div class="rs-intro">Your Potential reveals how God has wired your mind to learn, think, and create. Every intelligence is a gift — and yours points directly toward the unique contribution only you can make.</div>
+  <div class="rs-intro">Your Primary Intelligence reveals how God designed your mind to think, learn, and create. Every intelligence is equally valid — yours points to the contribution only you can make.</div>
+
   <div class="mi-primary-card">
     <div class="mi-primary-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M9 18V12l-2-1M15 18V12l2-1M12 3v2M12 3l-4 3M12 3l4 3M5 10l1 2M19 10l-1 2M8 19l1 1M16 19l-1 1M12 21v-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <div>
+    <div class="mi-primary-body">
       <div class="mi-primary-label">Primary Intelligence · #1 of 8</div>
-      <div class="mi-primary-name">Musical</div>
-      <div class="mi-primary-smart">Music Smart · 19% of your profile</div>
-      <div class="mi-primary-desc">Musical intelligence includes the recognition and use of rhythmic and tonal patterns, and sensitivity to sounds from the environment, the human voice, and musical instruments. You think in music, you hear patterns, and you experience emotional depth through sound.</div>
+      <div class="mi-primary-name">${miTopMeta.name}</div>
+      <div class="mi-primary-smart">${miTopMeta.smart} · ${Math.round(R.miPct(miTop)*100)}% of your profile</div>
+      <div class="mi-primary-desc">${miTopMeta.desc}</div>
     </div>
   </div>
-  <div class="radar-wrap">
-    <svg viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg" width="520" height="520">
-      <polygon points="260,60 409,154 409,366 260,460 111,366 111,154" fill="none" stroke="#e5e7eb" stroke-width="1.5"/>
-      <polygon points="260,102 369,169 369,331 260,398 151,331 151,169" fill="none" stroke="#e5e7eb" stroke-width="1"/>
-      <polygon points="260,144 329,184 329,296 260,336 191,296 191,184" fill="none" stroke="#e5e7eb" stroke-width="1"/>
-      <polygon points="260,186 289,199 289,261 260,274 231,261 231,199" fill="none" stroke="#e5e7eb" stroke-width="1"/>
-      <line x1="260" y1="260" x2="260" y2="60" stroke="#e5e7eb" stroke-width="1"/>
-      <line x1="260" y1="260" x2="409" y2="154" stroke="#e5e7eb" stroke-width="1"/>
-      <line x1="260" y1="260" x2="409" y2="366" stroke="#e5e7eb" stroke-width="1"/>
-      <line x1="260" y1="260" x2="260" y2="460" stroke="#e5e7eb" stroke-width="1"/>
-      <line x1="260" y1="260" x2="111" y2="366" stroke="#e5e7eb" stroke-width="1"/>
-      <line x1="260" y1="260" x2="111" y2="154" stroke="#e5e7eb" stroke-width="1"/>
-      <!-- data polygon: PEOPLE=13, WORD=17, NUMBER=9, PICTURE=15, BODY=9, MUSIC=19, SELF=13, NATURE=9 mapped to 8 axes -->
-      <polygon points="260,135 381,168 393,310 260,432 151,340 131,190 210,222 240,192" fill="rgba(38,63,106,0.15)" stroke="#263F6A" stroke-width="3" stroke-linejoin="round"/>
-      <text x="260" y="48" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" font-weight="800" fill="#263F6A">PEOPLE</text>
-      <text x="260" y="60" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#EFBD47">13%</text>
-      <text x="424" y="152" text-anchor="start" font-family="DM Sans,sans-serif" font-size="12" font-weight="800" fill="#263F6A">WORD</text>
-      <text x="424" y="164" text-anchor="start" font-family="DM Sans,sans-serif" font-size="11" fill="#EFBD47">17%</text>
-      <text x="424" y="370" text-anchor="start" font-family="DM Sans,sans-serif" font-size="12" font-weight="800" fill="#263F6A">NUMBER</text>
-      <text x="424" y="382" text-anchor="start" font-family="DM Sans,sans-serif" font-size="11" fill="#EFBD47">9%</text>
-      <text x="260" y="480" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" font-weight="800" fill="#263F6A">PICTURE</text>
-      <text x="260" y="492" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#EFBD47">15%</text>
-      <text x="96" y="370" text-anchor="end" font-family="DM Sans,sans-serif" font-size="12" font-weight="800" fill="#263F6A">BODY</text>
-      <text x="96" y="382" text-anchor="end" font-family="DM Sans,sans-serif" font-size="11" fill="#EFBD47">9%</text>
-      <text x="96" y="152" text-anchor="end" font-family="DM Sans,sans-serif" font-size="12" font-weight="800" fill="#263F6A">MUSIC</text>
-      <text x="96" y="164" text-anchor="end" font-family="DM Sans,sans-serif" font-size="11" fill="#EFBD47">19%</text>
-    </svg>
-  </div>
-  <div class="mi-legend">
-    <div class="mi-legend-item"><div class="mi-legend-dot" style="background:#263F6A"></div><div class="mi-legend-name">Music Smart</div><div class="mi-legend-pct">19%</div></div>
-    <div class="mi-legend-item"><div class="mi-legend-dot" style="background:#F7403A"></div><div class="mi-legend-name">Word Smart</div><div class="mi-legend-pct">17%</div></div>
-    <div class="mi-legend-item"><div class="mi-legend-dot" style="background:#EFBD47"></div><div class="mi-legend-name">Picture Smart</div><div class="mi-legend-pct">15%</div></div>
-    <div class="mi-legend-item"><div class="mi-legend-dot" style="background:var(--blue)"></div><div class="mi-legend-name">People Smart</div><div class="mi-legend-pct">13%</div></div>
-    <div class="mi-legend-item"><div class="mi-legend-dot" style="background:var(--blue)"></div><div class="mi-legend-name">Self Smart</div><div class="mi-legend-pct">13%</div></div>
-    <div class="mi-legend-item"><div class="mi-legend-dot" style="background:#3a6aad"></div><div class="mi-legend-name">Nature Smart</div><div class="mi-legend-pct">11%</div></div>
-    <div class="mi-legend-item"><div class="mi-legend-dot" style="background:#8899b8"></div><div class="mi-legend-name">Number Smart</div><div class="mi-legend-pct">9%</div></div>
-    <div class="mi-legend-item"><div class="mi-legend-dot" style="background:#aab4c8"></div><div class="mi-legend-name">Body Smart</div><div class="mi-legend-pct">9%</div></div>
+
+  <div class="pathway-grid">
+    <div style="display:flex;justify-content:center;align-items:center;padding:8px;">
+      ${buildRadar(R.miPct)}
+    </div>
+    <div class="wcard">
+      <div class="wcard-lbl">All 8 Intelligences</div>
+      ${miLegendHtml}
+    </div>
   </div>
 </div>
 
 <!-- ⑦ PERSONALITY -->
-<div class="rs">
+<div class="rs alt">
   <div class="rs-eyebrow"><span class="rs-icon" style="background:#EBF0F8;color:var(--blue)"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>Personality</div>
   <div class="rs-title">How you are wired to engage the world</div>
   <div class="rs-intro">Your personality type reveals your natural preferences — how you gain energy, process information, make decisions, and approach structure. There are no right or wrong types.</div>
+
   <div class="pers-type-card">
-    <div class="pers-letters"><div class="pers-letter">I</div><div class="pers-letter">N</div><div class="pers-letter">T</div><div class="pers-letter">J</div></div>
-    <div class="pers-name">Mastermind</div>
-    <div class="pers-role">Strategist · 2.1% of people · The Architect</div>
+    <div class="pers-type-top">
+      <div class="pers-letters">${persLettersHtml}</div>
+      <div>
+        <div class="pers-type-name">${pm.name}</div>
+        <div class="pers-type-role">${pm.role}</div>
+      </div>
+    </div>
     <div class="pers-dims">
-      <div class="dim-row"><div class="dim-pole left">E</div><div class="dim-pct-left">35%</div><div class="dim-track"><div class="dim-l" style="width:35%"></div><div class="dim-r" style="width:65%"></div></div><div class="dim-pct-right">65%</div><div class="dim-pole right">I</div></div>
-      <div class="dim-row"><div class="dim-pole left">S</div><div class="dim-pct-left">28%</div><div class="dim-track"><div class="dim-l" style="width:28%"></div><div class="dim-r" style="width:72%"></div></div><div class="dim-pct-right">72%</div><div class="dim-pole right">N</div></div>
-      <div class="dim-row"><div class="dim-pole left">T</div><div class="dim-pct-left">60%</div><div class="dim-track"><div class="dim-l" style="width:60%"></div><div class="dim-r" style="width:40%"></div></div><div class="dim-pct-right">40%</div><div class="dim-pole right">F</div></div>
-      <div class="dim-row"><div class="dim-pole left">J</div><div class="dim-pct-left">70%</div><div class="dim-track"><div class="dim-l" style="width:70%"></div><div class="dim-r" style="width:30%"></div></div><div class="dim-pct-right">30%</div><div class="dim-pole right">P</div></div>
+      ${persDimsHtml}
     </div>
   </div>
+
   <div class="pers-panels">
-    <div class="pers-panel strengths">
-      <div class="pers-panel-title"><svg viewBox="0 0 24 24" fill="none" width="13" height="13"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Strengths</div>
-      <div class="pers-panel-item">Strategic long-term thinking and vision</div>
-      <div class="pers-panel-item">High standards and drive for excellence</div>
-      <div class="pers-panel-item">Independent and decisive in difficult situations</div>
-      <div class="pers-panel-item">Deep commitment to growth and self-improvement</div>
+    <div class="pers-panel str">
+      <div class="pers-panel-title"><svg viewBox="0 0 24 24" fill="none" width="12" height="12"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Strengths</div>
+      ${persStrHtml}
     </div>
-    <div class="pers-panel watchout">
-      <div class="pers-panel-title"><svg viewBox="0 0 24 24" fill="none" width="13" height="13"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Watch out for</div>
-      <div class="pers-panel-item">Can come across as cold or overly critical</div>
-      <div class="pers-panel-item">May struggle to delegate or trust others fully</div>
-      <div class="pers-panel-item">Perfectionism can slow progress or exhaust the team</div>
-      <div class="pers-panel-item">Can undervalue emotional needs — in yourself and others</div>
+    <div class="pers-panel wtch">
+      <div class="pers-panel-title"><svg viewBox="0 0 24 24" fill="none" width="12" height="12"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Watch out for</div>
+      ${persWatchHtml}
     </div>
+  </div>
+
+  <div class="wcard" style="margin-top:16px">
+    <div class="wcard-lbl">About the ${R.mtype} — ${pm.name}</div>
+    <div style="font-size:13px;color:var(--text);line-height:1.75">${pm.desc||''}</div>
   </div>
 </div>
 
 <!-- ⑧ PATHWAY -->
-<div class="rs alt">
+<div class="rs">
   <div class="rs-eyebrow"><span class="rs-icon" style="background:#EBF0F8;color:var(--blue)"><svg viewBox="0 0 24 24" fill="none"><path d="M3 12h18M3 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Pathway</div>
   <div class="rs-title">How your experiences have shaped you</div>
   <div class="rs-intro">Your Pathway reflects the current state of the five key life areas that form the foundation from which you live and serve. Healthy pathways fuel purposeful living.</div>
+
   <div class="pathway-overall">
-    <div class="pathway-overall-score">62%</div>
+    <div class="pathway-overall-score">${R.op}%</div>
     <div class="pathway-overall-right">
-      <div class="pathway-overall-stage">Surviving · Overall Pathway</div>
-      <div class="pathway-overall-bar"><div class="pathway-overall-fill"></div></div>
-      <div class="pathway-overall-desc">You are making progress in each area of your life. There is real growth happening — and real areas that still need attention and investment. You are not thriving yet, but you are on the way.</div>
+      <div class="pathway-stage ${R.os}">${R.os.charAt(0).toUpperCase()+R.os.slice(1)}</div>
+      <div class="pathway-bar"><div class="pathway-bar-fill" style="width:${R.op}%"></div></div>
+      <div class="pathway-overall-desc">${R.os==='thriving'?'You are flourishing across your life areas. These strong foundations give you a powerful platform to serve, give, and lead others.':R.os==='surviving'?'You are making real progress. There is growth happening, and real areas still needing investment. You are on your way — keep going.':'There are significant challenges in some areas of your life right now. Be honest about them. Bringing them to God and a trusted community is the next step.'}</div>
     </div>
   </div>
-  <div class="pathway-grid">
-    <div>
-      <svg viewBox="0 0 260 260" width="260" height="260" xmlns="http://www.w3.org/2000/svg">
-        <polygon points="130,20 234,94 196,216 64,216 26,94" fill="none" stroke="#E2DDD5" stroke-width="1.5"/>
-        <polygon points="130,52 196,109 170,183 90,183 64,109" fill="none" stroke="#E2DDD5" stroke-width="1"/>
-        <polygon points="130,84 158,124 144,150 116,150 102,124" fill="none" stroke="#E2DDD5" stroke-width="1"/>
-        <line x1="130" y1="130" x2="130" y2="20" stroke="#E2DDD5" stroke-width="1"/>
-        <line x1="130" y1="130" x2="234" y2="94" stroke="#E2DDD5" stroke-width="1"/>
-        <line x1="130" y1="130" x2="196" y2="216" stroke="#E2DDD5" stroke-width="1"/>
-        <line x1="130" y1="130" x2="64" y2="216" stroke="#E2DDD5" stroke-width="1"/>
-        <line x1="130" y1="130" x2="26" y2="94" stroke="#E2DDD5" stroke-width="1"/>
-        <polygon points="130,47 202,105 176,192 84,192 58,105" fill="rgba(38,63,106,0.12)" stroke="#263F6A" stroke-width="2" stroke-linejoin="round"/>
-        <text x="130" y="12" text-anchor="middle" font-family="DM Sans" font-size="11" font-weight="800" fill="#263F6A">FAITH</text>
-        <text x="130" y="22" text-anchor="middle" font-family="DM Sans" font-size="10" fill="#EFBD47">70%</text>
-        <text x="246" y="98" text-anchor="start" font-family="DM Sans" font-size="11" font-weight="800" fill="#263F6A">FAMILY</text>
-        <text x="246" y="109" text-anchor="start" font-family="DM Sans" font-size="10" fill="#EFBD47">65%</text>
-        <text x="208" y="226" text-anchor="middle" font-family="DM Sans" font-size="11" font-weight="800" fill="#263F6A">FINANCES</text>
-        <text x="208" y="237" text-anchor="middle" font-family="DM Sans" font-size="10" fill="#EFBD47">55%</text>
-        <text x="52" y="226" text-anchor="middle" font-family="DM Sans" font-size="11" font-weight="800" fill="#263F6A">FITNESS</text>
-        <text x="52" y="237" text-anchor="middle" font-family="DM Sans" font-size="10" fill="#EFBD47">60%</text>
-        <text x="14" y="98" text-anchor="end" font-family="DM Sans" font-size="11" font-weight="800" fill="#263F6A">FRIENDS</text>
-        <text x="14" y="109" text-anchor="end" font-family="DM Sans" font-size="10" fill="#EFBD47">60%</text>
-      </svg>
+
+  <div class="pathway-top">
+    <div style="display:flex;justify-content:center;align-items:center;">
+      ${pathSvgHtml}
     </div>
-    <div class="pathway-areas-list">
-      <div class="pathway-area-row"><div class="pathway-area-icon pa-faith"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div><div class="pathway-area-name">Faith</div><div class="pathway-area-track"><div class="pathway-area-fill-surviving" style="width:70%"></div></div><div class="pathway-area-score">70%</div><div class="pathway-area-badge badge-surviving">Surviving</div></div>
-      <div class="pathway-area-row"><div class="pathway-area-icon pa-family"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="7" r="3" stroke="currentColor" stroke-width="1.8"/><circle cx="17" cy="8" r="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 20c0-3.314 2.686-6 6-6s6 2.686 6 6M17 20c0-2.209-1.343-4-3-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="pathway-area-name">Family</div><div class="pathway-area-track"><div class="pathway-area-fill-surviving" style="width:65%"></div></div><div class="pathway-area-score">65%</div><div class="pathway-area-badge badge-surviving">Surviving</div></div>
-      <div class="pathway-area-row"><div class="pathway-area-icon pa-finances"><svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="20" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M2 10h20" stroke="currentColor" stroke-width="1.8"/></svg></div><div class="pathway-area-name">Finances</div><div class="pathway-area-track"><div class="pathway-area-fill-striving" style="width:55%"></div></div><div class="pathway-area-score">55%</div><div class="pathway-area-badge badge-surviving">Surviving</div></div>
-      <div class="pathway-area-row"><div class="pathway-area-icon pa-fitness"><svg viewBox="0 0 24 24" fill="none"><path d="M6.5 6.5h11M6.5 17.5h11M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="4" cy="6.5" r="1.5" stroke="currentColor" stroke-width="1.8"/><circle cx="4" cy="17.5" r="1.5" stroke="currentColor" stroke-width="1.8"/><circle cx="20" cy="6.5" r="1.5" stroke="currentColor" stroke-width="1.8"/><circle cx="20" cy="17.5" r="1.5" stroke="currentColor" stroke-width="1.8"/></svg></div><div class="pathway-area-name">Fitness</div><div class="pathway-area-track"><div class="pathway-area-fill-surviving" style="width:60%"></div></div><div class="pathway-area-score">60%</div><div class="pathway-area-badge badge-surviving">Surviving</div></div>
-      <div class="pathway-area-row"><div class="pathway-area-icon pa-friends"><svg viewBox="0 0 24 24" fill="none"><circle cx="8" cy="7" r="3" stroke="currentColor" stroke-width="1.8"/><circle cx="16" cy="7" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M2 20c0-3.314 2.686-6 6-6s6 2.686 6 6M16 14c1.5 0 4 .9 4 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="pathway-area-name">Friends</div><div class="pathway-area-track"><div class="pathway-area-fill-surviving" style="width:60%"></div></div><div class="pathway-area-score">60%</div><div class="pathway-area-badge badge-surviving">Surviving</div></div>
+    <div>
+      ${pathAreasHtml}
     </div>
   </div>
 </div>
@@ -3356,6 +3104,7 @@ function buildReport(){
     Download Report
   </button>
 </div>
+
 
 `;
 
