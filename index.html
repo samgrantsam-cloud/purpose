@@ -2527,7 +2527,6 @@ function sectionHead(num, key, eyebrow, title, lead, color){
     <div class="section-eyebrow eyebrow" style="color:${color}">
       <span class="section-icon ${PKEY[key]}">${I[key]}</span>${eyebrow}
     </div>
-    <div class="section-num serif">${num}</div>
     <h2 class="section-title">${title}</h2>
     <p class="section-lead">${lead}</p>
   </div>`;
@@ -2584,10 +2583,6 @@ function buildCover(){
     </div>
     <div class="cover-bottom">
       ${showScripture("cover")?`<div class="cover-verse">${SCRIPTURE.cover.t}<cite>${SCRIPTURE.cover.c}</cite></div>`:`<div></div>`}
-      <div class="cover-ps">
-        <span class="cover-p lit">G</span><span class="cover-p lit">P</span>
-        <span class="cover-p lit">P</span><span class="cover-p lit">P</span><span class="cover-p lit">P</span>
-      </div>
     </div>
   </header>`;
 }
@@ -2600,7 +2595,7 @@ function buildGlance(){
     {k:"passion",p:"02",label:"Passion",val:P.passion.ministry.value,sub:`Heart for ${P.passion.people.value}`},
     {k:"potential",p:"03",label:"Potential",val:topMi.name,sub:topMi.smart},
     {k:"personality",p:"04",label:"Personality",val:P.personality.type,sub:P.personality.role},
-    {k:"pathway",p:"05",label:"Pathway",val:STAGE_LABEL[P.pathway.overallStage],sub:`Faith & Friends thriving`},
+    {k:"pathway",p:"05",label:"Pathway",val:STAGE_LABEL[P.pathway.overallStage],sub:`${P.op||''}% overall`},
   ];
   const glanceCards=cells.map(c=>`<div class="glance k-${c.k}">
     <div class="glance-top"><span class="glance-ico">${I[c.k]}</span><span class="glance-p serif">${c.p}</span></div>
@@ -2613,239 +2608,213 @@ function buildGlance(){
     <span class="pd-label serif">${d.label}</span>
     <span class="pd-sub">${d.sub}</span>
   </div>`).join("");
-  const themes=(P.purposeThemes||[]).map(t=>`<span class="purpose-theme">${t}</span>`).join("");
-  const detail=(P.purposeDetail||[]).map(p=>`<p>${p}</p>`).join("");
-  const band = (TWEAKS.purposeStatement && has(P.purpose)) ? `<div class="purpose-band">
-      <div class="eyebrow">${P.firstName}'s Purpose Statement</div>
-      <p class="purpose-statement">${P.purpose}</p>
-      ${has(themes)?`<div class="purpose-themes" style="margin-top:22px">${themes}</div>`:''}
-      ${has(detail)?`<div class="purpose-detail">${detail}</div>`:''}
-    </div>` : "";
   return `<section class="section tint">
     <div class="section-head">
-      <div class="section-eyebrow eyebrow" style="color:var(--gold)">${I.spark} The Five P's framework</div>
+      <div class="section-eyebrow eyebrow" style="color:var(--gold)">${I.spark} The Five P\'s framework</div>
       <h2 class="section-title">Your purpose, in five dimensions</h2>
       <p class="section-lead">God rarely reveals purpose through a single result — He reveals it through patterns. The YOUnique framework reads your design across five God-given dimensions. Where these five converge, your unique purpose comes into focus.</p>
     </div>
     <div class="p-descriptors">${pdesc}</div>
     <div class="glance-grid">${glanceCards}</div>
-    ${band}
   </section>`;
 }
 
-/* ── GIFTS ── */
 function buildGifts(){
-  const P=PROFILE, g=GIFT_META[P.gifts[0].key];
-  const primaryPct=pctOf(P.gifts[0].score,15);
-  const list = TWEAKS.giftBars==="all" ? P.gifts : P.gifts.slice(0,8);
-  const barsTitle = TWEAKS.giftBars==="all" ? `All ${P.gifts.length} Gifts, Ranked` : "Your Top Gift Mix";
-  const bars=list.map((x,i)=>{
-    const pct=pctOf(x.score,15);
-    const cls=i===0?"fill-navy":i===1?"fill-gold":i===2?"fill-red":"fill-mute";
-    return `<div class="bar-row ${i===0?'top':''}">
-      <div class="bar-rank serif">${i+1}</div>
-      <div class="bar-main">
-        <div class="bar-top"><span class="bar-name">${x.name}</span><span class="bar-pct">${pct}%</span></div>
-        <div class="bar-track"><div class="bar-fill ${cls}" data-w="${pct}"></div></div>
-      </div></div>`;
-  }).join("");
-  const attrs=(g.attrs||[]).map(a=>`<li><span class="dot"></span><span>${a}</span></li>`).join("");
-  const traits=(g.traits||[]).map(t=>`<div class="trait">${t}</div>`).join("");
-  const fits=[];
-  if(has(g.ministry)) fits.push(`<div class="fit"><div class="fit-lbl">Ministry Fit</div><div class="fit-text">${g.ministry}</div></div>`);
-  if(has(g.careers))  fits.push(`<div class="fit"><div class="fit-lbl">Vocational Fit</div><div class="fit-text">${g.careers}</div></div>`);
-  return `<section class="section">
-    ${sectionHead("Section 01","gifts","Primary Spiritual Gift",g.name,"How the Holy Spirit has supernaturally equipped you to build up the body of Christ. Your gift is the <em>how</em> of your purpose.","var(--navy)")}
+  const P=PROFILE;
+  const PRIMARY_KEYS=['A','D','G','J','M'];
+  const SECONDARY_KEYS=['B','E','H','K','N','O','P'];
+  const SUPPORTING_KEYS=['C','F','I','L'];
 
-    <div class="gift-hero">
-      <div class="gift-hero-l">
-        <span class="gift-rank-tag">Primary Gift · Top 1 of ${P.gifts.length}</span>
-        <div class="gift-name">${g.name}</div>
-        <div class="gift-thrust">${g.thrust}</div>
-        <p class="gift-def">${g.def}</p>
+  const primaryGifts=P.gifts.filter(g=>PRIMARY_KEYS.includes(g.key));
+  const secondaryGifts=P.gifts.filter(g=>SECONDARY_KEYS.includes(g.key));
+  const supportingGifts=P.gifts.filter(g=>SUPPORTING_KEYS.includes(g.key));
+
+  const g1=P.gifts[0];
+  const g1meta=GIFT_META[g1.key]||{};
+  const primaryPct=pctOf(g1.score,15);
+
+  // Full gift detail card — used for all three tiers
+  function giftDetailBlock(gKey, tier, tierColor, barsTitle, barsList){
+    const gm=GIFT_META[gKey]||{}; if(!gm.name) return '';
+    const pct=pctOf((barsList.find(x=>x.key===gKey)||{score:0}).score,15);
+    const tierColors={Primary:'var(--navy)',Secondary:'var(--red)',Supporting:'var(--navy-deep)'};
+    const bg=tierColors[tier]||'var(--navy)';
+    const tagColors={Primary:'rgba(239,189,71,.16)',Secondary:'rgba(255,255,255,.15)',Supporting:'rgba(239,189,71,.2)'};
+    const tagTextColors={Primary:'var(--gold)',Secondary:'rgba(255,255,255,.9)',Supporting:'var(--gold)'};
+    const catLabel=tier==='Primary'?'Motivational Gift':tier==='Secondary'?'Ministry Gift':'Manifestation Gift';
+    const attrs=(gm.attrs||[]).map(a=>`<li><span class="dot"></span><span>${a}</span></li>`).join('');
+    const traits=(gm.traits||[]).map(t=>`<div class="trait">${t}</div>`).join('');
+    const bars=barsList.map((x,i)=>{
+      const p=pctOf(x.score,15);
+      const cls=i===0?'fill-navy':i===1?'fill-gold':i===2?'fill-red':'fill-mute';
+      return `<div class="bar-row ${i===0?'top':''}">
+        <div class="bar-rank serif">${i+1}</div>
+        <div class="bar-main">
+          <div class="bar-top"><span class="bar-name">${x.name}</span><span class="bar-pct">${p}%</span></div>
+          <div class="bar-track"><div class="bar-fill ${cls}" data-w="${p}"></div></div>
+        </div></div>`;
+    }).join('');
+    const fits=[];
+    if(has(gm.ministry)) fits.push(`<div class="fit"><div class="fit-lbl">Ministry fit</div><div class="fit-text">${gm.ministry}</div></div>`);
+    if(has(gm.careers))  fits.push(`<div class="fit"><div class="fit-lbl">Vocational fit</div><div class="fit-text">${gm.careers}</div></div>`);
+    const theologyRows=[];
+    if(has(gm.theology))    theologyRows.push(`<div class="fit"><div class="fit-lbl">Theology of God</div><div class="fit-text">${gm.theology}</div></div>`);
+    if(has(gm.vocation))    theologyRows.push(`<div class="fit"><div class="fit-lbl">Core vocation</div><div class="fit-text">${gm.vocation}</div></div>`);
+    if(has(gm.impulse))     theologyRows.push(`<div class="fit"><div class="fit-lbl">Impulse</div><div class="fit-text">${gm.impulse}</div></div>`);
+    if(has(gm.effect))      theologyRows.push(`<div class="fit"><div class="fit-lbl">Effect</div><div class="fit-text">${gm.effect}</div></div>`);
+    if(has(gm.focus))       theologyRows.push(`<div class="fit"><div class="fit-lbl">Focus</div><div class="fit-text">${gm.focus}</div></div>`);
+    if(has(gm.spirituality))theologyRows.push(`<div class="fit"><div class="fit-lbl">Spirituality</div><div class="fit-text">${gm.spirituality}</div></div>`);
+    if(has(gm.leadership))  theologyRows.push(`<div class="fit"><div class="fit-lbl">Leadership style</div><div class="fit-text">${gm.leadership}</div></div>`);
+    if(has(gm.disciple))    theologyRows.push(`<div class="fit"><div class="fit-lbl">Disciple-making</div><div class="fit-text">${gm.disciple}</div></div>`);
+    if(has(gm.metrics))     theologyRows.push(`<div class="fit"><div class="fit-lbl">Metrics</div><div class="fit-text">${gm.metrics}</div></div>`);
+    const C = 2*Math.PI*32; const off=C*(1-pct/100);
+    return `
+    <div style="margin-top:${tier==='Primary'?0:48}px;${tier!=='Primary'?'padding-top:40px;border-top:1px solid var(--line);':''}">
+      <div class="eyebrow" style="color:${bg==='var(--red)'?'var(--red)':'var(--navy)'};margin-bottom:16px;gap:8px;">
+        <span class="section-icon" style="background:${bg==='var(--red)'?'var(--red-soft)':'var(--navy-soft)'};color:${bg==='var(--red)'?'var(--red)':'var(--navy)'}">${I.gifts}</span>
+        ${tier} Spiritual Gift
       </div>
-      <div class="gift-hero-r">
-        <div class="gift-arc">${arc(primaryPct,{fg:'#EFBD47'})}
-          <div class="gift-arc-num"><span class="gift-arc-pct">${primaryPct}%</span><span class="gift-arc-lbl">Strength</span></div>
+      <div class="gift-hero" style="background:${bg};">
+        <div class="gift-hero-l">
+          <span class="gift-rank-tag" style="background:${tagColors[tier]};color:${tagTextColors[tier]}">${catLabel}</span>
+          <div class="gift-name">${gm.name}</div>
+          <div class="gift-thrust">${(gm.thrust||'').toUpperCase()}</div>
+          <p class="gift-def">${gm.def||''}</p>
         </div>
-        ${has(g.rarity)?`<div class="gift-rarity">Held by only <b>${g.rarity}</b><br>— ${g.rarityNote||''}</div>`:''}
+        <div class="gift-hero-r">
+          <div class="gift-arc">
+            <svg viewBox="0 0 80 80" width="80" height="80" style="transform:rotate(-90deg)">
+              <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="7"/>
+              <circle cx="40" cy="40" r="32" fill="none" stroke="#EFBD47" stroke-width="7"
+                stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}"
+                class="arc-anim" data-off="${off.toFixed(1)}"/>
+            </svg>
+            <div class="gift-arc-num"><span class="gift-arc-pct">${pct}%</span><span class="gift-arc-lbl">Strength</span></div>
+          </div>
+          ${has(gm.rarity)?`<div class="gift-rarity">Held by only <b>${gm.rarity}</b><br>— ${gm.rarityNote||'of believers'}</div>`:''}
+        </div>
       </div>
-    </div>
 
-    <div class="grid g-2" style="margin-top:24px;align-items:flex-start">
-      <div class="card card-pad">
-        <div class="subhead">${barsTitle}</div>
-        <div class="bars">${bars}</div>
+      <div class="grid g-2" style="margin-top:24px;align-items:flex-start">
+        <div class="card card-pad">
+          <div class="subhead">${barsTitle}</div>
+          <div class="bars">${bars}</div>
+        </div>
+        <div class="card card-pad">
+          <div class="subhead">What this gift looks like</div>
+          <ul class="list-clean">${attrs}</ul>
+          ${has(gm.blind)?`<div class="blind" style="margin-top:20px">
+            <div class="blind-lbl">${I.warn} Blind spot to watch</div>
+            <div class="blind-text">${gm.blind}</div>
+          </div>`:''}
+        </div>
       </div>
-      <div class="card card-pad">
-        <div class="subhead">What this gift looks like</div>
-        <ul class="list-clean">${attrs}</ul>
-        ${has(g.blind)?`<div class="blind" style="margin-top:20px">
-          <div class="blind-lbl">${I.warn} Blind spot to watch</div>
-          <div class="blind-text">${g.blind}</div>
+
+      <div class="subhead" style="margin-top:34px">People with the gift of ${gm.name}…</div>
+      <div class="trait-grid">${traits}</div>
+
+      ${(has(gm.figure)||fits.length)?`<div class="grid g-2" style="margin-top:24px;align-items:stretch">
+        ${has(gm.figure)?`<div class="figure-card">
+          <div class="figure-emblem">${I.scroll}</div>
+          <div>
+            <div class="figure-lbl">Biblical model</div>
+            <div class="figure-name serif">${gm.figure}</div>
+            <div class="figure-ref">${gm.figureRef||''}</div>
+            <div class="figure-note">${gm.figureNote||''}</div>
+          </div>
         </div>`:''}
-      </div>
-    </div>
-
-    <div class="subhead" style="margin-top:34px">People with the gift of ${g.name}…</div>
-    <div class="trait-grid">${traits}</div>
-
-    ${(has(g.figure)||fits.length)?`<div class="grid g-2" style="margin-top:24px;align-items:stretch">
-      ${has(g.figure)?`<div class="figure-card">
-        <div class="figure-emblem">${I.scroll}</div>
-        <div>
-          <div class="figure-lbl">Biblical Model</div>
-          <div class="figure-name serif">${g.figure}</div>
-          <div class="figure-ref">${g.figureRef||''}</div>
-          <div class="figure-note">${g.figureNote||''}</div>
-        </div>
+        ${fits.length?`<div class="fit-grid">${fits.join('')}</div>`:''}
       </div>`:''}
-      ${fits.length?`<div class="fit-grid">${fits.join("")}</div>`:''}
-    </div>`:''}
 
-    ${buildGiftStackSection()}
+      ${theologyRows.length?`<div class="subhead" style="margin-top:28px">Theological fingerprint</div>
+      <div class="fit-grid" style="grid-template-columns:repeat(3,1fr)">${theologyRows.join('')}</div>`:''}
+    </div>`;
+  }
 
+  const primarySection = giftDetailBlock(
+    g1.key,'Primary','var(--navy)',
+    'Primary Gifts — How you ranked',
+    primaryGifts
+  );
+  const sec=secondaryGifts[0];
+  const secondarySection = sec?giftDetailBlock(
+    sec.key,'Secondary','var(--red)',
+    'Ministry Gifts — How you ranked',
+    secondaryGifts
+  ):'';
+  const sup=supportingGifts[0];
+  const supportingSection = sup?giftDetailBlock(
+    sup.key,'Supporting','var(--navy-deep)',
+    'Manifestation Gifts — How you ranked',
+    supportingGifts
+  ):'';
+
+  return `<section class="section">
+    <div class="section-head">
+      <div class="section-eyebrow eyebrow" style="color:var(--navy)">${I.gifts} Spiritual Gifts</div>
+      <h2 class="section-title">What God has equipped you to do</h2>
+      <p class="section-lead">Your spiritual gifts are the God-given capacities the Holy Spirit placed in you to build up the body of Christ. Every believer has a primary drive, a secondary support, and a manifestation gift — together they describe the unique way the Spirit works through you.</p>
+    </div>
+    ${primarySection}
+    ${secondarySection}
+    ${supportingSection}
     ${showScripture("gifts")?`<div style="margin-top:30px">${scriptureBlock("gifts")}</div>`:''}
   </section>`;
-}
-
-/* full (primary-style) presentation for secondary/supporting */
-function fullGift(key, tier, pct){
-  const g=GIFT_META[key]; if(!g) return "";
-  const attrs=(g.attrs||[]).map(a=>`<li><span class="dot"></span><span>${a}</span></li>`).join("");
-  const traits=(g.traits||[]).map(t=>`<div class="trait">${t}</div>`).join("");
-  const fits=[];
-  if(has(g.ministry)) fits.push(`<div class="fit"><div class="fit-lbl">Ministry Fit</div><div class="fit-text">${g.ministry}</div></div>`);
-  if(has(g.careers))  fits.push(`<div class="fit"><div class="fit-lbl">Vocational Fit</div><div class="fit-text">${g.careers}</div></div>`);
-  const tierLabel = tier==="Secondary" ? "② Secondary Gift" : "③ Supporting Gift";
-  return `<div class="full-gift-block" style="margin-top:24px">
-    <div class="gift-hero">
-      <div class="gift-hero-l">
-        <span class="gift-rank-tag">${tierLabel}</span>
-        <div class="gift-name">${g.name}</div>
-        <div class="gift-thrust">${g.thrust}</div>
-        <p class="gift-def">${g.def}</p>
-      </div>
-      <div class="gift-hero-r">
-        <div class="gift-arc">${arc(pct,{fg:'#EFBD47'})}
-          <div class="gift-arc-num"><span class="gift-arc-pct">${pct}%</span><span class="gift-arc-lbl">Strength</span></div></div>
-        <div class="gift-rarity">${tier} motivational<br>gift in your design</div>
-      </div>
-    </div>
-    <div class="grid g-2" style="margin-top:20px;align-items:flex-start">
-      <div class="card card-pad"><div class="subhead">What this gift looks like</div><ul class="list-clean">${attrs}</ul>
-        ${has(g.blind)?`<div class="blind" style="margin-top:20px"><div class="blind-lbl">${I.warn} Blind spot to watch</div><div class="blind-text">${g.blind}</div></div>`:''}</div>
-      <div class="card card-pad"><div class="subhead">People with the gift of ${g.name}…</div><div class="trait-grid">${traits}</div></div>
-    </div>
-    ${(has(g.figure)||fits.length)?`<div class="grid g-2" style="margin-top:16px;align-items:stretch">
-      ${has(g.figure)?`<div class="figure-card"><div class="figure-emblem">${I.scroll}</div><div>
-        <div class="figure-lbl">Biblical Model</div><div class="figure-name serif">${g.figure}</div>
-        <div class="figure-ref">${g.figureRef||''}</div><div class="figure-note">${g.figureNote||''}</div></div></div>`:''}
-      ${fits.length?`<div class="fit-grid">${fits.join("")}</div>`:''}
-    </div>`:''}
-  </div>`;
-}
-
-function giftStackCard(tier, key, pct){
-  const m=GIFT_META[key]; if(!m) return "";
-  const cls = tier==="Secondary"?"secondary":"supporting";
-  const traits=(m.traits||[]).slice(0,4).map(t=>`<span class="gstack-trait">${t}</span>`).join("");
-  return `<div class="gstack ${cls}">
-    <span class="gstack-tier">${tier==="Secondary"?"② Secondary Gift":"③ Supporting Gift"}</span>
-    <div class="gstack-head">
-      <div class="gstack-name serif">${m.name}</div>
-      <div class="gstack-pct">${pct}%</div>
-    </div>
-    <div class="gstack-thrust">${m.thrust}</div>
-    <p class="gstack-def">${m.def}</p>
-    <div class="gstack-mini-h">How it shows up in you</div>
-    <div class="gstack-traits">${traits}</div>
-    ${has(m.figure)?`<div class="gstack-figure">
-      <span class="fig-em">${I.scroll}</span>
-      <div>
-        <div class="fig-ref">Biblical model · ${m.figureRef||''}</div>
-        <div class="fig-name serif">${m.figure}</div>
-        <div class="fig-note">${m.figureNote||''}</div>
-      </div>
-    </div>`:''}
-    ${has(m.blind)?`<div class="gstack-blind"><b>Watch:</b> ${m.blind}</div>`:''}
-  </div>`;
-}
-
-function buildGiftStackSection(){
-  const P=PROFILE, sec=P.gifts[1], sup=P.gifts[2];
-  if(!sec) return "";
-  if(TWEAKS.giftDetail==="full"){
-    return `<div class="subhead" style="margin-top:42px">Secondary & supporting gifts — in full detail</div>
-      <p class="section-lead" style="margin-bottom:4px;font-size:14px">${P.giftStackNote}</p>
-      ${fullGift(sec.key,"Secondary",pctOf(sec.score,15))}
-      ${sup?fullGift(sup.key,"Supporting",pctOf(sup.score,15)):''}`;
-  }
-  return `<div class="subhead" style="margin-top:40px">Your gift stack — what supports your primary gift</div>
-  <p class="section-lead" style="margin-bottom:22px;font-size:14px">${P.giftStackNote}</p>
-  <div class="gift-stack">
-    ${giftStackCard("Secondary", sec.key, pctOf(sec.score,15))}
-    ${sup?giftStackCard("Supporting", sup.key, pctOf(sup.score,15)):''}
-  </div>`;
 }
 
 /* ── PASSION ── */
 function buildPassion(){
   const P=PROFILE.passion;
-  const summary=[
-    {c:"people",cat:"People I'm drawn to",val:P.people.value,desc:P.people.desc},
-    {c:"issues",cat:"Issue that moves me",val:P.issue.value,desc:P.issue.desc},
-    {c:"roles",cat:"Role I play",val:P.role.value,desc:P.role.desc},
-    {c:"ministry",cat:"Ministry focus",val:P.ministry.value,desc:P.ministry.desc},
-  ].map(x=>`<div class="psum c-${x.c}">
-    <div class="psum-cat">${x.cat}</div>
-    <div class="psum-val serif">${x.val}</div>
-    <div class="psum-desc">${x.desc}</div>
-  </div>`).join("");
+  const issMax=Math.max(...P.issuesBars.map(b=>b.pct))||1;
 
+  // 4 equal summary boxes
+  const summary=[
+    {c:"people",bg:"var(--navy)",cat:"People I\\'m drawn to",val:P.people.value,desc:P.people.desc},
+    {c:"issues",bg:"var(--red)",cat:"Issue that moves me",val:P.issue.value,desc:P.issue.desc},
+    {c:"roles",bg:"var(--gold)",catColor:"rgba(38,63,106,.6)",valColor:"var(--navy)",cat:"Role I play",val:P.role.value,desc:P.role.desc},
+    {c:"ministry",bg:"#1F7A57",cat:"Ministry focus",val:P.ministry.value,desc:P.ministry.desc},
+  ].map(x=>`<div style="background:${x.bg};border-radius:16px;padding:24px 22px;display:flex;flex-direction:column;min-height:160px;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:${x.catColor||'rgba(255,255,255,.65)'};margin-bottom:auto;">${x.cat}</div>
+    <div style="font-family:Lora,serif;font-size:21px;font-weight:600;color:${x.valColor||'#fff'};line-height:1.15;margin-top:12px;margin-bottom:5px;">${x.val}</div>
+    <div style="font-size:12px;line-height:1.5;color:${x.valColor?'rgba(38,63,106,.65)':'rgba(255,255,255,.75)'};">${x.desc}</div>
+  </div>`).join('');
+
+  // Issues bars
   const issueBars=P.issuesBars.map(b=>`<div class="bar-row">
     <div class="bar-rank">·</div>
     <div class="bar-main"><div class="bar-top"><span class="bar-name">${b.name} needs</span><span class="bar-pct">${b.pct}%</span></div>
-    <div class="bar-track"><div class="bar-fill fill-${b.c}" data-w="${b.pct}"></div></div></div></div>`).join("");
+    <div class="bar-track"><div class="bar-fill fill-${b.c}" data-w="${b.pct}"></div></div></div></div>`).join('');
 
-  const fitItems = TWEAKS.passionMinistry==="assessed" ? P.ministryFit.filter(m=>m.top) : P.ministryFit;
-  const cols = Math.min(fitItems.length,3) || 1;
+  // Ministry fit
+  const fitItems=P.ministryFit.slice(0,4);
   const fits=fitItems.map(m=>`<div class="trait" style="${m.top?'border-left-color:var(--red);background:var(--red-soft)':''}">
-    <div style="font-weight:700;color:${m.top?'var(--red)':'var(--navy)'};font-size:13.5px;margin-bottom:3px">${m.name}${m.top?' ★':''}</div>
-    <div style="color:var(--muted);font-size:12.5px">${m.desc}</div></div>`).join("");
-  const fitHead = TWEAKS.passionMinistry==="assessed" ? "Your assessed ministry focus" : "Where your passion finds expression";
-
-  const stmt = (TWEAKS.passionStatement && has(P.statement)) ? `<div class="passion-statement">
-      <div class="ps-lbl">Your Passion Statement</div>
-      <p>${P.statement}</p>
-    </div>` : "";
+    <div style="font-weight:700;color:${m.top?'var(--red)':'var(--navy)'};font-size:13.5px;margin-bottom:3px;">${m.name}${m.top?' ★':''}</div>
+    <div style="color:var(--muted);font-size:12.5px;">${m.desc}</div></div>`).join('');
 
   return `<section class="section tint">
-    ${sectionHead("Section 02","passion","Passion","What sets your heart on fire","The God-given burden that pulls at you — the <em>who</em> and the <em>why</em> of your purpose. Passion is where your energy and your calling meet.","var(--red)")}
+    ${sectionHead("02","passion","Passion","What sets your heart on fire","The God-given burden that pulls at you — the <em>who</em> and the <em>why</em> of your purpose. Passion is where your energy and your calling meet.","var(--red)")}
 
-    ${stmt}
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;">${summary}</div>
 
-    <div class="passion-summary">${summary}</div>
-
-    <div class="grid g-2" style="margin-top:24px">
+    <div class="grid g-2" style="margin-bottom:24px;">
       <div class="card card-pad">
         <div class="subhead">Needs that move you most</div>
         <div class="bars">${issueBars}</div>
       </div>
       <div class="card card-pad">
         <div class="subhead">Your role: ${P.role.value}</div>
-        <div class="spectrum">
+        <div class="spectrum" style="margin-bottom:16px;">
           <div class="spectrum-track"><div class="spectrum-fill" style="width:${P.role.pos}%"></div>
             <div class="spectrum-knob" style="left:${P.role.pos}%"></div></div>
           <div class="spectrum-ends"><span class="spectrum-end">Steady · Stabiliser</span><span class="spectrum-end">Risk-taking · Catalyst</span></div>
         </div>
-        <p style="font-size:13px;line-height:1.65;color:var(--muted);margin-top:16px">${P.role.desc} You bring momentum to a team and aren't afraid to move first — pair that with people who steady and sustain.</p>
+        <p style="font-size:13px;line-height:1.65;color:var(--muted);">${P.role.desc}</p>
       </div>
     </div>
 
-    <div class="subhead" style="margin-top:34px">${fitHead}</div>
-    <div class="trait-grid" style="grid-template-columns:repeat(${cols},1fr)">${fits}</div>
-    ${has(P.peopleNote)?`<p class="note-line">${P.peopleNote}</p>`:''}
+    <div class="subhead">Where your passion finds expression</div>
+    <div class="trait-grid" style="grid-template-columns:repeat(${Math.min(fitItems.length,3)},1fr)">${fits}</div>
+    ${has(P.peopleNote)?`<p style="font-size:13px;line-height:1.7;color:var(--muted);margin-top:16px;">${P.peopleNote}</p>`:''}
 
     ${showScripture("passion")?`<div style="margin-top:30px">${scriptureBlock("passion")}</div>`:''}
   </section>`;
@@ -2989,33 +2958,58 @@ function buildPathway(){
 /* ── CANVAS ── */
 function buildCanvas(){
   const P=PROFILE;
-  const cells=[
-    {k:"gifts",p:"Gift",val:P.gifts[0].name,sub:"Supported by "+P.gifts[1].name+" & "+P.gifts[2].name},
-    {k:"passion",p:"Passion",val:P.passion.ministry.value,sub:"Spiritual needs of "+P.passion.people.value+", as a "+P.passion.role.value},
-    {k:"potential",p:"Potential",val:P.mi[0].name,sub:P.mi[0].smart+", strong with self & words"},
-    {k:"personality",p:"Personality",val:P.personality.type+" · "+P.personality.role,sub:"Warm · visionary · decisive (E·N·F·J)"},
-    {k:"pathway",p:"Pathway",val:STAGE_LABEL[P.pathway.overallStage]+" & growing",sub:"Faith & friends thriving; finances & fitness next"},
-  ].map(c=>`<div class="cv">
-    <div class="cv-top"><span class="cv-ico ${PKEY[c.k]}">${I[c.k]}</span><span class="cv-p">${c.p}</span></div>
-    <div class="cv-val serif">${c.val}</div><div class="cv-sub">${c.sub}</div>
-  </div>`).join("");
+  const g1=P.gifts[0]||{}, g2=P.gifts.find(g=>['B','E','H','K','N','O','P'].includes(g.key))||P.gifts[1]||{}, g3=P.gifts.find(g=>['C','F','I','L'].includes(g.key))||P.gifts[2]||{};
+  const paStr=Object.keys(P.pathway.areas.reduce((o,a)=>{o[a.name]=a.score+'/20';return o;},{}))
+    .map(k=>k+' '+P.pathway.areas.find(a=>a.name===k).score+'/20').join(' · ');
+  const row1=[
+    {lbl:'Primary Spiritual Gift · Motivational',val:g1.name||'',sub:GIFT_META[g1.key]?GIFT_META[g1.key].thrust:''},
+    {lbl:'Secondary Spiritual Gift · Ministry',val:g2.name||'',sub:GIFT_META[g2.key]?GIFT_META[g2.key].thrust:''},
+    {lbl:'Supporting Gift · Manifestation',val:g3.name||'',sub:GIFT_META[g3.key]?GIFT_META[g3.key].thrust:''},
+  ].map(c=>`<div style="padding:18px 16px;background:rgba(255,255,255,.04);border-radius:6px;">
+    <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.35);margin-bottom:6px;">${c.lbl}</div>
+    <div style="font-family:Lora,serif;font-size:16px;font-weight:700;color:var(--gold);margin-bottom:4px;line-height:1.2;">${c.val}</div>
+    <div style="font-size:11px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em;">${(c.sub||'').substring(0,40)}</div>
+  </div>`).join('');
+  const row2=[
+    {lbl:'Passion — People',val:P.passion.people.value,desc:P.passion.people.desc.substring(0,100)+'…'},
+    {lbl:'Passion — Ministry',val:P.passion.ministry.value,desc:P.passion.ministry.desc.substring(0,100)+'…'},
+    {lbl:'Passion — Role',val:P.passion.role.value,desc:P.passion.role.desc.substring(0,80)+'…'},
+    {lbl:'Passion — Issues',val:P.passion.issue.value,desc:P.passion.issue.desc.substring(0,100)+'…'},
+  ].map(c=>`<div style="padding:18px 16px;background:rgba(255,255,255,.04);border-radius:6px;">
+    <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.35);margin-bottom:6px;">${c.lbl}</div>
+    <div style="font-family:Lora,serif;font-size:16px;font-weight:700;color:var(--gold);margin-bottom:4px;line-height:1.2;">${c.val}</div>
+    <div style="font-size:11px;color:rgba(255,255,255,.45);line-height:1.6;margin-top:6px;">${c.desc}</div>
+  </div>`).join('');
+  const topMi=P.mi[0]||{};
+  const row3=[
+    {lbl:'Potential',val:`${topMi.name} — ${topMi.smart}`,desc:`${P.mi.slice(0,3).map(m=>m.name).join(', ')} are your strongest intelligences.`},
+    {lbl:'Personality',val:`${P.personality.type} — ${P.personality.role}`,desc:P.personality.desc.substring(0,100)+'…'},
+    {lbl:'Pathway',val:`${STAGE_LABEL[P.pathway.overallStage]} · ${P.op||''}%`,desc:P.pathway.areas.map(a=>`${a.name} ${a.score}/20`).join(' · ')},
+  ].map(c=>`<div style="padding:18px 16px;background:rgba(255,255,255,.04);border-radius:6px;">
+    <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.35);margin-bottom:6px;">${c.lbl}</div>
+    <div style="font-family:Lora,serif;font-size:16px;font-weight:700;color:var(--gold);margin-bottom:4px;line-height:1.2;">${c.val}</div>
+    <div style="font-size:11px;color:rgba(255,255,255,.45);line-height:1.6;margin-top:6px;">${c.desc}</div>
+  </div>`).join('');
   return `<section class="section navy">
     <div class="section-head">
       <div class="section-eyebrow eyebrow" style="color:var(--gold)">${I.spark} The Synthesis</div>
       <h2 class="section-title">Your Purpose Canvas</h2>
       <p class="section-lead" style="color:rgba(255,255,255,.66)">Read left to right, this is the through-line of who God made you to be — all five lenses on one frame, converging on a single calling.</p>
     </div>
-    <div class="canvas">
-      <div class="canvas-title serif">${P.name}'s purpose, in one frame</div>
-      <p class="canvas-sub">Each lens sharpens the others. Together they point clearly toward how you're meant to serve.</p>
-      <div class="canvas-grid">${cells}</div>
-      ${has(P.canvasSynthesis)?`<p class="canvas-synthesis">${P.canvasSynthesis}</p>`:''}
+    <div style="background:#1e3252;border-radius:20px;padding:32px;border:1px solid rgba(239,189,71,.15);position:relative;overflow:hidden;">
+      <div style="position:absolute;left:50%;top:-180px;width:520px;height:520px;border-radius:50%;transform:translateX(-50%);background:radial-gradient(circle,rgba(239,189,71,.1),transparent 64%);"></div>
+      <div style="font-family:Lora,serif;font-size:20px;font-weight:700;color:var(--gold);margin-bottom:6px;position:relative;z-index:2;">${P.name}'s Purpose Canvas</div>
+      <p style="font-size:13px;color:rgba(255,255,255,.55);margin-bottom:24px;position:relative;z-index:2;max-width:560px;line-height:1.6;">Each lens sharpens the others. Together they point clearly toward how you\\'re meant to serve.</p>
+      <div style="display:flex;flex-direction:column;gap:3px;position:relative;z-index:2;">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:3px;">${row1}</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:3px;">${row2}</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:3px;">${row3}</div>
+      </div>
     </div>
     ${showScripture("canvas")?`<div style="margin-top:34px">${scriptureBlock("canvas")}</div>`:''}
   </section>`;
 }
 
-/* ── NEXT STEPS ── */
 function buildSteps(){
   const showV=showScripture("steps");
   const steps=[
@@ -3115,6 +3109,12 @@ function liveGiftMeta(giftsList) {
 // ── PROFILE BUILDER ──────────────────────────────────────────────────────────
 function buildProfile(R, ST) {
   const giftsSorted = R.gS.map(([k,v]) => ({ key:k, name:GM[k].name, score:v }));
+  // Sort by category order: Motivational first, then Ministry, then Manifestation
+  const PRIMARY_KEYS=['A','D','G','J','M'];
+  const SECONDARY_KEYS=['B','E','H','K','N','O','P'];
+  const SUPPORTING_KEYS=['C','F','I','L'];
+  const catOrder = k => PRIMARY_KEYS.includes(k)?0:SECONDARY_KEYS.includes(k)?1:2;
+  const giftsSortedByCat = [...giftsSorted].sort((a,b)=>catOrder(a.key)-catOrder(b.key)||(b.score-a.score));
   const MI_COLORS = ['#263F6A','#2F4E80','#F7403A','#EFBD47','#1F7A57','#6C8CC4','#B98714','#C8352F'];
   const miSorted = [...R.miS].map(([k],i) => ({
     key:k, name:MI_META[k].name, smart:MI_META[k].smart,
@@ -3162,7 +3162,7 @@ function buildProfile(R, ST) {
       {k:'personality',label:'Personality',sub:'How you relate to others'},
       {k:'pathway',label:'Pathway',sub:'The life you lead from'},
     ],
-    gifts:giftsSorted,
+    gifts:giftsSortedByCat,
     giftStackNote:"Gifts rarely work alone. Your top three form a 'gift stack' — a primary motivation supported by two others that shape <em>how</em> it shows up.",
     passion:{
       statement:'',
@@ -3186,7 +3186,8 @@ function buildProfile(R, ST) {
         R.os==='survive'?'You are making progress in each area. There is real growth — and real space to grow further. You are not thriving yet, but you are on the way.':
         'There are significant challenges in some areas right now. Bringing them to God and a trusted community is the next step.'
     },
-    canvasSynthesis:''
+    canvasSynthesis:'',
+    op:R.op
   };
 }
 
