@@ -3705,6 +3705,18 @@ function buildPassion(){
   const minRaw=P._minRaw||{};
   const minTop=P._minTop||"";
 
+  // Pre-compute top issue key for passion language overrides
+  const issKeysEarly=["spiritual","physical","relational","intellectual"];
+  const issTopEarly=issKeysEarly.map(k=>({k,v:issRaw[k]||0})).sort((a,b)=>b.v-a.v)[0]?.k||"spiritual";
+  const issPassionDescs={
+    spiritual:"You are passionate about people\'s spiritual lives — their walk with God, their faith, their prayer, and their understanding of Scripture.",
+    physical:"You are moved by the physical and practical needs of people — health, hunger, poverty, and hardship stir something deep in you.",
+    relational:"You are passionate about the emotional and relational needs of those around you — broken relationships, loneliness, and wounds move you.",
+    intellectual:"You are passionate about the intellectual and educational needs of others — you long to see people grow, learn, and reach their potential."
+  };
+  // Override P.issue.desc with passion language for hero card
+  if(issPassionDescs[issTopEarly]) P.issue={...P.issue, desc:issPassionDescs[issTopEarly]};
+
   const heroCards=[
     {bg:"#263F6A",eye:"People",title:P.people.value,desc:(P.people.desc||'').substring(0,110)+"…",ico:'rgba(255,255,255,.14)',tc:'#fff',mc:'rgba(255,255,255,.68)'},
     {bg:"#F7403A",eye:"Issue",title:P.issue.value,desc:(P.issue.desc||'').substring(0,110)+"…",ico:'rgba(255,255,255,.14)',tc:'#fff',mc:'rgba(255,255,255,.72)'},
@@ -3738,12 +3750,15 @@ function buildPassion(){
   const issKeys=["spiritual","physical","relational","intellectual"];
   const issLabels={spiritual:"Spiritual",physical:"Physical",relational:"Emotional",intellectual:"Intellectual"};
   const issDescs={
-    spiritual:"You are passionate about strengthening people's walk with God — through teaching, prayer, mentoring, and discipleship.",
-    physical:"You have a heart for meeting practical needs — healthcare, resources, crisis care — that bring healing and dignity.",
-    relational:"You are drawn to healing emotional wounds, strengthening trust, and nurturing empathy in relationships.",
-    intellectual:"You love inspiring learning and equipping others with knowledge to grow into their God-given potential."
+    spiritual:"You are passionate about people's spiritual lives — their walk with God, their faith, their prayer, their understanding of Scripture. You are drawn to help others grow deeper in their relationship with Christ.",
+    physical:"You are moved by the physical and practical needs of people — health, hunger, poverty, and hardship stir something deep in you. You want to bring tangible help and dignity to those who are struggling.",
+    relational:"You are passionate about the emotional and relational needs of those around you — broken relationships, loneliness, and emotional wounds move you to respond with presence, empathy, and care.",
+    intellectual:"You are passionate about the intellectual and educational needs of others — you long to see people grow in understanding, develop their minds, and reach their God-given potential through learning."
   };
   const issSorted=issKeys.map(k=>({k,label:issLabels[k],desc:issDescs[k],v:issRaw[k]||0})).sort((a,b)=>b.v-a.v);
+  // Override hero issue desc with passion language
+  const issTopKey=issSorted[0]?.k||'spiritual';
+  if(issDescs[issTopKey]) P.issue={...P.issue, desc:issDescs[issTopKey]};
   const issMax=issSorted[0]?.v||1;
   const issBars=issSorted.map((is,i)=>{
     const pct=Math.round(is.v/issMax*100);const top=i===0;
@@ -3777,11 +3792,40 @@ function buildPassion(){
     return `<div style="border:0.5px solid ${isTop?'#263F6A':'var(--line,#E7E4DB)'};border-radius:20px;padding:5px 14px;font-size:12px;color:${isTop?'#fff':'#736F66'};background:${isTop?'#263F6A':'#fff'};font-weight:${isTop?500:400};">${MIN_META[k].label}</div>`;
   }).join('');
   const topMin=minSorted[0];
-  const minPoints=[
-    `<b style="color:var(--ink,#20242E);font-weight:600;">You look for opportunities</b> to share your faith and build relational bridges with people who don't yet know Jesus — in everyday conversations and in your community.`,
-    `<b style="color:var(--ink,#20242E);font-weight:600;">You are bold and compassionate</b> — sensing when someone is open and responding with love, not pressure.`,
-    `<b style="color:var(--ink,#20242E);font-weight:600;">You carry a deep burden</b> — a restlessness that keeps you praying, reaching, and going rather than staying comfortable.`
-  ];
+  // Per-ministry bullet points
+  const MIN_POINTS={
+    evangelism:[
+      `<b>You look for opportunities</b> to share your faith and build relational bridges with people who don't yet know Jesus — in everyday conversations and in your community.`,
+      `<b>You are bold and compassionate</b> — sensing when someone is open and responding with love, not pressure.`,
+      `<b>You carry a deep burden</b> — a restlessness that keeps you praying, reaching, and going rather than staying comfortable.`
+    ],
+    discipleship:[
+      `<b>You invest in people for the long haul</b> — you're not just interested in decisions, but in lasting transformation and genuine growth.`,
+      `<b>You create space for questions</b> — discipleship for you means walking with people through doubt, struggle, and breakthrough.`,
+      `<b>You are most alive</b> when someone you've walked with begins to walk with others.`
+    ],
+    compassion:[
+      `<b>You are moved by what others overlook</b> — the unseen, the forgotten, the hurting — and you respond with action, not just sympathy.`,
+      `<b>You serve without conditions</b> — your love is practical, hands-on, and given freely without needing recognition.`,
+      `<b>You believe showing up matters</b> — that presence, care, and practical help communicate the Gospel as powerfully as words.`
+    ],
+    leadership:[
+      `<b>You see potential in people</b> before they see it in themselves — and you invest in drawing it out.`,
+      `<b>You build teams, not just followers</b> — your leadership empowers others to lead, not just to follow.`,
+      `<b>You feel responsible</b> for the growth and direction of those God has placed around you.`
+    ],
+    missions:[
+      `<b>You feel the pull of the unreached</b> — places, people groups, and contexts where the Gospel has not yet taken root.`,
+      `<b>You are willing to go</b> — to be inconvenienced, displaced, and stretched for the sake of people who haven't heard.`,
+      `<b>You carry a global burden</b> — the Great Commission is not an event for you, it's a way of life.`
+    ],
+    creative:[
+      `<b>You communicate truth through beauty</b> — art, music, story, and design are not decoration but proclamation for you.`,
+      `<b>You reach people that words alone can't reach</b> — creative expression opens doors that traditional methods sometimes miss.`,
+      `<b>You are driven to make the invisible visible</b> — to help people experience God's truth, not just understand it.`
+    ]
+  };
+  const minPoints=(MIN_POINTS[minTop]||MIN_POINTS.evangelism).map(p=>p.replace(/<b>/g,'<b style="color:var(--ink,#20242E);font-weight:600;">'));
 
   return `<section class="section tint" style="padding:clamp(48px,7vw,92px) clamp(20px,5vw,72px)">
     <div style="margin-bottom:clamp(32px,4vw,48px);max-width:760px;">
@@ -3799,7 +3843,7 @@ function buildPassion(){
           <div style="font-family:Lora,serif;font-size:17px;font-weight:700;color:#fff;">${P.people.value}</div>
         </div>
         <div style="padding:16px 20px;">
-          <div style="font-size:12.5px;line-height:1.65;color:#736F66;background:var(--paper,#F6F5F1);padding:10px 12px;border-radius:10px;margin-bottom:14px;">${(P.people.desc||'').substring(0,200)}…</div>
+          <div style="font-size:12.5px;line-height:1.65;color:#736F66;background:var(--paper,#F6F5F1);padding:10px 12px;border-radius:10px;margin-bottom:14px;">${((P.people.longDesc||P.people.desc||'').substring(0,350))}…</div>
           <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9A958B;margin-bottom:8px;">How you ranked</div>
           ${pplBars}
         </div>
@@ -4146,6 +4190,11 @@ function buildProfile(R, ST) {
   P.passion._issRaw = R.iss;
   P.passion._minRaw = R.min;
   P.passion._minTop = R.minTop;
+  // Add long descriptions (PPL_META and ISS_META are const in global script, accessible directly)
+  const pplTopKey=Object.entries(R.ppl).sort((a,b)=>b[1]-a[1])[0]?.[0]||'kids';
+  try{ if(PPL_META&&PPL_META[pplTopKey]) P.passion.people.longDesc = PPL_META[pplTopKey].long; }catch(e){}
+  const issTopK=Object.entries(R.iss).sort((a,b)=>b[1]-a[1])[0]?.[0]||'spiritual';
+  try{ if(ISS_META&&ISS_META[issTopK]) P.passion.issue.longDesc = ISS_META[issTopK].long; }catch(e){}
   return P;
 }
 // ── 9. render() — standalone, no _origRender pattern ──
