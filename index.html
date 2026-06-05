@@ -3559,5 +3559,528 @@ function showShareToast(msg){
 }
 </script>
 
+
+
+
+<script>
+// ═══════════════════════════════════════════════════
+// YOUnique v4 — Report Design Integration Patch
+// Overrides: animate, buildGifts, buildPassion,
+//   buildPotential, buildPathway, buildSteps, buildCTA
+// ═══════════════════════════════════════════════════
+
+// ── 1. animate() — fix bars showing immediately ──────
+function animate(){
+  const fills=[...document.querySelectorAll("[data-w]")];
+  const arcs=[...document.querySelectorAll(".arc-anim")];
+  function applyFill(el){ if(el.dataset.w!==undefined) el.style.width=el.dataset.w+"%"; }
+  fills.forEach((f,i)=>{
+    const rect=f.getBoundingClientRect();
+    if(rect.top<window.innerHeight+400) setTimeout(()=>applyFill(f),60+i*8);
+  });
+  const io=new IntersectionObserver((es)=>{
+    es.forEach(e=>{ if(e.isIntersecting){ applyFill(e.target); io.unobserve(e.target); }});
+  },{threshold:0.05,rootMargin:"300px 0px"});
+  fills.forEach(f=>io.observe(f));
+  const aio=new IntersectionObserver((es)=>{
+    es.forEach(e=>{ if(e.isIntersecting){ const c=e.target;
+      c.style.transition="stroke-dashoffset 1.3s cubic-bezier(.4,0,.2,1)";
+      requestAnimationFrame(()=>{ c.style.strokeDashoffset=c.dataset.off; });
+      aio.unobserve(c);
+    }});
+  },{threshold:0.2});
+  arcs.forEach(a=>aio.observe(a));
+}
+
+// ── 2. buildGifts() — 3 tiers each with full detail ──
+function buildGifts(){
+  const P=PROFILE;
+  const PRIMARY_KEYS=['A','D','G','J','M'];
+  const SECONDARY_KEYS=['B','E','H','K','N','O','P'];
+  const SUPPORTING_KEYS=['C','F','I','L'];
+  const primaryGifts=P.gifts.filter(g=>PRIMARY_KEYS.includes(g.key));
+  const secondaryGifts=P.gifts.filter(g=>SECONDARY_KEYS.includes(g.key));
+  const supportingGifts=P.gifts.filter(g=>SUPPORTING_KEYS.includes(g.key));
+
+  const TIER_BG={Primary:'#263F6A',Secondary:'#C0342F',Supporting:'#1A2C4D'};
+  const TIER_LABEL_CSS={Primary:'background:rgba(38,63,106,.08);color:#263F6A;border:0.5px solid rgba(38,63,106,.2)',Secondary:'background:rgba(192,52,47,.07);color:#C0342F;border:0.5px solid rgba(192,52,47,.18)',Supporting:'background:rgba(239,189,71,.12);color:#9A6B00;border:0.5px solid rgba(239,189,71,.3)'};
+  const CAT_LABEL={Primary:'Motivational gift',Secondary:'Ministry gift',Supporting:'Manifestation gift'};
+
+  function giftBlock(gKey,tier,barsList){
+    const gm=GIFT_META[gKey]||{}; if(!gm.name) return '';
+    const topScore=barsList[0]?.score||1;
+    const absP=Math.round((barsList.find(x=>x.key===gKey)?.score||0)/15*100);
+    const bg=TIER_BG[tier];
+    const C=2*Math.PI*32; const off=C*(1-absP/100);
+    const attrs=(gm.attrs||[]).map(a=>`<li style="list-style:none;display:flex;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--line,#E7E4DB);font-size:13px;line-height:1.55;color:var(--ink,#20242E)"><span style="width:5px;height:5px;border-radius:50%;background:#EFBD47;flex-shrink:0;margin-top:7px;"></span><span>${a}</span></li>`).join('');
+    const traits=(gm.traits||[]).map(t=>`<div style="background:var(--paper,#F6F5F1);border:0.5px solid var(--line,#E7E4DB);border-left:2.5px solid #263F6A;border-radius:0 10px 10px 0;padding:10px 12px;font-size:12.5px;line-height:1.5;color:var(--ink,#20242E)">${t}</div>`).join('');
+    const bars=barsList.map((x,i)=>{
+      const p=Math.round(x.score/15*100);
+      const relW=Math.round(x.score/topScore*100);
+      const bc=i===0?'linear-gradient(90deg,#263F6A,#2F4E80)':i===1?'linear-gradient(90deg,#D9A21F,#EFBD47)':i===2?'linear-gradient(90deg,#D8332D,#F7403A)':'#D9D5CA';
+      return `<div style="display:grid;grid-template-columns:32px 1fr 44px;gap:10px;align-items:center;padding:7px 0;${i<barsList.length-1?'border-bottom:0.5px solid var(--line,#E7E4DB)':''}">
+        <span style="font-size:12px;font-weight:500;color:${i===0?'#EFBD47':'#9A958B'};text-align:center;">${i<3?['#1','#2','#3'][i]:i+1}</span>
+        <div><div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:13px;font-weight:${i===0?600:400};color:${i===0?'#263F6A':'var(--ink,#20242E)'}">${x.name}</span><span style="font-size:12px;font-weight:${i===0?700:500};color:${i===0?'#263F6A':'#9A958B'}">${p}%</span></div>
+        <div style="height:7px;border-radius:4px;background:var(--paper,#F6F5F1);border:0.5px solid var(--line,#E7E4DB);overflow:hidden;"><div data-w="${relW}" style="height:100%;border-radius:4px;background:${bc};width:0;transition:width 1.1s ease;"></div></div></div>
+        <span style="display:none">${p}%</span>
+      </div>`;
+    }).join('');
+    const fits=[];
+    if(gm.ministry) fits.push(`<div style="background:var(--paper,#F6F5F1);border:0.5px solid var(--line,#E7E4DB);border-radius:10px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#9A958B;margin-bottom:5px;">Ministry fit</div><div style="font-size:13px;line-height:1.6;color:var(--ink,#20242E)">${gm.ministry}</div></div>`);
+    if(gm.careers)  fits.push(`<div style="background:var(--paper,#F6F5F1);border:0.5px solid var(--line,#E7E4DB);border-radius:10px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#9A958B;margin-bottom:5px;">Vocational fit</div><div style="font-size:13px;line-height:1.6;color:var(--ink,#20242E)">${gm.careers}</div></div>`);
+    return `
+    <div style="${tier!=='Primary'?'margin-top:48px;padding-top:40px;border-top:0.5px solid var(--line,#E7E4DB);':''}">
+      <div style="display:inline-flex;align-items:center;gap:7px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px;${TIER_LABEL_CSS[tier]}">
+        ${tier} Spiritual Gift
+      </div>
+      <div style="background:${bg};border-radius:16px;overflow:hidden;display:grid;grid-template-columns:1fr 120px;margin-bottom:20px;">
+        <div style="padding:28px 28px;position:relative;">
+          <div style="display:inline-flex;align-items:center;gap:5px;background:rgba(239,189,71,.18);color:#EFBD47;font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:20px;margin-bottom:12px;">${CAT_LABEL[tier]}</div>
+          <div style="font-family:Lora,serif;font-size:30px;font-weight:600;color:#fff;line-height:1;margin-bottom:6px;">${gm.name}</div>
+          <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:12px;">${(gm.thrust||'').toUpperCase()}</div>
+          <div style="font-size:13px;line-height:1.7;color:rgba(255,255,255,.72);">${gm.def||''}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px;border-left:0.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);gap:8px;">
+          <div style="position:relative;width:90px;height:90px;">
+            <svg viewBox="0 0 80 80" width="90" height="90" style="transform:rotate(-90deg)">
+              <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="7"/>
+              <circle cx="40" cy="40" r="32" fill="none" stroke="#EFBD47" stroke-width="7"
+                stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}"
+                class="arc-anim" data-off="${off.toFixed(1)}"/>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+              <span style="font-family:Lora,serif;font-size:20px;font-weight:600;color:#fff;line-height:1;">${absP}%</span>
+              <span style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-top:2px;">match</span>
+            </div>
+          </div>
+          ${gm.rarity?`<div style="font-size:11px;color:rgba(255,255,255,.5);text-align:center;line-height:1.4;">Only <b style="color:#EFBD47">${gm.rarity}</b><br>of believers</div>`:''}
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+        <div style="background:#fff;border:0.5px solid var(--line,#E7E4DB);border-radius:16px;padding:20px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9A958B;margin-bottom:12px;">${tier} Gifts — How you ranked</div>
+          ${bars}
+        </div>
+        <div style="background:#fff;border:0.5px solid var(--line,#E7E4DB);border-radius:16px;padding:20px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9A958B;margin-bottom:12px;">What this gift looks like</div>
+          <ul style="margin:0;padding:0">${attrs}</ul>
+          ${gm.blind?`<div style="background:#FDECEB;border:0.5px solid #F6D3D1;border-left:3px solid #C8352F;border-radius:0 10px 10px 0;padding:12px 14px;margin-top:14px;"><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#C8352F;margin-bottom:4px;">⚠ Blind spot</div><div style="font-size:12.5px;line-height:1.55;color:var(--ink,#20242E)">${gm.blind}</div></div>`:''}
+        </div>
+      </div>
+
+      <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9A958B;margin-bottom:10px;">People with the gift of ${gm.name}…</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px;">${traits}</div>
+
+      ${gm.figure?`<div style="background:#1A2C4D;border-radius:16px;padding:20px;display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:start;margin-bottom:16px;">
+        <div style="width:44px;height:44px;border-radius:12px;background:rgba(239,189,71,.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg viewBox="0 0 24 24" fill="none" width="22" height="22"><path d="M6 3h11a2 2 0 0 1 2 2v13a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V5a2 2 0 0 1 2-2Z" stroke="#EFBD47" stroke-width="1.7"/><path d="M8 8h7M8 12h7M8 16h4" stroke="#EFBD47" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:3px;">Biblical model</div>
+          <div style="font-family:Lora,serif;font-size:16px;font-weight:600;color:#fff;margin-bottom:2px;">${gm.figure}</div>
+          <div style="font-size:11px;color:#EFBD47;font-weight:600;margin-bottom:8px;">${gm.figureRef||''}</div>
+          <div style="font-size:13px;line-height:1.65;color:rgba(255,255,255,.65)">${gm.figureNote||''}</div>
+        </div>
+      </div>`:''}
+
+      ${fits.length?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">${fits.join('')}</div>`:''}
+    </div>`;
+  }
+
+  return `<section class="section" style="padding:clamp(48px,7vw,92px) clamp(20px,5vw,72px)">
+    <div class="section-head" style="margin-bottom:clamp(32px,4vw,48px);max-width:760px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;display:inline-flex;align-items:center;gap:9px;color:#263F6A;margin-bottom:16px;">${I.gifts} Spiritual Gifts</div>
+      <h2 style="font-family:Lora,serif;font-size:clamp(30px,4.6vw,50px);font-weight:600;line-height:1.05;letter-spacing:-.015em;color:#263F6A;margin-bottom:18px;">What God has equipped you to do</h2>
+      <p style="font-size:clamp(15px,1.5vw,17px);line-height:1.75;color:#736F66;max-width:680px;">Your spiritual gifts are the God-given capacities the Holy Spirit placed in you to build up the body of Christ. Every believer has a primary drive, a secondary support, and a manifestation gift — together they describe the unique way the Spirit works through you.</p>
+    </div>
+    ${giftBlock(primaryGifts[0]?.key,'Primary',primaryGifts)}
+    ${secondaryGifts[0]?giftBlock(secondaryGifts[0].key,'Secondary',secondaryGifts):''}
+    ${supportingGifts[0]?giftBlock(supportingGifts[0].key,'Supporting',supportingGifts):''}
+    <div style="margin-top:32px;font-family:Lora,serif;font-style:italic;font-size:18px;line-height:1.7;color:#263F6A;max-width:680px;padding-left:20px;border-left:3px solid #EFBD47;">"We have different gifts, according to the grace given to each of us."<cite style="display:block;font-style:normal;font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#EFBD47;margin-top:10px;">Romans 12:6</cite></div>
+  </section>`;
+}
+
+// ── 3. buildPassion() — redesigned with ranked bars + role spectrum ──
+function buildPassion(){
+  const P=PROFILE.passion;
+  const pplRaw=P._pplRaw||{};
+  const issRaw=P._issRaw||{};
+  const minRaw=P._minRaw||{};
+  const minTop=P._minTop||"";
+
+  const heroCards=[
+    {bg:"#263F6A",eye:"People",title:P.people.value,desc:(P.people.desc||'').substring(0,110)+"…",ico:'rgba(255,255,255,.14)',tc:'#fff',mc:'rgba(255,255,255,.68)'},
+    {bg:"#F7403A",eye:"Issue",title:P.issue.value,desc:(P.issue.desc||'').substring(0,110)+"…",ico:'rgba(255,255,255,.14)',tc:'#fff',mc:'rgba(255,255,255,.72)'},
+    {bg:"#EFBD47",eye:"Role",title:P.role.value,desc:(P.role.desc||'').substring(0,110)+"…",ico:'rgba(38,63,106,.14)',tc:'#263F6A',mc:'rgba(38,63,106,.62)'},
+    {bg:"#1F7A57",eye:"Ministry",title:P.ministry.value,desc:(P.ministry.desc||'').substring(0,110)+"…",ico:'rgba(255,255,255,.14)',tc:'#fff',mc:'rgba(255,255,255,.68)'},
+  ];
+  const heroHTML=heroCards.map(c=>`<div style="background:${c.bg};border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:7px;min-height:170px;">
+    <div style="width:30px;height:30px;border-radius:8px;background:${c.ico};flex-shrink:0;"></div>
+    <div style="font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:${c.mc};margin-top:auto;">${c.eye}</div>
+    <div style="font-family:Lora,serif;font-size:18px;font-weight:700;color:${c.tc};line-height:1.1;">${c.title}</div>
+    <div style="font-size:11px;line-height:1.5;color:${c.mc};">${c.desc}</div>
+  </div>`).join('');
+
+  // People bars
+  const pplKeys=["kids","teens","youth","ya","adults","elderly"];
+  const pplLabels={kids:"Kids (4–12)",teens:"Teens (13–17)",youth:"Youth (18–21)",ya:"Young Adults (22–25)",adults:"Adults (25–65)",elderly:"Elderly (65+)"};
+  const pplSorted=pplKeys.map(k=>({k,label:pplLabels[k],v:pplRaw[k]||0})).sort((a,b)=>b.v-a.v);
+  const pplMax=pplSorted[0]?.v||1;
+  const pplBars=pplSorted.map((p,i)=>{
+    const pct=Math.round(p.v/pplMax*100);const top=i===0;
+    return `<div style="display:grid;grid-template-columns:140px 1fr 44px;gap:10px;align-items:center;padding:8px 0;${i<pplSorted.length-1?'border-bottom:0.5px solid var(--line,#E7E4DB)':''}">
+      <span style="font-size:13px;font-weight:${top?600:400};color:${top?'#263F6A':'var(--ink,#20242E)'};">${p.label}</span>
+      <div style="height:6px;border-radius:3px;background:var(--paper,#F6F5F1);border:0.5px solid var(--line,#E7E4DB);overflow:hidden;">
+        <div data-w="${pct}" style="height:100%;border-radius:3px;background:${top?'linear-gradient(90deg,#263F6A,#2F4E80)':'#D9D5CA'};width:0;transition:width 1.1s ease;"></div>
+      </div>
+      <span style="font-size:12px;font-weight:${top?700:500};color:${top?'#263F6A':'#9A958B'};">${pct}%</span>
+    </div>`;
+  }).join('');
+
+  // Issues — only 4: spiritual, physical, relational(emotional), intellectual
+  const issKeys=["spiritual","physical","relational","intellectual"];
+  const issLabels={spiritual:"Spiritual",physical:"Physical",relational:"Emotional",intellectual:"Intellectual"};
+  const issDescs={
+    spiritual:"You are passionate about strengthening people's walk with God — through teaching, prayer, mentoring, and discipleship.",
+    physical:"You have a heart for meeting practical needs — healthcare, resources, crisis care — that bring healing and dignity.",
+    relational:"You are drawn to healing emotional wounds, strengthening trust, and nurturing empathy in relationships.",
+    intellectual:"You love inspiring learning and equipping others with knowledge to grow into their God-given potential."
+  };
+  const issSorted=issKeys.map(k=>({k,label:issLabels[k],desc:issDescs[k],v:issRaw[k]||0})).sort((a,b)=>b.v-a.v);
+  const issMax=issSorted[0]?.v||1;
+  const issBars=issSorted.map((is,i)=>{
+    const pct=Math.round(is.v/issMax*100);const top=i===0;
+    return `<div style="padding:12px 0;${i<issSorted.length-1?'border-bottom:0.5px solid var(--line,#E7E4DB)':''}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">
+        <span style="font-size:13px;font-weight:500;color:${top?'#F7403A':'var(--ink,#20242E)'};">${is.label}</span>
+        <div style="display:flex;align-items:center;gap:8px;min-width:110px;">
+          <div style="flex:1;height:5px;border-radius:3px;background:var(--paper,#F6F5F1);border:0.5px solid var(--line,#E7E4DB);overflow:hidden;">
+            <div data-w="${pct}" style="height:100%;border-radius:3px;background:${top?'#F7403A':'#D9D5CA'};width:0;transition:width 1.1s ease;"></div>
+          </div>
+          <span style="font-size:11px;font-weight:${top?700:500};color:${top?'#F7403A':'#9A958B'};min-width:26px;text-align:right;">${pct}%</span>
+        </div>
+      </div>
+      <div style="font-size:12px;line-height:1.65;color:#736F66;">${is.desc}</div>
+    </div>`;
+  }).join('');
+
+  // Role spectrum — Doer left, Thinker/Pioneer right
+  const roleOrder=['Doer','Supervisor','Manager','Innovator','Thinker / Pioneer'];
+  const rolePos=[10,28,46,66,90][roleOrder.indexOf(P.role.value)]||50;
+  const specLabels=roleOrder.map((r,i)=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;">
+    <div style="width:1px;height:5px;background:var(--line,#E7E4DB);"></div>
+    <span style="font-size:10px;text-align:center;line-height:1.3;color:${r===P.role.value?'#263F6A':'#9A958B'};font-weight:${r===P.role.value?600:400};">${r}</span>
+  </div>`).join('');
+
+  // Ministry
+  const minKeys=["evangelism","discipleship","compassion","leadership","missions"];
+  const minSorted=minKeys.map(k=>({k,name:MIN_META[k].label,desc:MIN_META[k].long||MIN_META[k].short||'',v:minRaw[k]||0,top:k===minTop})).sort((a,b)=>b.v-a.v);
+  const minChips=minKeys.map(k=>{
+    const isTop=k===minTop;
+    return `<div style="border:0.5px solid ${isTop?'#263F6A':'var(--line,#E7E4DB)'};border-radius:20px;padding:5px 14px;font-size:12px;color:${isTop?'#fff':'#736F66'};background:${isTop?'#263F6A':'#fff'};font-weight:${isTop?500:400};">${MIN_META[k].label}</div>`;
+  }).join('');
+  const topMin=minSorted[0];
+  const minPoints=[
+    `<b style="color:var(--ink,#20242E);font-weight:600;">You look for opportunities</b> to share your faith and build relational bridges with people who don't yet know Jesus — in everyday conversations and in your community.`,
+    `<b style="color:var(--ink,#20242E);font-weight:600;">You are bold and compassionate</b> — sensing when someone is open and responding with love, not pressure.`,
+    `<b style="color:var(--ink,#20242E);font-weight:600;">You carry a deep burden</b> — a restlessness that keeps you praying, reaching, and going rather than staying comfortable.`
+  ];
+
+  return `<section class="section tint" style="padding:clamp(48px,7vw,92px) clamp(20px,5vw,72px)">
+    <div style="margin-bottom:clamp(32px,4vw,48px);max-width:760px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;display:inline-flex;align-items:center;gap:9px;color:#F7403A;margin-bottom:16px;">${I.passion} Passion</div>
+      <h2 style="font-family:Lora,serif;font-size:clamp(30px,4.6vw,50px);font-weight:600;line-height:1.05;color:#263F6A;margin-bottom:18px;">What sets your heart on fire</h2>
+      <p style="font-size:clamp(15px,1.5vw,17px);line-height:1.75;color:#736F66;max-width:680px;">The God-given burden that pulls at you — the <em>who</em> and the <em>why</em> of your purpose. Passion is where your energy and your calling meet.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px;">${heroHTML}</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+      <div style="background:#fff;border:0.5px solid var(--line,#E7E4DB);border-radius:16px;overflow:hidden;">
+        <div style="padding:16px 20px 14px;background:#263F6A;display:flex;align-items:center;gap:10px;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.5);">Passion for people</div>
+          <div style="font-family:Lora,serif;font-size:17px;font-weight:700;color:#fff;">${P.people.value}</div>
+        </div>
+        <div style="padding:16px 20px;">
+          <div style="font-size:12.5px;line-height:1.65;color:#736F66;background:var(--paper,#F6F5F1);padding:10px 12px;border-radius:10px;margin-bottom:14px;">${(P.people.desc||'').substring(0,200)}…</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9A958B;margin-bottom:8px;">How you ranked</div>
+          ${pplBars}
+        </div>
+      </div>
+
+      <div style="background:#fff;border:0.5px solid var(--line,#E7E4DB);border-radius:16px;overflow:hidden;">
+        <div style="padding:16px 20px 14px;background:#F7403A;display:flex;align-items:center;gap:10px;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.5);">Needs that move you</div>
+          <div style="font-family:Lora,serif;font-size:17px;font-weight:700;color:#fff;">${P.issue.value}</div>
+        </div>
+        <div style="padding:16px 20px;">${issBars}</div>
+      </div>
+    </div>
+
+    <div style="background:#fff;border:0.5px solid var(--line,#E7E4DB);border-radius:16px;overflow:hidden;margin-bottom:20px;">
+      <div style="padding:14px 20px;border-bottom:0.5px solid var(--line,#E7E4DB);background:var(--paper,#F6F5F1);display:flex;align-items:center;gap:10px;">
+        <div style="width:30px;height:30px;border-radius:8px;background:var(--line,#E7E4DB);border:0.5px solid var(--line,#E7E4DB);display:flex;align-items:center;justify-content:center;flex-shrink:0;">${I.spark}</div>
+        <div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9A958B;">Your role</div>
+          <div style="font-size:16px;font-weight:600;color:#263F6A;">${P.role.value}</div>
+        </div>
+      </div>
+      <div style="padding:18px 20px;">
+        <div style="font-size:13px;line-height:1.7;color:#736F66;margin-bottom:18px;">${P.role.desc||''}</div>
+        <div style="height:8px;border-radius:5px;background:var(--paper,#F6F5F1);border:0.5px solid var(--line,#E7E4DB);position:relative;margin-bottom:0;">
+          <div style="position:absolute;left:0;top:0;bottom:0;width:${rolePos}%;border-radius:5px;background:linear-gradient(90deg,#EFBD47,#263F6A);"></div>
+          <div style="position:absolute;left:${rolePos}%;top:50%;width:18px;height:18px;border-radius:50%;background:#263F6A;border:2.5px solid #fff;box-shadow:0 2px 6px rgba(26,44,77,.2);transform:translate(-50%,-50%);"></div>
+        </div>
+        <div style="display:flex;margin-top:8px;">${specLabels}</div>
+      </div>
+    </div>
+
+    <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9A958B;margin-bottom:10px;">Ministry focus</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">${minChips}</div>
+    <div style="background:#fff;border:0.5px solid var(--line,#E7E4DB);border-radius:14px;overflow:hidden;">
+      <div style="padding:14px 18px;background:#263F6A;display:flex;align-items:center;gap:10px;">
+        <div style="width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#EFBD47;">${I.spark}</div>
+        <div>
+          <div style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);">Primary ministry focus</div>
+          <div style="font-size:16px;font-weight:600;color:#fff;">${topMin?.name||''}</div>
+        </div>
+      </div>
+      <div style="padding:16px 18px;">
+        <div style="font-size:13px;line-height:1.7;color:#736F66;margin-bottom:12px;">${topMin?.desc||''}</div>
+        ${minPoints.map(pt=>`<div style="display:flex;gap:9px;padding:8px 0;border-bottom:0.5px solid var(--line,#E7E4DB);font-size:12.5px;line-height:1.6;color:#736F66;"><span style="width:5px;height:5px;border-radius:50%;background:#EFBD47;flex-shrink:0;margin-top:6px;"></span><span>${pt}</span></div>`).join('')}
+      </div>
+    </div>
+
+    <div style="margin-top:28px;font-family:Lora,serif;font-style:italic;font-size:18px;line-height:1.7;color:#263F6A;max-width:680px;padding-left:20px;border-left:3px solid #EFBD47;">"Take delight in the Lord, and he will give you the desires of your heart."<cite style="display:block;font-style:normal;font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#EFBD47;margin-top:10px;">Psalm 37:4</cite></div>
+  </section>`;
+}
+
+// ── 4. buildPotential() — donut chart, percentages sum to 100 ──
+function buildPotential(){
+  const P=PROFILE;
+  const top=P.mi[0];
+  // Compute percentages that sum exactly to 100
+  const miKeys=['Li','Lo','Vi','Ki','Mu','Ie','Ia','Na'];
+  const totalRaw=P.mi.reduce((a,m)=>a+m.score,0)||1;
+  let pcts=[]; let sum=0;
+  P.mi.forEach((m,i)=>{
+    const p=i<P.mi.length-1?Math.round(m.score/totalRaw*100):100-sum;
+    pcts.push(p); sum+=p;
+  });
+  const topPct=pcts[0];
+
+  // Build donut SVG
+  const cx=105,cy=105,r=76,sw=32;
+  let cum=0; const segs=P.mi.map((m,i)=>{
+    const pct=pcts[i]; const len=Math.max(0.1,pct-0.8);
+    const seg=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${m.color}" stroke-width="${sw}" pathLength="100" stroke-dasharray="${len.toFixed(2)} ${(100-len).toFixed(2)}" stroke-dashoffset="${(-cum).toFixed(2)}" transform="rotate(-90 ${cx} ${cy})"><title>${m.name} ${pct}%</title></circle>`;
+    cum+=pct; return seg;
+  }).join('');
+
+  const legend=P.mi.map((m,i)=>`<div style="display:grid;grid-template-columns:10px 1fr auto;gap:10px;align-items:center;padding:8px 12px;background:var(--paper,#F6F5F1);border:0.5px solid var(--line,#E7E4DB);border-radius:10px;">
+    <span style="width:10px;height:10px;border-radius:3px;background:${m.color};flex-shrink:0;"></span>
+    <span style="font-size:12.5px;color:var(--ink,#20242E);">${m.name} · <span style="color:#736F66;font-weight:400">${m.smart}</span></span>
+    <span style="font-size:12.5px;font-weight:600;color:#263F6A;">${pcts[i]}%</span>
+  </div>`).join('');
+
+  return `<section class="section" style="padding:clamp(48px,7vw,92px) clamp(20px,5vw,72px)">
+    <div style="margin-bottom:clamp(32px,4vw,48px);max-width:760px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;display:inline-flex;align-items:center;gap:9px;color:#9A6B00;margin-bottom:16px;">${I.potential} Potential</div>
+      <h2 style="font-family:Lora,serif;font-size:clamp(30px,4.6vw,50px);font-weight:600;line-height:1.05;color:#263F6A;margin-bottom:18px;">How you naturally learn &amp; engage</h2>
+      <p style="font-size:clamp(15px,1.5vw,17px);line-height:1.75;color:#736F66;max-width:680px;">Your blend of intelligences — the <em>way</em> you're wired to think, learn and create. Your potential shows where you'll grow fastest and contribute best.</p>
+    </div>
+
+    <div style="background:#263F6A;border-radius:16px;padding:24px 28px;display:grid;grid-template-columns:56px 1fr;gap:18px;align-items:center;margin-bottom:24px;">
+      <div style="width:56px;height:56px;border-radius:14px;background:rgba(239,189,71,.16);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#EFBD47;">${I.potential}</div>
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45);">Lead intelligence</div>
+        <div style="font-family:Lora,serif;font-size:22px;font-weight:600;color:#fff;margin:4px 0 3px;">${top.name} · ${top.smart}</div>
+        <div style="font-size:12px;color:#EFBD47;">${topPct}% — your strongest way of engaging the world</div>
+      </div>
+      <div style="grid-column:1/-1;font-size:13px;line-height:1.65;color:rgba(255,255,255,.65);">${P.miPrimaryDesc||''}</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center;margin-bottom:24px;">
+      <div style="display:flex;justify-content:center;align-items:center;">
+        <div style="position:relative;width:210px;height:210px;">
+          <svg width="210" height="210" viewBox="0 0 210 210" style="max-width:100%;height:auto;">
+            <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--line,#E7E4DB)" stroke-width="${sw}"/>
+            ${segs}
+            <text x="${cx}" y="${cy-4}" text-anchor="middle" font-family="Lora,serif" font-size="24" font-weight="600" fill="#263F6A">${topPct}%</text>
+            <text x="${cx}" y="${cy+14}" text-anchor="middle" font-family="'Nunito',sans-serif" font-size="9" font-weight="700" letter-spacing=".5" fill="#9A958B">${top.smart.toUpperCase()}</text>
+          </svg>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        ${legend}
+        <div style="padding:6px 12px;font-size:11px;font-weight:600;color:#9A958B;text-align:right;border-top:0.5px solid var(--line,#E7E4DB);margin-top:4px;">Total: 100%</div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;font-family:Lora,serif;font-style:italic;font-size:18px;line-height:1.7;color:#263F6A;max-width:680px;padding-left:20px;border-left:3px solid #EFBD47;">"Each of you should use whatever gift you have received to serve others, as faithful stewards of God's grace."<cite style="display:block;font-style:normal;font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#EFBD47;margin-top:10px;">1 Peter 4:10</cite></div>
+  </section>`;
+}
+
+// ── 5. buildPathway() — show % not raw score, overall explanation ──
+function buildPathway(){
+  const P=PROFILE.pathway;
+  const areas=P.areas;
+  const op=PROFILE.op;
+  const lowestArea=areas.slice().sort((a,b)=>a.score-b.score)[0];
+
+  const STAGE_COLORS={thrive:{bg:'#E6F1EC',text:'#1F7A57',bar:'#1F7A57'},survive:{bg:'#FBF3DA',text:'#B98714',bar:'#EFBD47'},strive:{bg:'#FDECEB',text:'#C8352F',bar:'#F7403A'}};
+  const F_ICONS={Faith:'📖',Family:'🏠',Finances:'💰',Fitness:'🏃',Friends:'👥'};
+
+  const rows=areas.map(a=>{
+    const pct=Math.round(a.score/20*100);
+    const sc=STAGE_COLORS[a.stage]||STAGE_COLORS.strive;
+    return `<div style="display:grid;grid-template-columns:42px 1fr auto;gap:14px;align-items:center;padding:14px 0;border-bottom:0.5px solid var(--line,#E7E4DB);">
+      <div style="width:42px;height:42px;border-radius:12px;background:${sc.bg};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">${F_ICONS[a.name]||'·'}</div>
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--ink,#20242E);margin-bottom:7px;">${a.name}</div>
+        <div style="height:6px;border-radius:4px;background:var(--paper,#F6F5F1);border:0.5px solid var(--line,#E7E4DB);overflow:hidden;">
+          <div data-w="${pct}" style="height:100%;border-radius:4px;background:${sc.bar};width:0;transition:width 1.2s ease;"></div>
+        </div>
+      </div>
+      <div style="text-align:right;min-width:68px;">
+        <div style="font-family:Lora,serif;font-size:22px;font-weight:600;color:var(--ink,#20242E);line-height:1;">${pct}%</div>
+        <span style="font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:10px;display:inline-block;margin-top:4px;background:${sc.bg};color:${sc.text};">${a.stage==='thrive'?'Thriving':a.stage==='survive'?'Surviving':'Striving'}</span>
+      </div>
+    </div>`;
+  }).join('').replace(/border-bottom:0\.5px solid var\(--line,#E7E4DB\);(?=<\/div>\s*<\/div>)/,'');
+
+  // Overall explanation
+  const thriving=areas.filter(a=>a.stage==='thrive').map(a=>a.name);
+  const striving=areas.filter(a=>a.stage==='strive').map(a=>a.name);
+  const overallNote=`Your strongest foundations are ${thriving.length?'<strong>'+thriving.join(', ')+'</strong>':'building across all areas'} — these are the pillars that will carry your purpose forward. ${striving.length?'Your growth areas are <strong>'+striving.join(', ')+'</strong>. Attending to these will give you the foundation to sustain long-term impact.':'You are making real progress across all five areas.'} Small, consistent steps in each area will unlock the stability that lets your gifts flourish freely.`;
+
+  return `<section class="section" style="padding:clamp(48px,7vw,92px) clamp(20px,5vw,72px)">
+    <div style="margin-bottom:clamp(32px,4vw,48px);max-width:760px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;display:inline-flex;align-items:center;gap:9px;color:#1F7A57;margin-bottom:16px;">${I.pathway} Pathway</div>
+      <h2 style="font-family:Lora,serif;font-size:clamp(30px,4.6vw,50px);font-weight:600;line-height:1.05;color:#263F6A;margin-bottom:18px;">The ground you're standing on</h2>
+      <p style="font-size:clamp(15px,1.5vw,17px);line-height:1.75;color:#736F66;max-width:680px;">Purpose grows in real life. The five F's — Faith, Family, Finances, Fitness, Friends — show the <em>health of the soil</em> you're living and leading from right now.</p>
+    </div>
+
+    <div style="background:#263F6A;color:#fff;border-radius:16px;padding:28px 32px;display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center;margin-bottom:20px;">
+      <div style="font-family:Lora,serif;font-size:64px;font-weight:600;line-height:.9;flex-shrink:0;">${op}<span style="font-size:22px;color:rgba(255,255,255,.35);">%</span></div>
+      <div>
+        <div style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#EFBD47;margin-bottom:10px;">Overall: ${P.overallStage==='thrive'?'Thriving':P.overallStage==='survive'?'Surviving':'Striving'}</div>
+        <div style="height:8px;border-radius:5px;background:rgba(255,255,255,.14);overflow:hidden;margin-bottom:12px;">
+          <div data-w="${op}" style="height:100%;border-radius:5px;background:#EFBD47;width:0;transition:width 1.2s ease;"></div>
+        </div>
+        <div style="font-size:13px;line-height:1.65;color:rgba(255,255,255,.65);">${P.overallDesc}</div>
+      </div>
+    </div>
+
+    <div style="background:var(--paper,#F6F5F1);border:0.5px solid var(--line,#E7E4DB);border-radius:16px;padding:4px 20px 4px;">
+      ${rows}
+    </div>
+
+    <div style="background:var(--paper,#F6F5F1);border:0.5px solid var(--line,#E7E4DB);border-left:4px solid #263F6A;border-radius:0 14px 14px 0;padding:18px 22px;margin-top:16px;font-size:13px;line-height:1.75;color:#736F66;">${overallNote}</div>
+
+    <div style="margin-top:28px;font-family:Lora,serif;font-style:italic;font-size:18px;line-height:1.7;color:#263F6A;max-width:680px;padding-left:20px;border-left:3px solid #EFBD47;">"But seek first his kingdom and his righteousness, and all these things will be given to you as well."<cite style="display:block;font-style:normal;font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#EFBD47;margin-top:10px;">Matthew 6:33</cite></div>
+  </section>`;
+}
+
+// ── 6. buildSteps() — pray / mentor / lowest pathway ──
+function buildSteps(){
+  const P=PROFILE;
+  const lowestArea=P.pathway.areas.slice().sort((a,b)=>a.score-b.score)[0];
+  const lowestName=lowestArea?.name||'Fitness';
+  const lowestPct=lowestArea?Math.round(lowestArea.score/20*100):30;
+  const topGiftName=P.gifts[0]?.name||'gift';
+
+  const steps=[
+    {
+      color:'#263F6A',
+      title:'Pray over your purpose profile',
+      body:`Set aside time this week to bring this report before God. Ask Him to confirm what resonates, clarify what surprises you, and reveal how He wants to use the person He made you to be. Purpose that is not covered in prayer will not last.`,
+      verse:'"Commit to the Lord whatever you do, and he will establish your plans." — Proverbs 16:3'
+    },
+    {
+      color:'#F7403A',
+      title:'Connect with a mentor and discuss your gifting',
+      body:`Share this report with a trusted pastor, mentor, or leader in your life. Your primary gift of <strong>${topGiftName}</strong> comes alive when someone who knows you speaks into it. Ask them: where have they seen this gift in you? Where do they see growth?`,
+      verse:'"Plans fail for lack of counsel, but with many advisers they succeed." — Proverbs 15:22'
+    },
+    {
+      color:'#EFBD47',
+      title:`Work on your lowest pathway area`,
+      body:`Your <strong>${lowestName}</strong> score (${lowestPct}%) is the area most in need of attention right now. Choose one small, sustainable habit this week. The vessel that carries your calling needs care. A stronger foundation here will free up energy for everything else.`,
+      verse:'"Do you not know that your bodies are temples of the Holy Spirit?" — 1 Corinthians 6:19'
+    }
+  ];
+
+  const stepsHTML=steps.map((s,i)=>`<div style="background:#fff;border:0.5px solid var(--line,#E7E4DB);border-left:4px solid ${s.color};border-radius:0 16px 16px 0;padding:24px 28px;display:grid;grid-template-columns:44px 1fr;gap:20px;align-items:start;box-shadow:0 1px 2px rgba(26,44,77,.04);">
+    <div style="font-family:Lora,serif;font-size:38px;font-weight:600;line-height:1;color:#EFBD47;width:44px;">${i+1}</div>
+    <div>
+      <h4 style="font-size:15px;font-weight:700;color:#263F6A;margin-bottom:8px;">${s.title}</h4>
+      <p style="font-size:13px;line-height:1.7;color:#736F66;">${s.body}</p>
+      <div style="font-family:Lora,serif;font-style:italic;font-size:13px;color:#263F6A;opacity:.7;margin-top:10px;">${s.verse}</div>
+    </div>
+  </div>`).join('');
+
+  return `<section class="section tint" style="padding:clamp(48px,7vw,92px) clamp(20px,5vw,72px)">
+    <div style="margin-bottom:36px;max-width:760px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;display:inline-flex;align-items:center;gap:9px;color:#EFBD47;margin-bottom:16px;">${I.arrow} Your Next Steps</div>
+      <h2 style="font-family:Lora,serif;font-size:clamp(30px,4.6vw,50px);font-weight:600;line-height:1.05;color:#263F6A;margin-bottom:18px;">From insight to action</h2>
+      <p style="font-size:clamp(15px,1.5vw,17px);line-height:1.75;color:#736F66;max-width:680px;">Three God-sized, doable steps to start living from your purpose this season.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;">${stepsHTML}</div>
+  </section>`;
+}
+
+// ── 7. buildCTA() — gold + white buttons ──
+function buildCTA(){
+  return `<section class="section" style="border-top:none;padding:clamp(40px,5vw,60px) clamp(20px,5vw,72px)">
+    <div style="background:#263F6A;border-radius:20px;padding:clamp(40px,5vw,60px);text-align:center;position:relative;overflow:hidden;">
+      <div style="position:absolute;right:-140px;top:-120px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(239,189,71,.12),transparent 64%);pointer-events:none;"></div>
+      <div style="position:absolute;left:-100px;bottom:-140px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(247,64,58,.1),transparent 64%);pointer-events:none;"></div>
+      <div style="position:relative;z-index:2;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#EFBD47;margin-bottom:12px;">What's next</div>
+        <h2 style="font-family:Lora,serif;font-size:clamp(28px,4vw,42px);font-weight:600;color:#fff;margin-bottom:14px;line-height:1.1;">Your purpose is a journey,<br>not a result.</h2>
+        <p style="font-size:15px;line-height:1.75;color:rgba(255,255,255,.65);max-width:500px;margin:0 auto 16px;">This report is a starting line. A YOUnique coach can help you turn these insights into a clear, lived-out calling — one conversation at a time.</p>
+        <p style="font-family:Lora,serif;font-style:italic;font-size:13px;color:rgba(255,255,255,.38);max-width:380px;margin:0 auto 32px;line-height:1.7;">"Commit to the Lord whatever you do, and he will establish your plans." — Proverbs 16:3</p>
+        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+          <button onclick="window.open('https://youniquepurpose.com/coach','_blank')" style="display:inline-flex;align-items:center;gap:8px;background:#EFBD47;color:#1A2C4D;border:none;border-radius:12px;padding:14px 28px;font-size:14px;font-weight:700;font-family:'Nunito',sans-serif;cursor:pointer;transition:all .2s;">
+            <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><circle cx="12" cy="8" r="3.4" stroke="currentColor" stroke-width="2"/><path d="M5.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Connect with a purpose coach
+          </button>
+          <button onclick="window.print()" style="display:inline-flex;align-items:center;gap:8px;background:#fff;color:#263F6A;border:none;border-radius:12px;padding:14px 28px;font-size:14px;font-weight:700;font-family:'Nunito',sans-serif;cursor:pointer;transition:all .2s;">
+            <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M12 15V3m0 12l-4-4m4 4l4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 17l.62 2.48A2 2 0 0 0 4.56 21h14.88a2 2 0 0 0 1.94-1.52L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Download my report
+          </button>
+        </div>
+      </div>
+    </div>
+    <footer style="text-align:center;padding:32px clamp(20px,5vw,72px);color:#9A958B;font-size:12px;border-top:0.5px solid var(--line,#E7E4DB);margin-top:0;">
+      <div style="font-family:Lora,serif;color:#263F6A;font-size:14px;font-weight:600;margin-bottom:5px;">YOUnique Purpose Assessment</div>
+      Prepared for ${PROFILE.name} · ${PROFILE.date} · ${PROFILE.org}
+    </footer>
+  </section>`;
+}
+
+// ── 8. buildProfile() — add raw passion scores ──
+const _origBuildProfile = buildProfile;
+function buildProfile(R, ST){
+  const P = _origBuildProfile(R, ST);
+  P.passion._pplRaw = R.ppl;
+  P.passion._issRaw = R.iss;
+  P.passion._minRaw = R.min;
+  P.passion._minTop = R.minTop;
+  return P;
+}
+
+// ── 9. Re-run render after override ──
+const _origRender = render;
+function render(){
+  _origRender();
+  setTimeout(animate, 200);
+  setTimeout(animate, 800);
+}
+</script>
+
+
 </body>
 </html>
