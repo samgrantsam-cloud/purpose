@@ -3573,22 +3573,18 @@ function showShareToast(msg){
 function animate(){
   const fills=[...document.querySelectorAll("[data-w]")];
   const arcs=[...document.querySelectorAll(".arc-anim")];
-  function applyFill(el){ if(el.dataset.w!==undefined) el.style.width=el.dataset.w+"%"; }
+  // Set ALL bars immediately — no viewport check
   fills.forEach((f,i)=>{
-    const rect=f.getBoundingClientRect();
-    if(rect.top<window.innerHeight+400) setTimeout(()=>applyFill(f),60+i*8);
+    setTimeout(()=>{ if(f.dataset.w!==undefined) f.style.width=f.dataset.w+"%"; }, 60+i*10);
   });
-  const io=new IntersectionObserver((es)=>{
-    es.forEach(e=>{ if(e.isIntersecting){ applyFill(e.target); io.unobserve(e.target); }});
-  },{threshold:0.05,rootMargin:"300px 0px"});
-  fills.forEach(f=>io.observe(f));
+  // Arc animations via IO (only for arcs, which need timing)
   const aio=new IntersectionObserver((es)=>{
     es.forEach(e=>{ if(e.isIntersecting){ const c=e.target;
       c.style.transition="stroke-dashoffset 1.3s cubic-bezier(.4,0,.2,1)";
       requestAnimationFrame(()=>{ c.style.strokeDashoffset=c.dataset.off; });
       aio.unobserve(c);
     }});
-  },{threshold:0.2});
+  },{threshold:0.1,rootMargin:"200px 0px"});
   arcs.forEach(a=>aio.observe(a));
 }
 
@@ -4104,7 +4100,7 @@ function buildProfile(R, ST) {
   const purpose = ST.name+' is wired to serve as a <b>'+g1n+'</b> — drawing on a gift of <b>'+g2n.toLowerCase()+'</b>, a heart for <b>'+pplLabel+'</b>, and the drive to '+MIN_META[R.minTop].label.toLowerCase()+'.';
   const persStrengths = pm.strengths || [];
   const persWatch = pm.watchouts || pm.watch || [];
-  return {
+  const P = {
     name:ST.name, firstName:ST.name.split(' ')[0],
     org:ST.church||'YOUnique Purpose', city:ST.city||'', country:ST.country||'',
     role:ST.role||'Participant', ageBand:ST.age||'',
@@ -4145,16 +4141,13 @@ function buildProfile(R, ST) {
     canvasSynthesis:'',
     op:R.op
   };
-  // Add raw passion scores for new design sections
+  // Inject raw passion scores for new report design
   P.passion._pplRaw = R.ppl;
   P.passion._issRaw = R.iss;
   P.passion._minRaw = R.min;
   P.passion._minTop = R.minTop;
   return P;
 }
-
-// ── NEW buildReport ────────────────────────────────────────────────────────────
-
 // ── 9. render() — standalone, no _origRender pattern ──
 function render(){
   const root=document.getElementById("report");
