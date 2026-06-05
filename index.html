@@ -4061,10 +4061,91 @@ function buildCTA(){
   </section>`;
 }
 
-// ── 8. buildProfile() — add raw passion scores ──
-const _origBuildProfile = buildProfile;
-function buildProfile(R, ST){
-  const P = _origBuildProfile(R, ST);
+
+// ── 8. buildProfile() — standalone with raw passion scores ──
+function buildProfile(R, ST) {
+  const giftsSorted = R.gS.map(([k,v]) => ({ key:k, name:GM[k].name, score:v }));
+  // Sort by category order: Motivational first, then Ministry, then Manifestation
+  const PRIMARY_KEYS=['A','D','G','J','M'];
+  const SECONDARY_KEYS=['B','E','H','K','N','O','P'];
+  const SUPPORTING_KEYS=['C','F','I','L'];
+  const catOrder = k => PRIMARY_KEYS.includes(k)?0:SECONDARY_KEYS.includes(k)?1:2;
+  const giftsSortedByCat = [...giftsSorted].sort((a,b)=>catOrder(a.key)-catOrder(b.key)||(b.score-a.score));
+  const MI_COLORS = ['#263F6A','#2F4E80','#F7403A','#EFBD47','#1F7A57','#6C8CC4','#B98714','#C8352F'];
+  const miSorted = [...R.miS].map(([k],i) => ({
+    key:k, name:MI_META[k].name, smart:MI_META[k].smart,
+    score:Math.round(R.miPct(k)/100*25), color:MI_COLORS[i]||'#999'
+  }));
+  const pm = MBTI[R.mtype] || MBTI['ISTJ'] || {};
+  const dims = [
+    { l:'E', lName:'Extraversion', r:'I', rName:'Introversion', lPct:R.eiP[0] },
+    { l:'S', lName:'Sensing',      r:'N', rName:'Intuition',    lPct:R.snP[0] },
+    { l:'T', lName:'Thinking',     r:'F', rName:'Feeling',      lPct:R.tfP[0] },
+    { l:'J', lName:'Judging',      r:'P', rName:'Perceiving',   lPct:R.jpP[0] },
+  ];
+  const paAreas = ['faith','family','finances','fitness','friends'].map(f => ({
+    key:f, name:f.charAt(0).toUpperCase()+f.slice(1),
+    score:R.paR[f]?Math.round(R.paR[f].score/100*20):0,
+    stage:R.paR[f]?(R.paR[f].stage==='thriving'?'thrive':R.paR[f].stage==='surviving'?'survive':'strive'):'strive', note:''
+  }));
+  const issMax = Math.max(...Object.values(R.iss)) || 1;
+  const issColors = {spiritual:'navy',physical:'red',relational:'red',intellectual:'gold',social:'gold',financial:'mute'};
+  const issuesBars = ['spiritual','physical','relational','intellectual','social','financial']
+    .map(k => ({ name:ISS_META[k].label, pct:Math.round((R.iss[k]||0)/issMax*100), c:issColors[k]||'mute' }))
+    .sort((a,b) => b.pct-a.pct).slice(0,4);
+  const ministryFit = ['evangelism','discipleship','compassion','leadership','missions','creative']
+    .map(k => ({ name:MIN_META[k].label, desc:MIN_META[k].short||'', top:k===R.minTop, score:R.min[k]||0 }))
+    .sort((a,b) => b.score-a.score).slice(0,4);
+  const roleOrder = ['Doer','Supervisor','Manager','Innovator','Thinker / Pioneer'];
+  const rolePos = [10,28,46,66,85][roleOrder.indexOf(R.roleLabel)] || 50;
+  const g1n = giftsSorted[0]?GM[giftsSorted[0].key].name:'';
+  const g2n = giftsSorted[1]?GM[giftsSorted[1].key].name:'';
+  const pplLabel = PPL_META[R.pplS[0][0]] ? PPL_META[R.pplS[0][0]].label : '';
+  const purpose = ST.name+' is wired to serve as a <b>'+g1n+'</b> — drawing on a gift of <b>'+g2n.toLowerCase()+'</b>, a heart for <b>'+pplLabel+'</b>, and the drive to '+MIN_META[R.minTop].label.toLowerCase()+'.';
+  const persStrengths = pm.strengths || [];
+  const persWatch = pm.watchouts || pm.watch || [];
+  return {
+    name:ST.name, firstName:ST.name.split(' ')[0],
+    org:ST.church||'YOUnique Purpose', city:ST.city||'', country:ST.country||'',
+    role:ST.role||'Participant', ageBand:ST.age||'',
+    date:new Date().toLocaleDateString('en-GB',{month:'long',year:'numeric'}),
+    purpose:purpose, purposeThemes:[g1n,pplLabel,MIN_META[R.minTop].label],
+    purposeDetail:[],
+    pDescriptors:[
+      {k:'gifts',label:'Gifts',sub:'How God has empowered you'},
+      {k:'passion',label:'Passion',sub:"What stirs your heart"},
+      {k:'potential',label:'Potential',sub:"How you're wired to think"},
+      {k:'personality',label:'Personality',sub:'How you relate to others'},
+      {k:'pathway',label:'Pathway',sub:'The life you lead from'},
+    ],
+    gifts:giftsSortedByCat,
+    giftStackNote:"Gifts rarely work alone. Your top three form a 'gift stack' — a primary motivation supported by two others that shape <em>how</em> it shows up.",
+    passion:{
+      statement:'',
+      people:{value:PPL_META[R.pplS[0][0]]?PPL_META[R.pplS[0][0]].label:'',desc:PPL_META[R.pplS[0][0]]?PPL_META[R.pplS[0][0]].short:''},
+      issue:{value:ISS_META[R.issTop]?ISS_META[R.issTop].label:'',desc:ISS_META[R.issTop]?ISS_META[R.issTop].short:''},
+      role:{value:R.roleLabel,desc:(ROLE_META&&ROLE_META[R.roleLabel])?ROLE_META[R.roleLabel].long:'',pos:rolePos},
+      ministry:{value:MIN_META[R.minTop]?MIN_META[R.minTop].label:'',desc:MIN_META[R.minTop]?MIN_META[R.minTop].long:''},
+      issuesBars:issuesBars, ministryFit:ministryFit,
+      peopleNote:PPL_META[R.pplS[0][0]]?PPL_META[R.pplS[0][0]].long:''
+    },
+    mi:miSorted,
+    miPrimaryDesc:MI_META[miSorted[0]?miSorted[0].key:'Ie']?MI_META[miSorted[0].key].desc:'',
+    miTop:miSorted.slice(0,3).map(m=>({name:m.name+' · '+m.smart,text:MI_META[m.key]?MI_META[m.key].desc:''})),
+    personality:{
+      type:R.mtype, role:pm.name||R.mtype, desc:pm.desc||'', dims:dims, how:[],
+      strengths:persStrengths, watch:persWatch, growthNote:''
+    },
+    pathway:{
+      areas:paAreas, overallStage:R.os==='thriving'?'thrive':R.os==='surviving'?'survive':'strive',
+      overallDesc:R.os==='thrive'?'You are flourishing across all five areas. These strong foundations give you a platform to serve and lead with confidence.':
+        R.os==='survive'?'You are making progress in each area. There is real growth — and real space to grow further. You are not thriving yet, but you are on the way.':
+        'There are significant challenges in some areas right now. Bringing them to God and a trusted community is the next step.'
+    },
+    canvasSynthesis:'',
+    op:R.op
+  };
+  // Add raw passion scores for new design sections
   P.passion._pplRaw = R.ppl;
   P.passion._issRaw = R.iss;
   P.passion._minRaw = R.min;
@@ -4072,14 +4153,21 @@ function buildProfile(R, ST){
   return P;
 }
 
-// ── 9. Re-run render after override ──
-const _origRender = render;
+// ── NEW buildReport ────────────────────────────────────────────────────────────
+
+// ── 9. render() — standalone, no _origRender pattern ──
 function render(){
-  _origRender();
-  setTimeout(animate, 200);
-  setTimeout(animate, 800);
+  const root=document.getElementById("report");
+  root.className="report density-"+(TWEAKS.density||"regular");
+  root.innerHTML=
+    buildCover()+buildGlance()+buildGifts()+buildPassion()+
+    buildPotential()+buildPersonality()+buildPathway()+
+    buildCanvas()+buildSteps()+buildCTA();
+  setTimeout(animate, 80);
+  setTimeout(animate, 500);
 }
 </script>
+
 
 
 </body>
